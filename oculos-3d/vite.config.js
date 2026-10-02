@@ -9,6 +9,8 @@ export default defineConfig(({ mode }) => {
   const https = mode === "https";
   const port = https ? 8443 : 8080;
   return {
+    // Caminhos relativos: o build funciona tanto na raiz quanto em subpastas (GitHub Pages em /Livia/).
+    base: "./",
     plugins: https ? [basicSsl()] : [],
     server: { host: true, port, strictPort: true },
     preview: { host: true, port },
