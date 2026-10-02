@@ -1,0 +1,117 @@
+.hub {
+  min-height: 100%;
+  padding: 48px 64px 72px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 18%, #ffe08a 0 90px, transparent 91px),
+    radial-gradient(circle at 88% 12%, #fff8e0 0 70px, transparent 71px),
+    linear-gradient(180deg, #7ec8e8 0%, #b8e4c4 42%, #5aa24a 42%, #2f6b32 100%);
+}
+
+.hub-header {
+  text-align: center;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.hub-kicker {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f4d2c;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hub-header h1 {
+  margin: 0;
+  font-size: 64px;
+  line-height: 1;
+  color: #fff8e8;
+  text-shadow: 0 4px 0 #1f4d2c;
+}
+
+.hub-sub {
+  margin: 16px auto 0;
+  max-width: 560px;
+  font-size: 22px;
+  color: #14331f;
+  background: rgba(255, 248, 232, 0.78);
+  padding: 10px 18px;
+  border-radius: 999px;
+}
+
+.game-card {
+  width: min(880px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  background: #fff8e8;
+  border: 6px solid #1f4d2c;
+  border-radius: 36px;
+  box-shadow: 0 16px 0 #163820;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.game-card:hover,
+.game-card:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: 0 22px 0 #163820;
+}
+
+.game-card-art {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  padding: 28px 12px 8px;
+  background:
+    linear-gradient(#7ec8e8 54%, #5aa24a 54%);
+}
+
+.game-card-copy {
+  padding: 36px 32px 32px 16px;
+}
+
+.game-tag {
+  display: inline-block;
+  background: #ffd166;
+  color: #5a340f;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.game-card-copy h2 {
+  margin: 10px 0 8px;
+  font-size: 42px;
+  color: #c0392b;
+}
+
+.game-card-copy p {
+  margin: 0 0 22px;
+  font-size: 18px;
+  line-height: 1.35;
+  color: #3d4a32;
+}
+
+.play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+  padding: 12px 28px;
+  border-radius: 999px;
+  background: #e23d3d;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  box-shadow: 0 6px 0 #8c1c1c;
+}

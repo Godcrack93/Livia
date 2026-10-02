@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Labirinto Mágico</title>
+    <script>
+      // Os jogos agora ficam numa página só; atalhos antigos abrem direto o Labirinto (inclusive com ?todos).
+      window.location.replace("./?jogo=labirinto" + window.location.search.replace(/^\?/, "&"));
+    </script>
+  </head>
+  <body>
+    <a href="./?jogo=labirinto">Abrir o Labirinto Mágico</a>
+  </body>
+</html>

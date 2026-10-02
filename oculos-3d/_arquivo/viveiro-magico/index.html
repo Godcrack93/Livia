@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <title>Viveiro Mágico</title>
+  </head>
+  <body>
+    <canvas id="view"></canvas>
+    <main id="menu">
+      <p class="kicker">Pai e filha</p>
+      <h1>Viveiro Mágico</h1>
+      <p class="warn">5–10 minutos. Se ficar tonta, tire o óculos.</p>
+      <p class="warn" id="https-tip" hidden>
+        Para o celular acompanhar a cabeça, abra o endereço com https (porta 8443).
+      </p>
+      <button id="start" type="button">Começar / Entrar no VR</button>
+      <button id="sound" type="button">Som: ligado</button>
+      <div class="row">
+        <button id="detail" type="button">Detalhes: alto</button>
+        <button id="meter" type="button">Medidor: ligado</button>
+      </div>
+      <p class="warn small" id="last-stats" hidden></p>
+      <button id="reset" type="button">Recomeçar</button>
+    </main>
+    <button id="exit" type="button" hidden>Sair</button>
+    <div id="stats"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

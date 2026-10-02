@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#4f9be0" />
+    <title>Óculos Mágico</title>
+  </head>
+  <body>
+    <canvas id="view"></canvas>
+    <main id="menu">
+      <div class="card">
+        <h1><span>Óculos</span><span>Mágico</span></h1>
+        <p class="lead">Toque na tela e encaixe o celular no óculos.</p>
+        <button id="start" type="button">Começar</button>
+        <p class="small">Depois é tudo com o olhar: escolha o jogo, as fases e volte para a sala de jogos.</p>
+        <div class="row">
+          <button id="quality" type="button">Gráficos: bonitos</button>
+          <button id="meter" type="button">Medidor: desligado</button>
+        </div>
+        <p class="warn" id="https-tip" hidden>
+          Para o celular acompanhar a cabeça, abra o endereço com https (porta 8443).
+        </p>
+        <p class="small" id="last-stats" hidden></p>
+        <p class="small">Partidas curtas. Se ficar tonta, tire o óculos.</p>
+        <button class="link" id="reset" type="button" hidden>Apagar progresso do Labirinto</button>
+      </div>
+    </main>
+    <button id="exit" type="button" hidden>Sair</button>
+    <div id="stats"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
