@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Figurinhas da Floresta (fig51–fig60)</title>
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; padding: 16px; background: #DFF3D2; font-family: Fredoka, sans-serif; color: #3A2A5A; }
+  h2 { margin: 10px 0 6px; font-size: 18px; }
+  .grade { display: flex; flex-wrap: wrap; gap: 10px 14px; }
+  .item { text-align: center; font-size: 14px; }
+  .item div { width: var(--t, 200px); height: var(--t, 200px); }
+  .item svg { width: 100%; height: 100%; }
+  .peq { --t: 104px; }
+  .peq .item { font-size: 11px; width: 110px; }
+  .escuro { background: #2F5A3A; padding: 8px; border-radius: 12px; color: #fff; }
+</style>
+</head>
+<body>
+<h2>Novas (200 px)</h2>
+<div class="grade" id="grande"></div>
+<h2>Pequenas (104 px, como no mapa) — novas e antigas da Floresta misturadas</h2>
+<div class="grade peq" id="pequena"></div>
+<div class="grade peq escuro" id="pequena2"></div>
+<h2>Antigas da Floresta (200 px)</h2>
+<div class="grade" id="antigas"></div>
+<script src="../js/nucleo.js"></script>
+<script src="../js/arte.js"></script>
+<script src="../js/figurinhas.js"></script>
+<script src="../js/figurinhas-floresta.js"></script>
+<script>
+  const novas = [51, 52, 53, 54, 55, 56, 57, 58, 59, 60];
+  const antigas = [21, 22, 23, 24, 25, 26, 27, 28, 29];
+  const so = (location.search.match(/so=([\d,]+)/) || [])[1];
+  const filtro = n => !so || so.split(',').includes(String(n));
+  function por(alvo, nums) {
+    for (const n of nums) {
+      if (!filtro(n)) continue;
+      const f = PC.figurinhas.obter('fig' + String(n).padStart(2, '0'));
+      const d = document.createElement('div');
+      d.className = 'item';
+      d.innerHTML = `<div>${PC.figurinhas.desenho(f.id)}</div>${n}. ${f.nome}`;
+      document.getElementById(alvo).appendChild(d);
+    }
+  }
+  // ?t=380 aumenta as grandes (para olhar os detalhes)
+  const t = (location.search.match(/t=(\d+)/) || [])[1];
+  if (t) document.getElementById('grande').style.setProperty('--t', t + 'px');
+  por('grande', novas);
+  por('pequena', [51, 21, 52, 22, 53, 23, 54, 24, 55, 25, 56, 26, 57, 27, 58, 28, 59, 29, 60]);
+  por('pequena2', novas);
+  por('antigas', antigas);
+</script>
+</body>
+</html>

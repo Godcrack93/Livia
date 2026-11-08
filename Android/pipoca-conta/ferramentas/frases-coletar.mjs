@@ -1,8 +1,8 @@
-// Pipoca Conta — coleta as falas do jogo, na ordem em que aparecem: um robô joga cada estação da trilha
+// Pipoca Aprende — coleta as falas do jogo, na ordem em que aparecem: um robô joga cada estação da trilha
 // (com vários sorteios) e anota tudo o que a Pipoca fala (PC.debug.falas, gravado por voz.js no navegador).
 // Ele também fica parado um pouco no começo de cada estação, para ouvir a ajuda de quem demora.
 // Uso:
-//   node ferramentas/frases-coletar.mjs [--estacoes 1-30] [--sementes 8] [--lote 6]
+//   node ferramentas/frases-coletar.mjs [--estacoes 1-60] [--sementes 8] [--lote 6]
 // Saída: ferramentas/saida/falas-coletadas.json  →  [{ estacao, semente, falas: [...] }, ...]
 import { spawn } from 'node:child_process';
 import fs from 'node:fs';
@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const RAIZ = path.resolve(AQUI, '..');
 const args = Object.fromEntries(process.argv.slice(2).map((a, i, l) => a.startsWith('--') ? [a.slice(2), l[i + 1] && !l[i + 1].startsWith('--') ? l[i + 1] : true] : null).filter(Boolean));
-const [de, ate] = String(args.estacoes || '1-30').split('-').map(Number);
+const [de, ate] = String(args.estacoes || '1-60').split('-').map(Number);
 const SEMENTES = Number(args.sementes || 8);
 const LOTE = Number(args.lote || 6);
 const SAIDA = path.join(AQUI, 'saida', 'falas-coletadas.json');

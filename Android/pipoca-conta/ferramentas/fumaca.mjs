@@ -1,13 +1,13 @@
-// Pipoca Conta — teste de fumaça: joga cada estação da trilha sozinho (com gestos certos e toque real) até a tela de
+// Pipoca Aprende — teste de fumaça: joga cada estação da trilha sozinho (com gestos certos e toque real) até a tela de
 // Parabéns, em lotes paralelos, e resume quem passou. Uso:
-//   node ferramentas/fumaca.mjs [--estacoes 1-30] [--lote 4] [--tamanho 1280x800] [--toque] [--rapido]
+//   node ferramentas/fumaca.mjs [--estacoes 1-60] [--lote 4] [--tamanho 1280x800] [--toque] [--rapido]
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const args = Object.fromEntries(process.argv.slice(2).map((a, i, l) => a.startsWith('--') ? [a.slice(2), l[i + 1] && !l[i + 1].startsWith('--') ? l[i + 1] : true] : null).filter(Boolean));
-const [de, ate] = String(args.estacoes || '1-30').split('-').map(Number);
+const [de, ate] = String(args.estacoes || '1-60').split('-').map(Number);
 const LOTE = Number(args.lote || 4);
 const TAM = args.tamanho || '1280x800';
 

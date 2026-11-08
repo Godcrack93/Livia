@@ -1,4 +1,4 @@
-/* Pipoca Conta — interface comum: Pipoca apresentadora, botões, confete, dica, plaquinha de número,
+/* Pipoca Aprende — interface comum: Pipoca apresentadora, botões, confete, dica, plaquinha de número,
    avisos e o gerenciador de telas (PC.telas). */
 (function () {
   'use strict';

@@ -1,12 +1,14 @@
-/* Pipoca Conta — tela "album": o álbum que brinca (PROJETO.md 4, item 5). Dono: agente do álbum.
-   Uma cena por região (Prado, Lagoa, Floresta), com o cenário da região e as 10 figurinhas dela em lugares fixos
+/* Pipoca Aprende — tela "album": o álbum que brinca (PROJETO.md 4, item 5). Dono: agente do álbum.
+   Duas cenas por região (Prado, Lagoa, Floresta): a dos números (fig01–fig30) e a das letras (fig31–fig60), cada uma
+   com o cenário da região e as 10 figurinhas dela em lugares fixos
    (os bichos que voam no céu, os outros no chão ou na água). A figurinha ganha fica colada no seu lugar; tocar nela:
    som do bicho, pulinho e a Pipoca diz o nome. As que faltam são molduras tracejadas vazias (sem silhueta, sem "?").
-   Contador "12 de 30" no alto (tocar: a Pipoca diz quantas são). Troca de cena pelas abas grandes do alto ou
+   Contador "12 de 60" no alto (tocar: a Pipoca diz quantas são). Troca de cena pelas abas grandes do alto ou
    arrastando o dedo para o lado. A figurinha que a criança ainda não viu no álbum chega "colando" na primeira vez
    que a cena dela aparece (PC.dados.extra('album-vistas')). Voltar (botão ou Android) → mapa.
-   params: { pagina: 'prado' | 'lagoa' | 'floresta' } (opcional; o padrão é a cena da figurinha mais nova).
-   data-teste: voltar, pagina-prado, pagina-lagoa, pagina-floresta, contador, pipoca, figurinha-figNN (ganha),
+   params: { pagina: 'prado' | 'prado-letras' | 'lagoa' | 'lagoa-letras' | 'floresta' | 'floresta-letras' } (opcional;
+   o padrão é a cena da figurinha mais nova).
+   data-teste: voltar, pagina-<pagina>, contador, pipoca, figurinha-figNN (ganha),
    vazia-figNN (moldura vazia).
    Testes (só no navegador): PC.debug.album.estado(), PC.debug.album.pagina(id); {"gesto": true} toca na próxima
    figurinha ainda não tocada (ou na aba da cena que ainda tem uma). */
@@ -14,7 +16,10 @@
   'use strict';
   const PC = window.PC, U = PC.util;
 
-  const PAGINAS = ['prado', 'lagoa', 'floresta'];
+  // seis cenas: números e letras de cada região (as abas mostram o emblema da região e "123" ou "ABC")
+  const PAGINAS = ['prado', 'prado-letras', 'lagoa', 'lagoa-letras', 'floresta', 'floresta-letras'];
+  const regiaoDa = id => id.replace('-letras', '');
+  const materiaDa = id => (id.indexOf('-letras') > 0 ? 'letras' : 'numeros');
   let comemorouCompleto = false;      // a festa do álbum completo acontece uma vez cada vez que o jogo abre
   const OCIOSO_MS = 12000;            // parada sem tocar: a Pipoca convida (uma vez por visita)
   const LIMIAR_PAGINA = 120;          // arraste para o lado (px virtuais) que troca de cena
@@ -35,6 +40,18 @@
     fig22: [258, 282, 190, -5], fig23: [568, 252, 190, 5], fig24: [872, 282, 190, -4], fig25: [1172, 252, 186, 4],
     fig28: [1462, 300, 186, -5], fig30: [980, 512, 206, 0],
     fig27: [432, 742, 194, -2], fig21: [762, 750, 194, 3], fig26: [1092, 748, 194, -3], fig29: [1420, 752, 190, 4],
+    // Prado das letras: no céu os que voam; no meio o sabiá e a flor-de-maracujá; no chão o resto
+    fig31: [262, 288, 186, -7], fig35: [578, 252, 190, 6], fig36: [892, 290, 186, -5], fig37: [1210, 258, 176, 4],
+    fig32: [920, 516, 188, 3], fig40: [1262, 512, 186, -4],
+    fig33: [432, 742, 196, -2], fig34: [762, 744, 200, 3], fig38: [1092, 750, 190, -3], fig39: [1420, 748, 188, 4],
+    // Lagoa das letras: no alto o colhereiro e a jaçanã; na margem os de beira; na água o resto
+    fig46: [420, 288, 190, -6], fig48: [1180, 262, 186, 5],
+    fig45: [700, 504, 192, -3], fig47: [955, 522, 186, 4], fig49: [1205, 502, 188, -4], fig50: [1455, 516, 180, 3],
+    fig41: [432, 742, 200, -2], fig42: [762, 758, 186, 4], fig43: [1092, 748, 196, -3], fig44: [1420, 740, 190, 3],
+    // Floresta das letras: nas árvores os de galho; no meio a Pipoca lendo; no chão o resto
+    fig51: [258, 282, 190, -5], fig52: [568, 252, 194, 5], fig55: [872, 282, 190, -4], fig57: [1172, 252, 186, 4],
+    fig56: [1462, 300, 180, -5], fig60: [980, 512, 206, 0],
+    fig53: [432, 742, 194, -2], fig54: [762, 750, 194, 3], fig58: [1092, 748, 190, -3], fig59: [1420, 752, 190, 4],
   };
 
   // som e pulinho de cada tipo de figurinha (PC.figurinhas.lista[].tipo)
@@ -71,7 +88,7 @@
     vazio: 'Brinque na trilha e ganhe figurinhas!',
     nova: 'Figurinha nova! Toque nela.',
     novas: 'Figurinhas novas! Toque nelas.',
-    completo: 'Álbum completo! Trinta figurinhas!',
+    completo: 'Álbum completo! Sessenta figurinhas!',
     lugarVazio: 'Aqui ainda está vazio.',
     convite: 'Toque numa figurinha!',
     outraCena: 'Suas figurinhas estão aqui!',
@@ -108,13 +125,14 @@
 
       .pc-album-topo { position: absolute; left: 0; top: 0; width: 1600px; height: 0; z-index: 60; }
       .tela-album .hud .botao-icone::before { content: ''; position: absolute; left: -20px; top: -20px; right: -20px; bottom: -20px; border-radius: 50%; }
-      .pc-album-abas { position: absolute; left: 790px; top: 6px; transform: translateX(-50%); display: flex; gap: 18px; }
-      .pc-album-aba { position: relative; width: 248px; height: 142px; padding: 0; border: 0; background: none; cursor: pointer;
+      .pc-album-abas { position: absolute; left: 768px; top: 6px; transform: translateX(-50%); display: flex; gap: 10px; }
+      .pc-album-aba { position: relative; width: 158px; height: 142px; padding: 0; border: 0; background: none; cursor: pointer;
         touch-action: manipulation; display: grid; place-items: center; }
-      .pc-album-aba .pc-album-aba-cara { width: 236px; height: 118px; border-radius: 30px; display: flex; align-items: center; justify-content: center;
-        gap: 8px; padding: 0 14px 0 8px; background: var(--claro); border: 5px solid var(--tinta); box-shadow: 0 7px 0 var(--tinta);
+      .pc-album-aba .pc-album-aba-cara { width: 150px; height: 118px; border-radius: 30px; display: flex; flex-direction: column; align-items: center;
+        justify-content: center; gap: 2px; padding: 0; background: var(--claro); border: 5px solid var(--tinta); box-shadow: 0 7px 0 var(--tinta);
         font: 700 37px/1 var(--fonte); color: var(--tinta); transition: transform .12s, box-shadow .12s; white-space: nowrap; }
-      .pc-album-aba .pc-album-aba-cara svg { width: 58px; height: 58px; flex: none; display: block; }
+      .pc-album-aba .pc-album-aba-cara svg { width: 50px; height: 50px; flex: none; display: block; }
+      .pc-album-aba .pc-album-aba-cara > span { font-size: 34px; letter-spacing: .02em; }
       .pc-album-aba.ativa .pc-album-aba-cara { background: var(--cor); color: #fff; -webkit-text-stroke: 3px var(--tinta); paint-order: stroke fill;
         transform: translateY(4px) scale(1.06); box-shadow: 0 0 0 5px #fff, 0 7px 0 5px var(--tinta); }
       .pc-album-aba.apertado .pc-album-aba-cara { transform: translateY(6px) scale(.97); box-shadow: 0 2px 0 var(--tinta); }
@@ -166,8 +184,8 @@
 
       // ------------------------------------------------------------ cenários (um por região) e as cenas
       const fundos = PAGINAS.map(id => {
-        const regiao = PC.regioes.find(r => r.id === id);
-        const f = PC.arte.cenario((regiao && regiao.cenario) || id);
+        const regiao = PC.regioes.find(r => r.id === regiaoDa(id));
+        const f = PC.arte.cenario((regiao && regiao.cenario) || regiaoDa(id));
         f.classList.add('pc-album-fundo');
         f.hidden = true;
         raiz.appendChild(f);
@@ -179,7 +197,7 @@
       const slots = {};                         // id -> { el, img, fig, ganha, pagina }
       const cenas = PAGINAS.map((id, pagina) => {
         const cena = U.el('div', { class: 'pc-album-cena', 'data-pagina': id, hidden: true });
-        lista.filter(f => f.regiao === id).forEach(fig => {
+        lista.filter(f => f.regiao === regiaoDa(id) && f.materia === materiaDa(id)).forEach(fig => {
           const lugar = LUGARES[fig.id] || [800, 500, 186, 0];
           const [x, y, lado, rot] = lugar;
           const ganha = tem.has(fig.id);
@@ -200,7 +218,7 @@
         camada.appendChild(cena);
         return cena;
       });
-      const ganhasNa = pagina => lista.filter(f => f.regiao === PAGINAS[pagina] && slots[f.id].ganha);
+      const ganhasNa = pagina => lista.filter(f => slots[f.id] && slots[f.id].pagina === pagina && slots[f.id].ganha);
       const novasNa = pagina => ganhasNa(pagina).filter(f => !vistas.has(f.id));
 
       // ------------------------------------------------------------ alto: voltar, abas e contador
@@ -209,10 +227,12 @@
       bVoltar.dataset.teste = 'voltar';
       const hud = U.el('div', { class: 'hud' }, U.el('div', { class: 'hud-esq' }, bVoltar));
       const abas = PAGINAS.map((id, pagina) => {
-        const regiao = PC.regioes.find(r => r.id === id) || { nome: id, cor: '#5CC84A' };
-        const aba = U.el('button', { type: 'button', class: 'pc-album-aba', teste: 'pagina-' + id, 'aria-label': regiao.nome,
+        const regiao = PC.regioes.find(r => r.id === regiaoDa(id)) || { nome: id, cor: '#5CC84A' };
+        const letras = materiaDa(id) === 'letras';
+        const aba = U.el('button', { type: 'button', class: 'pc-album-aba' + (letras ? ' letras' : ''), teste: 'pagina-' + id,
+          'aria-label': regiao.nome + (letras ? ', letras' : ', números'),
           style: `--cor:${regiao.cor};--claro:${U.tom(regiao.cor, 0.62)}` },
-          U.el('span', { class: 'pc-album-aba-cara', html: EMBLEMAS[id] || '' }, U.el('span', { text: regiao.nome })),
+          U.el('span', { class: 'pc-album-aba-cara', html: EMBLEMAS[regiaoDa(id)] || '' }, U.el('span', { text: letras ? 'ABC' : '123' })),
           U.el('span', { class: 'pc-album-novo', html: estrelaNova }));
         PC.aoTocar(aba, () => {
           if (pagina !== atual) { irPara(pagina, pagina > atual ? 1 : -1); return; }
@@ -360,7 +380,7 @@
           { duration: 340, easing: 'cubic-bezier(.2, .8, .3, 1)' });
         PC.som.pagina();
         const n = colarNovas(pagina, 260);
-        const regiao = PC.regioes.find(r => r.id === PAGINAS[pagina]);
+        const regiao = PC.regioes.find(r => r.id === regiaoDa(PAGINAS[pagina]));
         falar(n ? (n > 1 ? FALAS.novas : FALAS.nova) : (regiao ? regiao.nome + '!' : ''), { pose: n ? 'feliz' : 'aponta' });
       }
 

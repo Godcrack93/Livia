@@ -1,4 +1,4 @@
-/* Pipoca Conta — portão dos adultos (PROJETO.md 4, item 9).
+/* Pipoca Aprende — portão dos adultos (PROJETO.md 4, item 9).
 
    PC.portao.pedir() -> Promise<boolean>
      Abre uma camada por cima da tela atual (z-index 70) com um desafio que só um adulto que lê resolve:

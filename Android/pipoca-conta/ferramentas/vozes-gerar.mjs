@@ -1,4 +1,4 @@
-// Pipoca Conta — gera os áudios das falas da Pipoca no ElevenLabs (uma requisição por frase) e monta jogo/vozes/indice.js.
+// Pipoca Aprende — gera os áudios das falas da Pipoca no ElevenLabs (uma requisição por frase) e monta jogo/vozes/indice.js.
 // Lê:  gravacao/configuracao.json (voz, modelo, ajustes), gravacao/frases.json (lista), gravacao/chave-elevenlabs.txt (chave).
 // Só gera o que ainda não existe em jogo/vozes/ — rodar de novo não gasta crédito com o que já foi feito.
 // Uso (ou pelo GERAR-VOZES.bat):
@@ -74,10 +74,11 @@ if (args.refazer) {
 let faltam = lista.filter(f => !existe(f));
 if (args.refazer) faltam = faltam.filter(f => ids(args.refazer).has(f.id));
 if (args['ate-estacao']) {
-  // a lista está na ordem do jogo: tudo até a última frase da estação pedida (inclui abertura, mapa e moldura)
+  // o que a criança ouve até a estação pedida: as frases das estações 1..n, mais abertura, mapa e a moldura das
+  // atividades (álbum, brincar livre e pais ficam de fora; testes '*-teste' também)
   const n = Number(args['ate-estacao']);
-  const ate = Math.max(0, ...lista.filter(f => { const m = /estacao-(\d+)/.exec(f.onde); return m ? Number(m[1]) <= n : false; }).map(f => f.id));
-  faltam = faltam.filter(f => f.id <= ate);
+  const TELAS = new Set(['abertura', 'mapa', 'atividade']);
+  faltam = faltam.filter(f => { const m = /^estacao-(\d+)$/.exec(f.onde); return m ? Number(m[1]) <= n : TELAS.has(f.onde); });
 }
 if (args.teste) faltam = faltam.slice(0, Number(args.teste) || 10);
 const caracteres = faltam.reduce((s, f) => s + textoParaVoz(f).length, 0);

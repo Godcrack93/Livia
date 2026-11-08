@@ -1,4 +1,4 @@
-/* Pipoca Conta — efeitos sonoros sintetizados com Web Audio (nenhum arquivo de som).
+/* Pipoca Aprende — efeitos sonoros sintetizados com Web Audio (nenhum arquivo de som).
    PC.som.iniciar() precisa ser chamado num toque (o app chama no primeiro toque da tela). */
 (function () {
   'use strict';

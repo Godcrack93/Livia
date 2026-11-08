@@ -1,4 +1,4 @@
-# Pipoca Conta — regras do R8 para a versão de release.
+# Pipoca Aprende — regras do R8 para a versão de release.
 # A ponte com o jogo usa WebViewCompat.addWebMessageListener (uma interface comum, sem @JavascriptInterface),
 # e a biblioteca de cobrança traz as próprias regras. Por isso não há nada extra para manter aqui.
 

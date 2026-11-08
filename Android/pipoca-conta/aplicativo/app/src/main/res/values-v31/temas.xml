@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Android 12+: a tela de abertura do sistema usa o ícone do app sobre o céu do jogo. -->
-    <style name="Tema.PipocaConta" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Tema.PipocaAprende" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/fundo</item>
         <item name="android:colorAccent">@color/tinta</item>
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>

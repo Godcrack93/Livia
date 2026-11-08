@@ -1,4 +1,4 @@
-/* Pipoca Conta — moldura das atividades (PROJETO.md 9.7).
+/* Pipoca Aprende — moldura das atividades (PROJETO.md 9.7).
    Cuida de: cenário, HUD (voltar, bolinhas de progresso, ouvir de novo), Pipoca apresentadora, ciclo das rodadas,
    retorno de erro, dicas em degraus, relógio de inatividade, "Quer parar?", retomada da rodada, comemoração entre
    rodadas, estatísticas e a tela de Parabéns com figurinha.

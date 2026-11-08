@@ -1,8 +1,9 @@
-// Pipoca Conta — monta gravacao/frases.json: a lista de TODAS as frases que a Pipoca fala, na ordem em que a criança
+// Pipoca Aprende — monta gravacao/frases.json: a lista de TODAS as frases que a Pipoca fala, na ordem em que a criança
 // as encontra no jogo, cada uma com o nome do arquivo de áudio e a tag de emoção para o ElevenLabs.
 // Fontes:
-//   ferramentas/saida/falas-coletadas.json   (frases-coletar.mjs: o robô jogando as 30 estações)
-//   ferramentas/frases-extras.mjs            (erros, ajudas e telas, que o robô não alcança)
+//   ferramentas/saida/falas-coletadas.json   (frases-coletar.mjs: o robô jogando as 60 estações)
+//   ferramentas/frases-extras.mjs            (erros, ajudas e telas, que o robô não alcança — estações de números)
+//   ferramentas/frases-letras.mjs            (todas as falas possíveis das estações de letras, a partir do banco de palavras)
 // Se gravacao/frases.json já existe, nada muda nas frases antigas (número, arquivo e tag editada à mão ficam);
 // as frases novas entram no fim da lista.
 // Uso: node ferramentas/frases-montar.mjs
@@ -14,6 +15,7 @@ const AQUI = path.dirname(fileURLToPath(import.meta.url));
 const RAIZ = path.resolve(AQUI, '..');
 const COLETA = path.join(AQUI, 'saida', 'falas-coletadas.json');
 const EXTRAS = path.join(AQUI, 'frases-extras.mjs');
+const LETRAS = path.join(AQUI, 'frases-letras.mjs');
 const DESTINO = path.join(RAIZ, 'gravacao', 'frases.json');
 
 // A divisão e a chave TÊM de ser iguais às de jogo/js/voz.js.
@@ -31,7 +33,8 @@ function lerColeta() {
 async function lerExtras() {
   if (!fs.existsSync(EXTRAS)) { console.log('Aviso: sem ' + EXTRAS); return []; }
   const m = await import(pathToFileURL(EXTRAS).href);
-  return m.default();
+  const l = fs.existsSync(LETRAS) ? (await import(pathToFileURL(LETRAS).href)).default() : [];
+  return m.default().concat(l);
 }
 
 const estacaoDe = origem => { const r = /estacao-?(\d+)/.exec(String(origem)); return r ? Number(r[1]) : null; };
@@ -42,7 +45,7 @@ async function falasEmOrdem() {
   const saida = [];
   const extrasDe = filtro => extras.filter(filtro).map(e => ({ origem: e.origem, texto: e.texto }));
   for (const o of ORDEM_TELAS_ANTES) saida.push(...extrasDe(e => e.origem === o));
-  for (let n = 1; n <= 30; n++) {
+  for (let n = 1; n <= 60; n++) {
     const o = 'estacao-' + String(n).padStart(2, '0');
     for (const r of coleta.filter(c => c.estacao === n)) for (const t of r.falas) saida.push({ origem: o, texto: t });
     saida.push(...extrasDe(e => estacaoDe(e.origem) === n));

@@ -1,4 +1,4 @@
-// Pipoca Conta — frases que o robô de coleta (frases-coletar.mjs) não alcança: retornos de erro, ajudas, falas das
+// Pipoca Aprende — frases que o robô de coleta (frases-coletar.mjs) não alcança: retornos de erro, ajudas, falas das
 // telas (abertura, mapa, álbum, brincar livre, pais) e as variantes sorteadas das instruções de cada estação.
 // Tudo gerado a partir das regras do código do jogo (jogo/js/...), com a mesma grafia, maiúsculas e pontuação.
 // Uso: import frasesExtras from './frases-extras.mjs'; frasesExtras() → [{ origem, texto }, ...]
@@ -91,7 +91,7 @@ const FASES = [
 
 // ================================================================ telas
 function abertura(f) {
-  f('Oi! Eu sou a Pipoca! Vamos brincar com números?');
+  f('Oi! Eu sou a Pipoca! Vamos brincar e aprender?');
   f('Toque no botão verde para jogar!');
 }
 function mapa(f) {
@@ -448,7 +448,7 @@ function distratores(certo, passo) {
 function sapinho(f, p, estacao) {
   const { valores, passo, n } = sequencia(p);
   const P = Math.abs(passo);
-  const seguidas = estacao > 14;                       // permiteSeguidas: só depois da estação 14
+  const seguidas = estacao > 27;                       // permiteSeguidas: só depois da estação 27 (a 14ª de números)
   // abertura (1ª rodada e seguintes)
   for (const primeiraRodada of [true, false]) {
     const primeira = primeiraRodada ? 'Este é o Pulo! ' : '';
@@ -514,7 +514,7 @@ function album(f) {
   f('Brinque na trilha e ganhe figurinhas!');
   f('Figurinha nova! Toque nela.');
   f('Figurinhas novas! Toque nelas.');
-  f('Álbum completo! Trinta figurinhas!');
+  f('Álbum completo! Sessenta figurinhas!');
   f('Aqui ainda está vazio.');
   f('Toque numa figurinha!');
   f('Suas figurinhas estão aqui!');
@@ -527,6 +527,11 @@ function album(f) {
     ['capivara'], ['onça-pintada'], ['bicho-preguiça'], ['tucano'], ['arara-azul'],
     ['mico-leão-dourado'], ['quati'], ['coruja-buraqueira'], ['beija-flor'], ['cogumelo', 'Cogumelos!'],
     ['Pipoca com medalha', 'A Pipoca ganhou uma medalha!'],
+    // estações de letras (fig31–fig60)
+    ['bem-te-vi'], ['sabiá-laranjeira'], ['tatu-bola'], ['ema'], ['carcará'], ['papagaio'], ['vaga-lume'], ['gafanhoto'], ['caju'],
+    ['flor-de-maracujá'], ['boto-cor-de-rosa'], ['tracajá'], ['pirarucu'], ['arraia'], ['cervo-do-pantanal'], ['colhereiro'], ['anta'],
+    ['jaçanã'], ['sucuri'], ['aguapé'], ['sagui'], ['harpia'], ['jabuti'], ['cutia'], ['jiboia'], ['sapinho-ponta-de-flecha'],
+    ['bromélia'], ['pau-brasil'], ['castanheira'], ['Pipoca lendo', 'A Pipoca aprendeu a ler!'],
   ];
   FIGS.forEach(([nome, fala]) => f(fala || M(nome) + '!'));
   const total = FIGS.length;
@@ -590,7 +595,7 @@ export default function frasesExtras() {
   mapa(coletor('mapa'));
   atividade(coletor('atividade'));
   FASES.forEach((e, i) => {
-    const n = i + 1;
+    const n = 2 * i + 1;                                 // trilha intercalada: as de números são as ímpares
     ATIVIDADES[e.atividade](coletor('estacao-' + String(n).padStart(2, '0')), e.params, n);
   });
   album(coletor('album'));

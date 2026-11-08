@@ -1,4 +1,4 @@
-/* Pipoca Conta — voz em português do Brasil.
+/* Pipoca Aprende — voz em português do Brasil.
    Modos (PC.voz.modo):
      'nativa'   — no app Android: TextToSpeech do aparelho pela ponte (mensagens 'falar'/'pararFala'; resposta 'voz-fim').
      'web'      — no navegador: speechSynthesis com voz pt-BR, se houver.

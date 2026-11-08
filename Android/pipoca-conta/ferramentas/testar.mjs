@@ -1,4 +1,4 @@
-// Pipoca Conta — testador automático com Chrome sem janela (Chrome DevTools Protocol).
+// Pipoca Aprende — testador automático com Chrome sem janela (Chrome DevTools Protocol).
 // Cada execução usa um Chrome e um servidor próprios (porta livre), então vários testes podem rodar ao mesmo tempo.
 //
 // Uso:

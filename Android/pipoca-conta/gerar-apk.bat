@@ -1,14 +1,14 @@
 @echo off
-rem Pipoca Conta: gera o APK de teste (debug) e copia para PipocaConta.apk nesta pasta.
+rem Pipoca Aprende: gera o APK de teste (debug) e copia para PipocaAprende.apk nesta pasta.
 rem Para rodar sem a pausa no fim (scripts): set SEM_PAUSA=1
 setlocal EnableExtensions
 chcp 65001 >nul
-title Pipoca Conta - gerar o APK
+title Pipoca Aprende - gerar o APK
 cd /d "%~dp0"
 
 echo.
 echo  ==================================================
-echo    Pipoca Conta - gerando o APK de teste
+echo    Pipoca Aprende - gerando o APK de teste
 echo  ==================================================
 echo.
 
@@ -52,12 +52,12 @@ set "RESULTADO=%ERRORLEVEL%"
 popd
 if not "%RESULTADO%"=="0" goto :falhou
 
-copy /y "aplicativo\app\build\outputs\apk\debug\app-debug.apk" "PipocaConta.apk" >nul
+copy /y "aplicativo\app\build\outputs\apk\debug\app-debug.apk" "PipocaAprende.apk" >nul
 if errorlevel 1 goto :falhou
 
 echo.
 echo  Pronto! O APK está aqui:
-echo    %CD%\PipocaConta.apk
+echo    %CD%\PipocaAprende.apk
 echo  Para instalar pelo cabo USB, dê dois cliques em instalar-no-celular.bat.
 echo  Lembrete: neste APK de teste a compra da assinatura não funciona ^(só pela Play^).
 echo.

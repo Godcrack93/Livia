@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Palavras — desenhos, parte 2</title>
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; padding: 16px; background: #DFF3D2; font-family: Fredoka, sans-serif; color: #3A2A5A; }
+  .grade { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+  .item { background: #FFFFFF; border-radius: 16px; padding: 6px; text-align: center; font-size: 16px; }
+  .item img { display: block; width: var(--t); height: var(--t); }
+  #erros { font-size: 18px; margin: 0 0 8px; }
+</style>
+</head>
+<body>
+<p id="erros"></p>
+<div class="grade" id="grande" style="--t: 200px"></div>
+<div class="grade" id="pequena" style="--t: 120px"></div>
+<script src="../js/nucleo.js"></script>
+<script src="../js/palavras.js"></script>
+<script src="../js/palavras-arte-2.js"></script>
+<script>
+  const IDS = ['bola', 'mola', 'sapato', 'pao', 'janela', 'panela', 'vela', 'peteca', 'caneca', 'mala', 'bala',
+    'anzol', 'ovo', 'casa', 'dado', 'bolo', 'pipa', 'copo', 'lapis', 'navio', 'roda', 'escada'];
+  const so = (location.search.match(/so=([\w,]+)/) || [])[1];
+  const erros = [];
+  for (const id of IDS) {
+    if (so && !so.split(',').includes(id)) continue;
+    const svg = PC.palavras.desenho(id);
+    const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+    if (doc.querySelector('parsererror')) erros.push(id + ': XML inválido');
+    if (/\sid="/.test(svg)) erros.push(id + ': tem id');
+    if (!PC.palavras.temDesenho(id)) erros.push(id + ': sem desenho');
+    for (const alvo of ['grande', 'pequena']) {
+      const d = document.createElement('div');
+      d.className = 'item';
+      d.innerHTML = `<img src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}">${id}`;
+      document.getElementById(alvo).appendChild(d);
+    }
+  }
+  window.ERROS = erros;
+  document.getElementById('erros').textContent = erros.length ? 'Erros: ' + erros.join('; ') : 'XML ok em todos (' + IDS.length + ')';
+</script>
+</body>
+</html>

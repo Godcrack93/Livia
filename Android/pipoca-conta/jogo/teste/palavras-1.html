@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Palavras — desenhos parte 1</title>
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; padding: 20px; background: #DFF3D2; font-family: Fredoka, sans-serif; color: #3A2A5A; }
+  .grade { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 22px; }
+  .item { background: #fff; border-radius: 16px; padding: 6px; text-align: center; font-size: 15px; }
+  .item img { display: block; width: var(--t); height: var(--t); }
+  #erros { font-size: 18px; margin: 0 0 12px; }
+</style>
+</head>
+<body>
+<p id="erros"></p>
+<div class="grade" id="grande" style="--t: 200px"></div>
+<div class="grade" id="pequeno" style="--t: 120px"></div>
+<script src="../js/nucleo.js"></script>
+<script src="../js/arte.js"></script>
+<script src="../js/palavras.js"></script>
+<script src="../js/palavras-arte-1.js"></script>
+<script>
+  // ?so=pato,gato para ver só alguns
+  const IDS = ['pato', 'gato', 'rato', 'leao', 'foca', 'vaca', 'macaca', 'cavalo', 'elefante', 'urubu', 'dourado', 'formiga',
+    'mao', 'pe', 'boca', 'olho', 'dedo', 'asa', 'fada', 'boneca', 'sol', 'lua', 'nuvem', 'ilha', 'uva', 'banana', 'tomate'];
+  const so = (location.search.match(/so=([\w,]+)/) || [])[1];
+  const erros = [];
+  for (const id of IDS) {
+    if (so && !so.split(',').includes(id)) continue;
+    const s = PC.palavras.desenho(id);
+    if (!PC.palavras.temDesenho(id)) erros.push(id + ': sem desenho');
+    const doc = new DOMParser().parseFromString(s, 'image/svg+xml');
+    if (doc.getElementsByTagName('parsererror').length) erros.push(id + ': XML inválido');
+    if (/\sid="/.test(s)) erros.push(id + ': tem id');
+    if (!/viewBox="0 0 200 200"/.test(s)) erros.push(id + ': viewBox');
+    const src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
+    for (const g of ['grande', 'pequeno']) {
+      const d = document.createElement('div');
+      d.className = 'item';
+      d.innerHTML = `<img src="${src}" alt="">${id}`;
+      document.getElementById(g).appendChild(d);
+    }
+  }
+  window.ERROS = erros;
+  document.getElementById('erros').textContent = erros.length ? 'Erros: ' + erros.join(' | ') : 'Tudo certo: XML válido, sem ids.';
+</script>
+</body>
+</html>

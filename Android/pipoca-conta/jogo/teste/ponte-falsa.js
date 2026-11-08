@@ -1,4 +1,4 @@
-/* Pipoca Conta — ponte falsa do Android, para testar no navegador o que só existe no app.
+/* Pipoca Aprende — ponte falsa do Android, para testar no navegador o que só existe no app.
    Ativada por #ponte=falsa na URL (app.js carrega este arquivo antes de iniciar). Fala o MESMO protocolo de
    mensagens do app (PROJETO.md, seção 10). Opções na URL:
      assinatura=inativa (padrão) | ativa | carregando | pendente | indisponivel | semteste | semPreco

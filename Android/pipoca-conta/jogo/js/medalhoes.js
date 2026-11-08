@@ -1,9 +1,13 @@
-/* Pipoca Conta — medalhões das estações do mapa: uma mini cena colorida por estação (viewBox 0 0 100 100, recortada
+/* Pipoca Aprende — medalhões das estações do mapa: uma mini cena colorida por estação (viewBox 0 0 100 100, recortada
    em círculo). A cena mostra a brincadeira E o que muda naquela estação: os algarismos do traçar, as moedas da
    feirinha, a sequência do sapinho, a altura da torre, o jeito de contar os pintinhos.
    Regras de arte do jogo: contorno #3A2A5A, cores chapadas, cubinhos sem rosto, número só em plaquinha/folha/moeda,
    padrão de 5 em 5 em roxo e dourado (a cor nunca depende da quantidade).
-   Uso: PC.arte.medalhao(fase) → texto SVG. */
+   Uso: PC.arte.medalhao(fase) → texto SVG.
+   Atividades novas registram a sua cena (no próprio arquivo da atividade):
+     PC.arte.registrarMedalhao(id, { fundo: [ceu, chao|null, chaoEscuro|null], cena(params) -> SVG em 0..100 })
+   e podem usar as peças: PC.arte.pecasMedalhao = { T, COR, FONTE, brilho, cartinha }.
+   Estações de letras (fase.materia === 'letras') ganham a borda rosa no mapa (o mapa cuida disso). */
 (function () {
   'use strict';
   const PC = window.PC;
@@ -261,7 +265,9 @@
 
   /** SVG do medalhão da estação (fase = item de PC.fases). Recortado em círculo; o disco do mapa faz a moldura. */
   function medalhao(fase) {
-    const at = fase && fase.atividade, p = (fase && fase.params) || {};
+    let at = fase && fase.atividade;
+    const p = (fase && fase.params) || {};
+    if (at === 'tracar' && p.letras && CENAS['tracar-letras']) at = 'tracar-letras';
     const cena = CENAS[at];
     if (!cena) return PC.arte.icone(at);
     const id = PC.arte.novoId('pc-med-');
@@ -271,4 +277,12 @@
   }
 
   PC.arte.medalhao = medalhao;
+  PC.arte.registrarMedalhao = (id, { fundo: f, cena }) => { if (f) FUNDO[id] = f; CENAS[id] = cena; };
+  /** Cartinha de letra (sem rosto): x, y = centro; l = largura; letra; cor do papel. */
+  const cartinha = (x, y, l, letra, cor = '#fff', giro = 0) => {
+    const a = l * 1.25;
+    return `<g transform="rotate(${giro} ${x} ${y})"><rect x="${x - l / 2}" y="${y - a / 2}" width="${l}" height="${a}" rx="${l * 0.18}" fill="${cor}" stroke="${T}" stroke-width="2.4"/>` +
+      `<text x="${x}" y="${y + l * 0.3}" text-anchor="middle" font-size="${l * 0.82}" ${FONTE} fill="${T}">${letra}</text></g>`;
+  };
+  PC.arte.pecasMedalhao = { T, COR, FONTE, brilho, cartinha };
 })();

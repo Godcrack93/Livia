@@ -1,4 +1,4 @@
-// Pipoca Conta — módulo do app (PROJETO.md, seções 8, 10 e 11).
+// Pipoca Aprende — módulo do app (PROJETO.md, seções 8, 10 e 11).
 import java.security.MessageDigest
 import java.util.Properties
 import javax.inject.Inject
@@ -39,7 +39,7 @@ val privacidadeUrl: String = revisao.getProperty("PRIVACIDADE_URL", "").trim().l
 fun resumoDoCodigo(codigo: String): String {
     if (codigo.isEmpty()) return ""
     val bytes = MessageDigest.getInstance("SHA-256")
-        .digest(("br.livia.pipocaconta:" + codigo.uppercase()).toByteArray(Charsets.UTF_8))
+        .digest(("br.livia.pipocaaprende:" + codigo.uppercase()).toByteArray(Charsets.UTF_8))
     return bytes.joinToString("") { "%02x".format(it) }
 }
 
@@ -48,13 +48,13 @@ val chaveUpload = lerPropriedades(rootProject.file("keystore.properties"))
 val temChaveUpload = chaveUpload.getProperty("storeFile", "").isNotBlank()
 
 android {
-    namespace = "br.livia.pipocaconta"
+    namespace = "br.livia.pipocaaprende"
     compileSdk = 36
     buildToolsVersion = "36.0.0"
 
     defaultConfig {
         // Confirmar antes do primeiro envio à Play: depois de publicado, o pacote não muda nunca.
-        applicationId = "br.livia.pipocaconta"
+        applicationId = "br.livia.pipocaaprende"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

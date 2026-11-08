@@ -1,4 +1,4 @@
-/* Pipoca Conta — núcleo: namespace PC, utilidades, palco virtual, toque/arraste, eventos, registros e ponte nativa.
+/* Pipoca Aprende — núcleo: namespace PC, utilidades, palco virtual, toque/arraste, eventos, registros e ponte nativa.
    Todo o jogo vive em window.PC. Os outros arquivos penduram as suas partes aqui.
    Regra de carga: nenhum arquivo chama outro módulo no nível do topo; tudo roda depois de app.js iniciar. */
 (function () {

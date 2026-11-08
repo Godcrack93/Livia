@@ -1,4 +1,4 @@
-/* Pipoca Conta — atividade "tracar": escrever os algarismos de 0 a 10 numa lousa (PROJETO.md 5.7).
+/* Pipoca Aprende — atividade "tracar": escrever os algarismos de 0 a 10 numa lousa (PROJETO.md 5.7).
    A lousa (moldura de madeira e verde-lousa) mostra o algarismo grande no MESMO desenho da Fredoka (a fonte do jogo):
    o corpo do algarismo bem clarinho, pontinhos de giz no meio do traço, setinhas no sentido de escrever e a bolinha
    verde onde o dedo começa. Arrastar o dedo pinta de giz; é preciso passar pelos pontos de controle em ordem (o giz
@@ -10,7 +10,11 @@
    "Zero! Nenhuma estrelinha." (quadro vazio). O 10 é traçado como 1 e depois 0.
    Erros (ctx.errou, com desenho no balão): arrastar um bom pedaço começando longe da bolinha, ou sair da bolinha
    para o lado contrário da setinha. Risquinho curto e escorregão não contam.
-   params: { digitos: [...] (0 a 10; uma rodada por algarismo), demo }. */
+   params: { digitos: [...] (0 a 10; uma rodada por algarismo), demo }.
+   Modo letra (estações de português): params: { letras: ['A', 'E'], demo }: a mesma lousa com a letra de forma
+   maiúscula (Fredoka 700), traços na ordem da escola (de cima para baixo, da esquerda para a direita). No fim a letra
+   brilha, vai para a esquerda, a figura de uma palavra do banco que começa com ela aparece num cartão branco ao lado
+   e a Pipoca diz "Á! Á de arara!" (sem estrelinhas). */
 (function () {
   'use strict';
   const PC = window.PC, U = PC.util;
@@ -67,11 +71,93 @@
       { sentido: 'esquerda', q: [12], p: [[402, -556], [348, -608], [256, -629], [163, -603], [111, -542], [98, -479], [117, -410], [177, -355], [250, -338], [328, -354], [395, -395], [419, -460], [402, -556], [419, -460], [408, -340], [387, -227], [328, -143], [227, -85], [115, -68]] },
     ] },
   };
-  Object.keys(ALGARISMOS).forEach(d => {
-    const a = ALGARISMOS[d];
+  // Letras de forma maiúsculas, no desenho da Fredoka 700 (a fonte das cartinhas de letras). Os pontos seguem o
+  // "esqueleto" do desenho da fonte (o meio do traço, tirado do glifo afinado em jogo/teste/tracar-letras.html); as
+  // pontas livres ficam um pouco para dentro da ponta redonda. Mesmas unidades e campos dos algarismos.
+  // Ordem da escola: de cima para baixo e da esquerda para a direita; a vertical antes das barrigas (B, D, P, R) e
+  // dos tracinhos deitados (E, F); O e C começam no alto e vão para a esquerda.
+  const LETRAS = {
+    A: { avanco: 711, tracos: [
+      // as duas pernas, saindo do bico; depois o tracinho do meio
+      { sentido: 'baixo', p: [[355, -610], [304, -502], [253, -395], [202, -287], [151, -180], [100, -72]] },
+      { sentido: 'baixo', p: [[355, -610], [406, -502], [457, -395], [508, -287], [559, -180], [610, -72]] },
+      { sentido: 'direita', fala: 'Agora o tracinho do meio!', p: [[172, -220], [294, -220], [416, -220], [538, -220]] },
+    ] },
+    E: { avanco: 603, tracos: [
+      { sentido: 'baixo', p: [[129, -601], [129, -471], [129, -342], [129, -212], [129, -83]] },
+      { sentido: 'direita', fala: 'Agora os tracinhos deitados!', p: [[129, -601], [256, -601], [383, -601], [510, -601]] },
+      { sentido: 'direita', p: [[129, -341], [280, -341], [430, -341]] },
+      { sentido: 'direita', p: [[129, -83], [256, -83], [383, -83], [510, -83]] },
+    ] },
+    I: { avanco: 239, tracos: [
+      { sentido: 'baixo', p: [[119, -615], [119, -479], [119, -343], [119, -208], [119, -72]] },
+    ] },
+    O: { avanco: 721, tracos: [
+      { sentido: 'esquerda', f: true, p: [[361, -601], [296, -593], [232, -571], [180, -528], [141, -472], [121, -408], [111, -341], [120, -274], [139, -209], [178, -154], [230, -111], [294, -89], [361, -79], [427, -88], [491, -110], [544, -153], [582, -209], [601, -274], [611, -341], [601, -407], [581, -471], [542, -526], [490, -569], [427, -592]] },
+    ] },
+    U: { avanco: 675, tracos: [
+      // desce, faz a curva embaixo e sobe
+      { sentido: 'baixo', p: [[119, -615], [119, -501], [119, -421], [123, -341], [132, -265], [152, -191], [195, -129], [261, -92], [337, -79], [401, -89], [460, -112], [505, -158], [532, -217], [545, -280], [553, -343], [555, -404], [555, -466], [555, -527], [555, -615]] },
+    ] },
+    P: { avanco: 595, tracos: [
+      { sentido: 'baixo', p: [[125, -601], [125, -469], [125, -336], [125, -204], [125, -72]] },
+      { sentido: 'direita', fala: 'Agora a barriga!', p: [[125, -601], [191, -599], [265, -599], [339, -590], [411, -572], [463, -520], [481, -449], [474, -387], [451, -330], [400, -294], [339, -280], [266, -278], [192, -278], [125, -278]] },
+    ] },
+    B: { avanco: 609, tracos: [
+      { sentido: 'baixo', p: [[121, -601], [121, -472], [121, -343], [121, -214], [121, -85]] },
+      { sentido: 'direita', fala: 'Agora a barriga de cima!', p: [[121, -601], [183, -600], [253, -600], [324, -597], [393, -584], [451, -549], [469, -481], [461, -408], [429, -362], [355, -357], [238, -357], [121, -357]] },
+      { sentido: 'direita', fala: 'Agora a barriga de baixo!', p: [[121, -357], [238, -357], [355, -357], [432, -352], [471, -306], [487, -231], [476, -158], [427, -106], [353, -89], [279, -85], [204, -85], [121, -85]] },
+    ] },
+    M: { avanco: 809, tracos: [
+      { sentido: 'baixo', p: [[119, -615], [119, -479], [119, -343], [119, -208], [119, -72]] },
+      { sentido: 'baixo', p: [[125, -605], [218, -488], [311, -372], [404, -255]] },
+      { sentido: 'baixo', p: [[683, -605], [590, -488], [497, -372], [404, -255]] },
+      { sentido: 'baixo', p: [[689, -615], [689, -479], [689, -343], [689, -208], [689, -72]] },
+    ] },
+    L: { avanco: 569, tracos: [
+      { sentido: 'baixo', q: [4], p: [[141, -615], [141, -478], [141, -342], [141, -205], [141, -69], [259, -69], [377, -69], [495, -69]] },
+    ] },
+    T: { avanco: 640, tracos: [
+      { sentido: 'direita', p: [[85, -615], [203, -615], [320, -615], [438, -615], [555, -615]] },
+      { sentido: 'baixo', p: [[320, -615], [320, -479], [320, -343], [320, -208], [320, -72]] },
+    ] },
+    V: { avanco: 728, tracos: [
+      { sentido: 'baixo', p: [[113, -620], [176, -489], [239, -357], [301, -226], [364, -95]] },
+      { sentido: 'baixo', p: [[615, -620], [552, -489], [490, -357], [427, -226], [364, -95]] },
+    ] },
+    C: { avanco: 631, tracos: [
+      { sentido: 'esquerda', p: [[543, -555], [450, -589], [380, -600], [311, -591], [244, -571], [186, -532], [142, -477], [120, -411], [111, -341], [120, -272], [141, -206], [185, -151], [242, -112], [308, -90], [377, -81], [446, -90], [539, -123]] },
+    ] },
+    D: { avanco: 655, tracos: [
+      { sentido: 'baixo', p: [[119, -601], [119, -472], [119, -343], [119, -214], [119, -85]] },
+      { sentido: 'direita', fala: 'Agora a barriga!', p: [[119, -601], [183, -600], [256, -598], [328, -589], [399, -573], [460, -535], [507, -480], [533, -413], [543, -341], [533, -272], [509, -206], [464, -152], [405, -114], [338, -97], [268, -88], [198, -85], [119, -85]] },
+    ] },
+    F: { avanco: 613, tracos: [
+      { sentido: 'baixo', p: [[129, -601], [129, -469], [129, -336], [129, -204], [129, -72]] },
+      { sentido: 'direita', fala: 'Agora os tracinhos deitados!', p: [[129, -601], [256, -601], [383, -601], [510, -601]] },
+      { sentido: 'direita', p: [[129, -341], [281, -341], [432, -341]] },
+    ] },
+    R: { avanco: 604, tracos: [
+      // a vertical, a barriga (volta até a vertical) e a perninha, que sai do meio
+      { sentido: 'baixo', p: [[125, -601], [125, -469], [125, -336], [125, -204], [125, -72]] },
+      { sentido: 'direita', fala: 'Agora a barriga!', p: [[125, -601], [191, -599], [265, -599], [338, -590], [410, -573], [463, -522], [481, -451], [474, -385], [448, -325], [405, -284], [339, -278], [265, -278], [192, -278], [125, -278]] },
+      { sentido: 'baixo', fala: 'Agora a perninha!', p: [[413, -281], [419, -213], [448, -148], [510, -65]] },
+    ] },
+    N: { avanco: 670, tracos: [
+      { sentido: 'baixo', p: [[119, -615], [119, -479], [119, -343], [119, -208], [119, -72]] },
+      { sentido: 'baixo', p: [[125, -605], [209, -502], [293, -399], [377, -296], [461, -193], [545, -90]] },
+      { sentido: 'baixo', p: [[549, -615], [549, -479], [549, -343], [549, -208], [549, -72]] },
+    ] },
+    J: { avanco: 531, tracos: [
+      // desce e faz o ganchinho para a esquerda
+      { sentido: 'baixo', p: [[401, -615], [401, -511], [401, -441], [401, -371], [399, -301], [393, -239], [381, -177], [353, -123], [299, -93], [239, -82], [178, -92], [100, -127]] },
+    ] },
+  };
+  [ALGARISMOS, LETRAS].forEach(tabela => Object.keys(tabela).forEach(d => {
+    const a = tabela[d];
     a.numeroDeTracos = a.tracos.length;
     a.tracos.forEach(t => { t.inicio = t.p[0]; });
-  });
+  }));
 
   // ================================================================ medidas (palco virtual 1600 × 900)
   const LOUSA = { x: 330, y: 160, l: 1200, a: 700 };      // por fora da moldura de madeira
@@ -79,8 +165,10 @@
   const K = 0.75;                                         // px virtuais por unidade da fonte (~540 px de altura)
   const MEIO_Y = -343.5;                                  // meio da altura dos algarismos na fonte (de -703 a +16)
   const GIZ = Math.round(112 * K);                        // grossura do giz (um pouco mais fino que o traço da fonte)
-  const DEPOIS = { x: 700, k: 0.62, k10: 0.56 };          // no fim, o algarismo vai para a esquerda e diminui
+  const DEPOIS = { x: 700, xLetra: 730, k: 0.62, k10: 0.56 }; // no fim, o algarismo (ou a letra) vai para a esquerda e diminui
   const QUADRO = { x: 965, y: 413, l: 460, a: 184 };      // quadro de 10 das estrelinhas (lado direito da lousa)
+  const GIZ_LETRA = Math.round(130 * K);                  // a Fredoka 700 é mais grossa: giz um pouco mais largo
+  const CARTAO = { x: 1035, y: 318, l: 320, a: 374 };     // cartão da figura no modo letra (no lugar do quadro de 10)
   const JANELA_FRENTE = 90;                               // quanto o giz pode avançar de uma vez (px virtuais)
   const JANELA_TRAS = 40;
   const PASSO_DEDO = 6;                                   // o movimento do dedo é examinado de 6 em 6 px
@@ -176,6 +264,25 @@
     const l = (params && Array.isArray(params.digitos) ? params.digitos : []).map(Number).filter(n => Number.isInteger(n) && n >= 0 && n <= 10);
     return l.length ? l : [1];
   }
+  /** Modo letra: lista das letras válidas dos params (null se a fase é de algarismos). */
+  function letrasDe(params) {
+    if (!params || !Array.isArray(params.letras)) return null;
+    const l = params.letras.map(x => String(x).toUpperCase()).filter(x => LETRAS[x]);
+    return l.length ? l : ['A'];
+  }
+  /** Rodadas da fase: [{ letra: 'A' }] ou [{ numero: 3 }]. */
+  function itensDe(params) {
+    const l = letrasDe(params);
+    return l ? l.map(letra => ({ letra })) : digitosDe(params).map(numero => ({ numero }));
+  }
+  /** Palavra do banco que começa com a letra, com figura; de preferência um bicho do álbum. */
+  function palavraDa(letra) {
+    if (!PC.palavras) return null;
+    const todas = PC.palavras.filtrar({ iniciais: [letra], comFigura: true });
+    const bichos = todas.filter(p => p.bicho);
+    return U.escolher(bichos.length ? bichos : todas) || null;
+  }
+  const maiuscula = s => s.charAt(0).toUpperCase() + s.slice(1);
 
   // ================================================================ desenhos fixos
   const ESTRELA = '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6 L 39.6 22.6 L 57.7 24.6 L 44.2 36.9 L 48 54.7 L 32 45.6 L 16 54.7 L 19.8 36.9 L 6.3 24.6 L 24.4 22.6 Z" fill="#FFC93C" stroke="#3A2A5A" stroke-width="5" stroke-linejoin="round"/><path d="M23 27 L 30 25.5" stroke="#FFF1BC" stroke-width="4" stroke-linecap="round"/></svg>';
@@ -218,6 +325,16 @@
     .pc-tracar-desenho svg { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; overflow: visible; }
     .pc-tracar-fantasma { font-family: var(--fonte); font-weight: 600; fill: rgba(244, 241, 232, .13); stroke: rgba(244, 241, 232, .30);
       stroke-width: 3px; stroke-dasharray: 9 11; }
+    .pc-tracar-fantasma.letra { font-weight: 700; }
+    .pc-tracar-cartao { position: absolute; left: ${CARTAO.x}px; top: ${CARTAO.y}px; width: ${CARTAO.l}px; height: ${CARTAO.a}px; box-sizing: border-box;
+      display: grid; grid-template-rows: 1fr auto; justify-items: center; padding: 18px 16px 14px; border-radius: 34px; background: #fff;
+      border: 5px solid var(--tinta); box-shadow: 0 10px 0 rgba(0, 0, 0, .18); pointer-events: none;
+      opacity: 0; transform: scale(.85) rotate(-3deg); transition: opacity .3s, transform .4s cubic-bezier(.3, 1.5, .5, 1); }
+    .pc-tracar-cartao.mostra { opacity: 1; transform: scale(1) rotate(-2deg); }
+    .pc-tracar-figura { width: 250px; height: 250px; }
+    .pc-tracar-figura svg { width: 100%; height: 100%; display: block; }
+    .pc-tracar-palavra { font: 700 50px/1 var(--fonte); color: var(--tinta); letter-spacing: .02em; white-space: nowrap; }
+    .pc-tracar-palavra b { color: #FF7A6B; font-weight: 700; }
     .pc-tracar-pontilhado { fill: none; stroke: #F4F1E8; stroke-width: 13px; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 0 27;
       transition: opacity .3s; }
     .pc-tracar-pontilhado.futuro { opacity: .38; }
@@ -269,18 +386,26 @@
     titulo: 'Escrever os números',
     icone: 'tracar',
     cenario: 'prado',
-    totalRodadas(params) { return digitosDe(params).length; },
+    totalRodadas(params) { return itensDe(params).length; },
 
     rodada(ctx) {
-      const lista = digitosDe(ctx.params);
-      const numero = lista[Math.min(ctx.indice, lista.length - 1)];
-      const nome = PC.voz.extenso(numero);
-      const Nome = nome.charAt(0).toUpperCase() + nome.slice(1);
-      const partes = numero === 10 ? [1, 0] : [numero];
+      const lista = itensDe(ctx.params);
+      const item = lista[Math.min(ctx.indice, lista.length - 1)];
+      const modoLetra = !!item.letra;
+      const letra = modoLetra ? item.letra : null;
+      const numero = modoLetra ? null : item.numero;
+      const nome = modoLetra ? PC.palavras.falaLetra(letra) : PC.voz.extenso(numero);
+      const Nome = maiuscula(nome);
+      const partes = modoLetra ? [letra] : numero === 10 ? [1, 0] : [numero];
+      const TABELA = modoLetra ? LETRAS : ALGARISMOS;
+      const GIZ_RODADA = modoLetra ? GIZ_LETRA : GIZ;
+      const palavra = modoLetra ? palavraDa(letra) : null;
       const raiz = ctx.palco;
+      /** O que aparece no balão ao lado da fala: o número (com pontinhos) ou a letra numa cartinha. */
+      const mostrar = () => (modoLetra ? U.el('div', { class: 'balao-numero', 'aria-hidden': 'true' }, U.el('b', { text: letra })) : numero);
 
       // ------------------------------------------------------------ geometria da rodada
-      const largura = partes.reduce((a, d) => a + ALGARISMOS[d].avanco, 0) * K;
+      const largura = partes.reduce((a, d) => a + TABELA[d].avanco, 0) * K;
       const base = CENTRO.y - MEIO_Y * K;                          // linha de base da fonte
       const x0 = CENTRO.x - largura / 2;
       const caixa = { x: x0, y: base - 703 * K, l: largura, a: 719 * K };
@@ -288,13 +413,13 @@
       let caneta = x0;
       partes.forEach((d, iParte) => {
         canetas.push(caneta);
-        ALGARISMOS[d].tracos.forEach((def, i) => {
+        TABELA[d].tracos.forEach((def, i) => {
           const t = montarTraco(def, caneta, base);
           t.digito = d; t.parte = iParte;
           t.fala = iParte > 0 && i === 0 ? 'Agora o ' + PC.voz.extenso(d) + '!' : (def.fala || '');
           tracos.push(t);
         });
-        caneta += ALGARISMOS[d].avanco * K;
+        caneta += TABELA[d].avanco * K;
       });
 
       // ------------------------------------------------------------ cena: cavalete, lousa, algarismo, quadro de 10
@@ -303,7 +428,7 @@
         U.el('i', { class: 'pc-tracar-peca', style: 'left:36px;width:96px;background:#F7F4EC' }),
         U.el('i', { class: 'pc-tracar-peca', style: 'left:150px;width:58px;background:#FFD84D' }),
         U.el('i', { class: 'pc-tracar-apagador' }));
-      const lousa = U.el('div', { class: 'pc-tracar-lousa', teste: 'lousa', role: 'img', 'aria-label': 'Lousa para escrever o ' + nome },
+      const lousa = U.el('div', { class: 'pc-tracar-lousa', teste: 'lousa', role: 'img', 'aria-label': (modoLetra ? 'Lousa para escrever a letra ' : 'Lousa para escrever o ') + nome },
         U.el('div', { class: 'pc-tracar-verde' }),
         U.el('i', { class: 'pc-tracar-prego', style: 'left:5px;top:5px' }), U.el('i', { class: 'pc-tracar-prego', style: 'right:5px;top:5px' }),
         U.el('i', { class: 'pc-tracar-prego', style: 'left:5px;bottom:5px' }), U.el('i', { class: 'pc-tracar-prego', style: 'right:5px;bottom:5px' }),
@@ -314,7 +439,7 @@
       const gFantasma = U.svgEl('g'), gHalo = U.svgEl('g'), gPontos = U.svgEl('g'), gGiz = U.svgEl('g'), gRastro = U.svgEl('g'), gSetas = U.svgEl('g');
       svg.append(gFantasma, gHalo, gPontos, gGiz, gRastro, gSetas);
       partes.forEach((d, i) => {
-        gFantasma.appendChild(U.svgEl('text', { class: 'pc-tracar-fantasma', x: arred(canetas[i]), y: arred(base), 'font-size': 1000 * K }, String(d)));
+        gFantasma.appendChild(U.svgEl('text', { class: 'pc-tracar-fantasma' + (modoLetra ? ' letra' : ''), x: arred(canetas[i]), y: arred(base), 'font-size': 1000 * K }, String(d)));
       });
       const lugaresSetas = [];                                   // setas já postas (para não amontoar)
       /**
@@ -334,13 +459,13 @@
       }
       tracos.forEach((t, i) => {
         t.elHalos = [
-          U.svgEl('path', { d: t.d, class: 'pc-tracar-halo fora', 'stroke-width': GIZ + 64 }),
-          U.svgEl('path', { d: t.d, class: 'pc-tracar-halo', 'stroke-width': GIZ + 30 }),
+          U.svgEl('path', { d: t.d, class: 'pc-tracar-halo fora', 'stroke-width': GIZ_RODADA + 64 }),
+          U.svgEl('path', { d: t.d, class: 'pc-tracar-halo', 'stroke-width': GIZ_RODADA + 30 }),
         ];
         t.elPontos = U.svgEl('path', { d: t.d, class: 'pc-tracar-pontilhado' + (i ? ' futuro' : '') });
-        t.elPo = U.svgEl('path', { d: t.d, class: 'pc-tracar-po', 'stroke-width': GIZ + 12, pathLength: 1000 });
-        t.elGiz = U.svgEl('path', { d: t.d, class: 'pc-tracar-giz', 'stroke-width': GIZ, pathLength: 1000 });
-        t.elLampejo = U.svgEl('path', { d: t.d, class: 'pc-tracar-lampejo', 'stroke-width': GIZ });
+        t.elPo = U.svgEl('path', { d: t.d, class: 'pc-tracar-po', 'stroke-width': GIZ_RODADA + 12, pathLength: 1000 });
+        t.elGiz = U.svgEl('path', { d: t.d, class: 'pc-tracar-giz', 'stroke-width': GIZ_RODADA, pathLength: 1000 });
+        t.elLampejo = U.svgEl('path', { d: t.d, class: 'pc-tracar-lampejo', 'stroke-width': GIZ_RODADA });
         gHalo.append(...t.elHalos); gPontos.appendChild(t.elPontos); gGiz.append(t.elPo, t.elGiz, t.elLampejo);
         // setinhas no sentido do traço, ao longo do caminho
         t.gSetas = U.svgEl('g', { class: 'pc-tracar-setas' + (i ? ' oculta' : '') });
@@ -371,9 +496,20 @@
       const inicio = U.el('div', { class: 'pc-tracar-inicio' }, U.el('div', { class: 'pc-tracar-bola' }));
       desenho.append(svg, inicio);
 
-      const quadro = U.el('div', { class: 'pc-tracar-quadro', 'aria-hidden': 'true' });
+      // lado direito da lousa no fim: o quadro de 10 das estrelinhas (algarismo) ou o cartão da figura (letra)
+      let quadro, cartao = null;
       const casas = [];
-      for (let i = 0; i < 10; i++) { const c = U.el('i', { class: 'pc-tracar-casa' }); casas.push(c); quadro.appendChild(c); }
+      if (modoLetra) {
+        // a palavra escrita embaixo da figura, com a letra do começo colorida (a criança liga a letra ao desenho)
+        quadro = cartao = U.el('div', { class: 'pc-tracar-cartao', 'aria-hidden': 'true' });
+        if (palavra) {
+          cartao.append(U.el('div', { class: 'pc-tracar-figura', html: PC.palavras.desenho(palavra) }),
+            U.el('div', { class: 'pc-tracar-palavra' }, U.el('b', { text: palavra.texto.charAt(0) }), palavra.texto.slice(1)));
+        }
+      } else {
+        quadro = U.el('div', { class: 'pc-tracar-quadro', 'aria-hidden': 'true' });
+        for (let i = 0; i < 10; i++) { const c = U.el('i', { class: 'pc-tracar-casa' }); casas.push(c); quadro.appendChild(c); }
+      }
 
       raiz.append(cavalete, lousa, desenho, quadro);
 
@@ -421,7 +557,7 @@
         (mao ? raiz : desenho).appendChild(el);
         let trilha = null;
         if (rastro) {
-          trilha = U.svgEl('path', { d: t.d, class: 'pc-tracar-rastro', 'stroke-width': Math.round(GIZ * 0.8), pathLength: 1000 });
+          trilha = U.svgEl('path', { d: t.d, class: 'pc-tracar-rastro', 'stroke-width': Math.round(GIZ_RODADA * 0.8), pathLength: 1000 });
           trilha.style.strokeDasharray = '1000 1000';
           trilha.style.strokeDashoffset = String(1000 - 1000 * de / t.L);
           gRastro.appendChild(trilha);
@@ -482,6 +618,7 @@
       // ------------------------------------------------------------ falas
       function textoInstrucao() {
         const t = tracos[atual];
+        if (atual === 0 && s === 0 && modoLetra) return 'Vamos escrever a letra ' + nome + '! Comece na bolinha verde.';
         if (atual === 0 && s === 0) return numero === 10 ? 'Vamos escrever o dez! Comece pelo um.' : 'Vamos escrever o ' + nome + '! Comece na bolinha verde.';
         if (s === 0 && t.fala) return t.fala + ' Comece na bolinha verde.';
         if (s === 0) return 'Agora este risquinho! Comece na bolinha verde.';
@@ -492,7 +629,7 @@
         chamarAtencao();
         depois(mostrarCaminho, 500);
         ctx.pipoca.pose('aponta');
-        return falar(textoInstrucao(), { mostrar: numero }).then(r => {
+        return falar(textoInstrucao(), { mostrar: mostrar() }).then(r => {
           // interrompida por outra fala (um retorno de erro, por exemplo): a outra fala cuida da pose
           if (r !== 'interrompida' && fase === 'tracando' && !destruida) ctx.pipoca.pose('normal');
           return r;
@@ -504,20 +641,25 @@
         fase = 'demo';
         ctx.ocupado(true);
         ctx.pipoca.pose('aponta');
-        const fala = falar('Olha como se escreve o ' + nome + '!', { mostrar: numero });
+        const fala = falar((modoLetra ? 'Olha como se escreve a letra ' : 'Olha como se escreve o ') + nome + '!', { mostrar: mostrar() });
         try { await ctx.esperar(700); } catch (e) { return; }
         if (fase !== 'demo') return;
-        const t = tracos[0];
-        animacao = percorrer(t, 0, t.L, { rastro: true, ms: duracaoMao(t.L) });
-        await animacao.fim;
-        if (fase !== 'demo' || destruida) return;
+        // algarismo: a mãozinha mostra o primeiro traço; letra: todos os traços, na ordem
+        const mostrados = modoLetra ? tracos : [tracos[0]];
+        for (let i = 0; i < mostrados.length; i++) {
+          const t = mostrados[i];
+          if (i) { try { await ctx.esperar(250); } catch (e) { return; } if (fase !== 'demo' || destruida) return; }
+          animacao = percorrer(t, 0, t.L, { rastro: true, ms: duracaoMao(t.L) });
+          await animacao.fim;
+          if (fase !== 'demo' || destruida) return;
+        }
         await fala;
         if (fase !== 'demo' || destruida) return;
         fase = 'tracando';
         ctx.ocupado(false);
         ctx.pipoca.pose('normal');
         chamarAtencao();
-        falar('Agora é a sua vez! Comece na bolinha verde.', { mostrar: numero });
+        falar('Agora é a sua vez! Comece na bolinha verde.', { mostrar: mostrar() });
       }
       function pararDemo() {
         if (fase !== 'demo') return;
@@ -674,7 +816,7 @@
         inicio.classList.remove('tracando');
         chamarAtencao();
         PC.som.bolha();
-        if (prox.fala) falar(prox.fala, { mostrar: numero });
+        if (prox.fala) falar(prox.fala, { mostrar: mostrar() });
       }
 
       function faiscas() {
@@ -719,6 +861,9 @@
         await PC.voz.falar(total.charAt(0).toUpperCase() + total.slice(1) + '!');
       }
 
+      /** Fim da letra: "Á! Á de arara!" (só "Á!" se o banco não tiver palavra com ela). */
+      const fraseFinal = () => (palavra ? Nome + '! ' + Nome + ' de ' + PC.palavras.nome(palavra) + '!' : Nome + '!');
+
       async function terminar() {
         fase = 'fim';
         gesto = null;
@@ -734,9 +879,23 @@
           });
           faiscas();
           await U.animar(desenho, [{ transform: 'scale(1)' }, { transform: 'scale(1.07)', offset: 0.4 }, { transform: 'scale(1)' }], { duration: 650, easing: 'ease-in-out' });
-          // a Pipoca diz o número
           ctx.pipoca.pose('feliz');
-          if (numero > 0) await ctx.falar(Nome + '!', { mostrar: numero });
+          if (modoLetra) {
+            // a letra vai para a esquerda e diminui; o cartão com a figura aparece à direita; a Pipoca diz
+            // o nome da letra e a palavra ("Á! Á de arara!")
+            await U.animar(desenho, [{ transform: 'translate(0px, 0px) scale(1)' }, { transform: `translate(${DEPOIS.xLetra - CENTRO.x}px, 0px) scale(${DEPOIS.k})` }],
+              { duration: 520, easing: 'cubic-bezier(.4, 0, .2, 1)', fill: 'forwards' });
+            if (palavra) { cartao.classList.add('mostra'); PC.som.bolha(); }
+            await ctx.esperar(380);
+            ctx.pipoca.pose('aponta');
+            await ctx.falar(fraseFinal(), { mostrar: mostrar() });
+            await ctx.esperar(450);
+            ctx.pipoca.pose('normal');
+            ctx.acertou();
+            return;
+          }
+          // a Pipoca diz o número
+          if (numero > 0) await ctx.falar(Nome + '!', { mostrar: mostrar() });
           // o algarismo vai para a esquerda e diminui (sem encostar no balão); o quadro de 10 aparece à direita
           const k = numero === 10 ? DEPOIS.k10 : DEPOIS.k;
           await U.animar(desenho, [{ transform: 'translate(0px, 0px) scale(1)' }, { transform: `translate(${DEPOIS.x - CENTRO.x}px, 0px) scale(${k})` }],
@@ -785,7 +944,7 @@
           pararAnimacao();
           chamarAtencao();
           ctx.ocupado(true);
-          falar('Olha a mãozinha. Siga as setinhas!', { mostrar: numero });
+          falar('Olha a mãozinha. Siga as setinhas!', { mostrar: mostrar() });
           animacao = percorrer(t, s, t.L, { rastro: true, ms: duracaoMao(t.L - s) });
           animacao.fim.then(() => { if (fase === 'tracando' && !destruida) ctx.ocupado(false); });
         },
@@ -802,7 +961,7 @@
         estado() {
           const t = tracos[atual];
           return {
-            algarismo: numero, partes: partes.slice(), fase, traco: atual, tracos: tracos.length,
+            algarismo: numero, letra, palavra: palavra ? palavra.id : null, partes: partes.slice(), fase, traco: atual, tracos: tracos.length,
             sentido: t ? t.def.sentido : null,
             progresso: t ? Math.round(1000 * s / t.L) / 1000 : 1,
             tolerancia: Math.round(tolerancia()), erros: totalErros, demo: fase === 'demo',
@@ -823,4 +982,31 @@
 
   // dados expostos para testes e para a ferramenta de conferência do desenho
   PC.atividades.obter('tracar').algarismos = ALGARISMOS;
+  PC.atividades.obter('tracar').letras = LETRAS;
+
+  // ================================================================ medalhão do mapa (estações de letras)
+  // A mesma lousinha branca do medalhão dos números (CENAS.tracar em medalhoes.js), com as letras pontilhadas.
+  if (PC.arte && PC.arte.registrarMedalhao) {
+    PC.arte.registrarMedalhao('tracar-letras', {
+      fundo: ['#DDF7F3', null, null],
+      cena(p) {
+        const { T, COR, FONTE, brilho } = PC.arte.pecasMedalhao;
+        const lista = (Array.isArray(p.letras) && p.letras.length ? p.letras : ['A', 'E']).map(l => String(l).toUpperCase()).filter(l => LETRAS[l]);
+        // as letras são mais largas que os algarismos: o tamanho sai da largura delas na fonte, para caber entre a
+        // bolinha verde e o lápis (até 50 unidades a partir de x = 22)
+        const largura = lista.reduce((a, l) => a + LETRAS[l].avanco / 1000, 0) + 0.22 * (lista.length - 1);
+        const tam = Math.min(30, 50 / (largura || 1));
+        const texto = lista.map((l, i) => `<tspan dx="${i ? (0.22 * tam).toFixed(1) : 0}">${l}</tspan>`).join('');
+        return `<g transform="rotate(-6 50 50)"><rect x="6" y="20" width="80" height="58" rx="7" fill="#fff" stroke="${T}" stroke-width="2.6"/>` +
+          `<path d="M14 33 H 78 M14 66 H 78" stroke="#BFE9E3" stroke-width="1.8"/>` +
+          `<text x="22" y="${lista.length > 2 ? 58 : 61}" font-size="${tam.toFixed(1)}" ${FONTE} fill="#B5EDE5" stroke="${COR.turquesa}" stroke-width="1.7" stroke-dasharray="3 2.2" stroke-linejoin="round">${texto}</text>` +
+          `</g>` +
+          `<circle cx="15" cy="36" r="5" fill="${COR.verde}" stroke="${T}" stroke-width="2"/>` +
+          `<g transform="translate(8 8) scale(.9) rotate(38 76 66)"><rect x="69" y="30" width="14" height="42" rx="3.5" fill="${COR.ouro}" stroke="${T}" stroke-width="2.6"/>` +
+          `<path d="M73.5 30 V 72" stroke="#E9A92A" stroke-width="2.2"/><rect x="69" y="25" width="14" height="8" rx="3" fill="${COR.rosa}" stroke="${T}" stroke-width="2.4"/>` +
+          `<path d="M69 72 L 76 86 L 83 72 Z" fill="#FFE0C2" stroke="${T}" stroke-width="2.4" stroke-linejoin="round"/><path d="M74 82 L 76 86 L 78 82 Z" fill="${T}"/></g>` +
+          brilho(86, 14, 4.5, COR.ouro);
+      },
+    });
+  }
 })();

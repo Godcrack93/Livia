@@ -1,4 +1,4 @@
-/* Pipoca Conta — tela "livre": Brincar livre (PROJETO.md, seção 4, item 6).
+/* Pipoca Aprende — tela "livre": Brincar livre (PROJETO.md, seção 4, item 6).
    Uma mesa com um balde de cubinhos (fonte infinita). A criança:
      - monta torres: toca no balde (um cubinho voa para a torre da vez ou começa uma torre nova) ou arrasta um
        cubinho do balde até a mesa (torre nova) ou até uma torre (ela cresce);

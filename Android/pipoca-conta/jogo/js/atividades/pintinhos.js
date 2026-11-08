@@ -1,4 +1,4 @@
-/* Pipoca Conta — atividade "pintinhos": quantos são? (PROJETO.md 5.6)
+/* Pipoca Aprende — atividade "pintinhos": quantos são? (PROJETO.md 5.6)
    Modos (params.modo):
      contar     pintinhos no terreiro; tocar em cada um marca (o já marcado só pia e não conta de novo). Com
                 vozConta, a voz conta junto a cada toque e termina com o total ("Quatro pintinhos!"); sem isso, quem

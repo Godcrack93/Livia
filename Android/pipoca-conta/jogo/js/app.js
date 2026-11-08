@@ -1,4 +1,4 @@
-/* Pipoca Conta — inicialização e modo de teste.
+/* Pipoca Aprende — inicialização e modo de teste.
    Chaves da URL (combináveis, depois de #; params sempre como encodeURIComponent(JSON.stringify(obj))):
      atividade=torre&params={...}   abre direto uma atividade (modo teste)
      estacao=7                      abre direto uma estação da trilha

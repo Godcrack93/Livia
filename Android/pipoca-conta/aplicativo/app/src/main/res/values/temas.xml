@@ -2,7 +2,7 @@
 <resources>
     <!-- Tema claro, sem barra de título; o fundo já é o céu do jogo. As barras do sistema ficam escondidas
          pelo código (MainActivity.esconderBarras). -->
-    <style name="Tema.PipocaConta" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Tema.PipocaAprende" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/fundo</item>
         <item name="android:colorAccent">@color/tinta</item>
     </style>

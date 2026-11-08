@@ -1,11 +1,11 @@
-/* Pipoca Conta — progresso, figurinhas, ajustes, tempo de uso e estatísticas, guardados só no aparelho (localStorage).
-   Nada disso sai do aparelho. Estação = número de 1 a 30; figurinha = 'fig01'…'fig30'.
+/* Pipoca Aprende — progresso, figurinhas, ajustes, tempo de uso e estatísticas, guardados só no aparelho (localStorage).
+   Nada disso sai do aparelho. Estação = número de 1 a 60; figurinha = 'fig01'…'fig60' (a de cada estação vem de PC.fases).
    #dados=memoria na URL (e nos testes automáticos) usa só a memória, sem tocar no localStorage.
    #progresso=N marca as estações 1 a N como concluídas (com as figurinhas), para testar mapa e álbum. */
 (function () {
   'use strict';
   const PC = window.PC;
-  const CHAVE = 'pipoca-conta:v1';
+  const CHAVE = 'pipoca-aprende:v1';
   const AJUSTES_PADRAO = () => ({
     som: true,               // efeitos sonoros
     voz: true,               // só para testes; os pais ajustam volume e velocidade, não desligam a voz
@@ -49,7 +49,7 @@
     if (PC.som) PC.som.ligado = d.ajustes.som !== false;
     if (PC.voz) PC.voz.ligada = d.ajustes.voz !== false;
   }
-  const total = () => (PC.fases && PC.fases.length) || 30;
+  const total = () => (PC.fases && PC.fases.length) || 60;
   const dia = (desloc = 0) => {
     const x = new Date(); x.setDate(x.getDate() - desloc);
     return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0');
@@ -63,7 +63,7 @@
       if (opcoes.progresso) {
         for (let n = 1; n <= Math.min(total(), opcoes.progresso); n++) {
           if (d.concluidas.indexOf(n) < 0) d.concluidas.push(n);
-          const f = 'fig' + String(n).padStart(2, '0');
+          const f = PC.fases && PC.fases[n - 1] ? PC.fases[n - 1].figurinha : 'fig' + String(n).padStart(2, '0');
           if (d.figurinhas.indexOf(f) < 0) d.figurinhas.push(f);
         }
         d.concluidas.sort((a, b) => a - b);
@@ -72,7 +72,7 @@
     },
     get modo() { return modo; },
     salvar,
-    /** A estação n (1…30) já foi concluída? */
+    /** A estação n (1…60) já foi concluída? */
     estacaoConcluida: n => d.concluidas.indexOf(n) >= 0,
     /**
      * Conclui a estação e dá a figurinha numa única gravação.

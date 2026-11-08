@@ -1,4 +1,4 @@
-/* Pipoca Conta — telas dos adultos (PROJETO.md 4, itens 7, 8 e 10):
+/* Pipoca Aprende — telas dos adultos (PROJETO.md 4, itens 7, 8 e 10):
      "pais"        área dos pais (aberta depois do portão): assinatura, voz e sons, supervisão (tempo de uso, limite
                    diário, esconder ofertas), progresso por estação (e zerar, com confirmação dupla), privacidade,
                    créditos e licenças, versão.
@@ -266,7 +266,7 @@
     if (e.ativa) {
       if (e.origem === 'revisao') return { classe: 'ativa', titulo: 'Acesso de revisão ativo', texto: 'Tudo liberado pelo código de acesso.' };
       if (e.origem === 'simulada') return { classe: 'ativa', titulo: 'Assinatura ativa (simulada)', texto: 'Simulação do navegador: todas as estações estão liberadas.' };
-      return { classe: 'ativa', titulo: 'Assinatura ativa', texto: 'As 30 estações e o Brincar livre completo estão liberados.' };
+      return { classe: 'ativa', titulo: 'Assinatura ativa', texto: 'As 60 estações e o Brincar livre completo estão liberados.' };
     }
     if (e.carregando) return { classe: 'carregando', titulo: 'Consultando o Google Play…', texto: '' };
     if (e.pendente) return { classe: 'pendente', titulo: 'Compra aguardando pagamento ou aprovação', texto: 'Quando o Google Play confirmar, tudo é liberado sozinho.' };
@@ -275,7 +275,7 @@
         texto: 'Isso acontece, por exemplo, quando o modo infantil do fabricante bloqueia a loja. As estações 1 a 4 continuam grátis.' };
     }
     return { classe: 'inativa', titulo: 'Sem assinatura',
-      texto: 'Grátis: estações 1 a 4 e Brincar livre com até 2 torres. A assinatura libera as estações 5 a 30 e o Brincar livre completo.' };
+      texto: 'Grátis: estações 1 a 4 e Brincar livre com até 2 torres. A assinatura libera as estações 5 a 60 e o Brincar livre completo.' };
   }
 
   /**
@@ -771,14 +771,14 @@
       }
       function construirPrivacidade() {
         const s = cartao('privacidade', 'Privacidade');
-        s.append(U.el('p', { class: 'pc-pais-texto', text: 'O Pipoca Conta não coleta, não envia e não compartilha dados pessoais. Não tem anúncios nem ferramentas de análise.' }));
+        s.append(U.el('p', { class: 'pc-pais-texto', text: 'O Pipoca Aprende não coleta, não envia e não compartilha dados pessoais. Não tem anúncios nem ferramentas de análise.' }));
         s.append(U.el('p', { class: 'pc-pais-texto', text: 'O progresso, os ajustes e o tempo de uso ficam só neste aparelho. A assinatura é cobrada pelo Google Play, que cuida do pagamento.' }));
         s.append(U.el('div', { class: 'pc-pais-botoes', style: 'margin-top:10px' }, botao('Ver a política completa', abrirPolitica, { teste: 'politica' })));
         return s;
       }
       function construirCreditos() {
         const s = cartao('creditos', 'Créditos e licenças');
-        s.append(U.el('p', { class: 'pc-pais-texto', text: 'Pipoca Conta: brincadeiras, desenhos e sons originais.' }));
+        s.append(U.el('p', { class: 'pc-pais-texto', text: 'Pipoca Aprende: brincadeiras, desenhos e sons originais.' }));
         s.append(U.el('p', { class: 'pc-pais-texto', text: 'Fonte Fredoka — Copyright 2016 The Fredoka Project Authors. Licenciada sob a SIL Open Font License 1.1 (o texto completo da licença acompanha o aplicativo).' }));
         const m = /Chrome\/(\d+)/.exec(navigator.userAgent || '');
         const versao = U.el('p', { class: 'pc-pais-texto', style: 'margin:0', 'data-teste': 'versao',
@@ -1019,7 +1019,7 @@
         const preco = e.precoFormatado || '';
         const dias = Number(e.diasTeste) || 7;
         const comTeste = !!(e.temTeste && preco) && !e.carregando && !e.pendente && !e.indisponivel;
-        cartao.append(U.el('p', { class: 'pc-pais-assin-marca', text: 'Pipoca Conta – assinatura mensal' }));
+        cartao.append(U.el('p', { class: 'pc-pais-assin-marca', text: 'Pipoca Aprende – assinatura mensal' }));
         cartao.append(U.el('h1', { class: 'pc-pais-assin-titulo', text: comTeste ? 'Experimente ' + dias + ' dias grátis' : 'Assinatura mensal' }));
 
         let rotulo = '', pode = false;
@@ -1056,7 +1056,7 @@
         const libera = U.el('div', { class: 'pc-pais-assin-libera' },
           U.el('p', { text: 'A assinatura libera:' }),
           U.el('ul', {},
-            U.el('li', {}, check(), '26 estações a mais (da 5 à 30)'),
+            U.el('li', {}, check(), '56 estações a mais (da 5 à 60)'),
             U.el('li', {}, check(), 'Brincar livre completo')));
         cartao.append(libera);
 

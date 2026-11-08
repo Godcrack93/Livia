@@ -1,5 +1,7 @@
-/* Pipoca Conta — a trilha: 3 regiões e 30 estações (PROJETO.md, seção 7).
-   Cada estação: n (1…30), regiao, atividade, params, figurinha ('fig01'…'fig30').
+/* Pipoca Aprende — a trilha: 3 regiões e 60 estações (PROJETO.md, seção 7), intercaladas: as ímpares são de
+   números (as 30 estações de matemática, na ordem de sempre) e as pares são de letras (as 30 de português).
+   Cada estação: n (1…60), regiao, materia ('numeros' | 'letras'), atividade, params, figurinha.
+   Figurinhas: as de números continuam 'fig01'…'fig30' (na ordem da matemática); as de letras são 'fig31'…'fig60'.
    As 4 primeiras são grátis (PC.config.estacoesGratis). Parâmetros comuns:
      demo: true      primeira rodada começa com a Pipoca demonstrando (estreia de atividade ou modo)
      confirmar: true a criança decide quando terminou e toca no botão Pronto (ou Pagar); sem isso, o acerto é automático
@@ -9,13 +11,13 @@
   const PC = window.PC;
 
   PC.regioes = [
-    { id: 'prado', nome: 'Prado', subtitulo: 'Números de 1 a 5', de: 1, ate: 10, cenario: 'prado', cor: '#5CC84A' },
-    { id: 'lagoa', nome: 'Lagoa', subtitulo: 'Números de 6 a 10', de: 11, ate: 20, cenario: 'lagoa', cor: '#4DA3FF' },
-    { id: 'floresta', nome: 'Floresta', subtitulo: 'Até 20 e até 100', de: 21, ate: 30, cenario: 'floresta', cor: '#9B7BFF' },
+    { id: 'prado', nome: 'Prado', subtitulo: 'Números até 5 e vogais', de: 1, ate: 20, cenario: 'prado', cor: '#5CC84A' },
+    { id: 'lagoa', nome: 'Lagoa', subtitulo: 'Números até 10 e sílabas', de: 21, ate: 40, cenario: 'lagoa', cor: '#4DA3FF' },
+    { id: 'floresta', nome: 'Floresta', subtitulo: 'Até 100 e primeiras palavras', de: 41, ate: 60, cenario: 'floresta', cor: '#9B7BFF' },
   ];
 
   const E = (atividade, params) => ({ atividade, params });
-  const lista = [
+  const numeros = [
     // ---------------- Prado (Educação Infantil, 1 a 5)
     E('torre', { min: 1, max: 3, rodadas: 3, demo: true, pontos: true, vozTotal: true, confirmar: false }),
     E('pintinhos', { modo: 'contar', min: 1, max: 4, arranjo: 'solto', rodadas: 4, demo: true, vozConta: true }),
@@ -51,10 +53,54 @@
     E('sapinho', { inicio: 10, passo: 10, quantidade: 10, lacunas: 3, rodadas: 2, barras: true, demo: true }),
   ];
 
-  PC.fases = lista.map((e, i) => {
-    const n = i + 1;
-    const regiao = PC.regioes.find(r => n >= r.de && n <= r.ate).id;
-    return { n, regiao, atividade: e.atividade, params: e.params, figurinha: 'fig' + String(n).padStart(2, '0') };
+  // ---------------- letras (português). Palavras e sílabas: PC.palavras (js/palavras.js)
+  const VOGAIS = ['A', 'E', 'I', 'O', 'U'];
+  const letras = [
+    // ---------------- Prado (Educação Infantil: sílabas, vogais e rimas)
+    E('tambor', { silabas: [1, 2], rodadas: 3, demo: true }),
+    E('tracar', { letras: ['A', 'E'], demo: true }),
+    E('inicial', { letras: VOGAIS, opcoes: 2, rodadas: 4, demo: true }),
+    E('rimas', { opcoes: 2, rodadas: 4, demo: true }),
+    E('tracar', { letras: ['I', 'O', 'U'] }),
+    E('tambor', { silabas: [2, 3], rodadas: 4 }),
+    E('inicial', { letras: VOGAIS, opcoes: 3, rodadas: 4 }),
+    E('rimas', { opcoes: 3, rodadas: 4 }),
+    E('tambor', { silabas: [1, 4], rodadas: 4 }),
+    E('inicial', { letras: VOGAIS, opcoes: 3, rodadas: 5 }),
+    // ---------------- Lagoa (Educação Infantil: consoantes e sílabas)
+    E('tracar', { letras: ['P', 'B', 'M'] }),
+    E('inicial', { letras: ['P', 'B', 'M'], opcoes: 3, rodadas: 4 }),
+    E('montar', { silabas: [2, 2], despiste: 0, rodadas: 3, demo: true }),
+    E('rimas', { opcoes: 3, rodadas: 4 }),
+    E('tracar', { letras: ['L', 'T', 'V'] }),
+    E('inicial', { letras: ['P', 'B', 'M', 'L', 'T', 'V'], opcoes: 3, rodadas: 5 }),
+    E('montar', { silabas: [2, 2], despiste: 1, rodadas: 4, demo: true }),
+    E('tambor', { silabas: [2, 4], bichos: true, rodadas: 4 }),
+    E('montar', { silabas: [3, 3], despiste: 0, rodadas: 3, demo: true }),
+    E('inicial', { modo: 'bicho', letras: ['P', 'B', 'M', 'L', 'T', 'V'], opcoes: 3, rodadas: 4, demo: true }),
+    // ---------------- Floresta (1º ano: letras maiúsculas e minúsculas, primeiras palavras)
+    E('tracar', { letras: ['C', 'D', 'F'] }),
+    E('pares', { letras: VOGAIS, pares: 4, rodadas: 2, demo: true }),
+    E('ler', { silabas: [2, 2], opcoes: 2, rodadas: 4, demo: true }),
+    E('montar', { silabas: [3, 3], despiste: 1, rodadas: 4 }),
+    E('tracar', { letras: ['R', 'N', 'J'] }),
+    E('pares', { letras: ['B', 'D', 'F', 'J', 'L', 'M', 'N', 'P', 'R', 'T', 'V'], pares: 4, rodadas: 2 }),
+    E('ler', { silabas: [2, 2], opcoes: 3, rodadas: 4 }),
+    E('rimas', { modo: 'intruso', opcoes: 3, rodadas: 4, demo: true }),
+    E('montar', { silabas: [2, 3], despiste: 2, bichos: true, rodadas: 4 }),
+    E('ler', { silabas: [3, 3], opcoes: 3, rodadas: 4 }),
+  ];
+
+  const fig = k => 'fig' + String(k).padStart(2, '0');
+  PC.fases = [];
+  numeros.forEach((e, i) => {
+    PC.fases.push({ materia: 'numeros', atividade: e.atividade, params: e.params, figurinha: fig(i + 1) });
+    const l = letras[i];
+    PC.fases.push({ materia: 'letras', atividade: l.atividade, params: l.params, figurinha: fig(31 + i) });
+  });
+  PC.fases.forEach((f, i) => {
+    f.n = i + 1;
+    f.regiao = PC.regioes.find(r => f.n >= r.de && f.n <= r.ate).id;
   });
 
   PC.fase = n => PC.fases.find(f => f.n === n) || null;

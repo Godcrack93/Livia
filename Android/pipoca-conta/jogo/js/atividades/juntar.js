@@ -1,4 +1,4 @@
-/* Pipoca Conta — atividade "juntar" (PROJETO.md 5.2): compor N juntando duas torres prontas (soma).
+/* Pipoca Aprende — atividade "juntar" (PROJETO.md 5.2): compor N juntando duas torres prontas (soma).
    Torres prontas no chão (2 a 4), cada uma com cor + estampa sorteadas (PC.cores.sortearTorres) e a plaquinha presa
    na base; a placa do alvo fica à direita. A criança junta duas torres arrastando uma sobre a outra OU tocando numa
    (ela sobe e fica iluminada) e depois na outra. A área de toque de cada torre é a coluna inteira, com folga.

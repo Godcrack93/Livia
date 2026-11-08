@@ -1,4 +1,4 @@
-// Pipoca Conta — projeto Android que empacota o jogo web (../jogo) num app com WebView (PROJETO.md, seção 11).
+// Pipoca Aprende — projeto Android que empacota o jogo web (../jogo) num app com WebView (PROJETO.md, seção 11).
 pluginManagement {
     repositories {
         google()
@@ -16,5 +16,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "PipocaConta"
+rootProject.name = "PipocaAprende"
 include(":app")

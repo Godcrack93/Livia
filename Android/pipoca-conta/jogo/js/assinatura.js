@@ -1,4 +1,4 @@
-/* Pipoca Conta — assinatura.
+/* Pipoca Aprende — assinatura.
    No app Android, quem fala com o Google Play Billing é o código nativo (ponte PipocaAndroid); aqui só guardamos
    o estado e avisamos as telas. No navegador (sem a ponte), a assinatura é simulada para testes; no APK a simulação
    não existe, porque a ponte sempre existe lá.
@@ -17,7 +17,7 @@
 (function () {
   'use strict';
   const PC = window.PC;
-  const CHAVE_SIM = 'pipocaconta.simulacao';
+  const CHAVE_SIM = 'pipocaaprende.simulacao';
   let estado = {
     ativa: false, carregando: true, origem: '', precoFormatado: '', temTeste: false, diasTeste: 0,
     pendente: false, indisponivel: false, erro: '', nativo: false,

@@ -1,7 +1,10 @@
-/* Pipoca Conta — as 30 figurinhas do álbum (PROJETO.md 7.1): fauna e flora do Brasil, uma por estação, na ordem da
-   trilha (fig01–fig10 Prado, fig11–fig20 Lagoa, fig21–fig30 Floresta). Dono: agente do álbum.
+/* Pipoca Aprende — as 60 figurinhas do álbum (PROJETO.md 7.1): fauna e flora do Brasil, uma por estação.
+   fig01–fig30 são as das estações de números (fig01–fig10 Prado, fig11–fig20 Lagoa, fig21–fig30 Floresta) e
+   fig31–fig60 as das estações de letras (fig31–fig40 Prado, fig41–fig50 Lagoa, fig51–fig60 Floresta). Dono: agente do álbum.
+   Os desenhos de fig31–fig59 ficam em js/figurinhas-prado.js, figurinhas-lagoa.js e figurinhas-floresta.js, que usam
+   PC.figurinhas.registrar({ fig31: () => desenho }) e as peças de PC.figurinhas.pecas (as mesmas deste arquivo).
 
-   PC.figurinhas.lista        -> [{ id: 'fig01', nome: 'ipê-amarelo', regiao: 'prado', tipo: 'planta', fala? }, ...]
+   PC.figurinhas.lista        -> [{ id: 'fig01', nome: 'ipê-amarelo', regiao: 'prado', materia: 'numeros', tipo: 'planta', fala? }, ...]
                                  tipo: planta | fungo | ave | mamifero | inseto | peixe | anfibio | reptil | pipoca
                                  (o álbum escolhe o som e o jeito do pulinho pelo tipo)
    PC.figurinhas.desenho(id)  -> texto SVG (viewBox 0 0 200 200): adesivo recortado — o desenho com contorno #3A2A5A,
@@ -10,11 +13,11 @@
                                  xmlns (o mapa usa como <img src="data:...">). Id desconhecido: adesivo de estrelinha.
    PC.figurinhas.obter(id)    -> o item da lista (ou null)
    PC.figurinhas.fala(id)     -> o que a Pipoca diz ao tocar na figurinha ("Ipê-amarelo!"), sem algarismos
-   PC.figurinhas.daRegiao(r)  -> as 10 figurinhas da região, na ordem
+   PC.figurinhas.daRegiao(r)  -> as 20 figurinhas da região, na ordem (10 de números e 10 de letras)
 
    Regras (PROJETO.md 2 e 7.1): desenho próprio, fofo e simples; nenhum número como personagem, nenhum cubinho com
    rosto. Bichos têm cara de bicho (bico, patas, rabo), as plantas não têm rosto. A fig30 é a Pipoca (PC.arte.pipoca)
-   com uma medalha de estrela. */
+   com uma medalha de estrela; a fig60 é a Pipoca lendo um livro. */
 (function () {
   'use strict';
   const PC = window.PC;
@@ -644,9 +647,9 @@
       c(125, 207, 21, '#FFC93C', 4.5) + c(125, 207, 15, '#FFD95A', 2.5) +
       p(estrela(125, 207.5, 10.5, 4.6), '#FFF4B8', 2.5) + brilho(117, 199, 5, 3, -40, 0.6);
   }
-  function pipocaMiolo() {
+  function pipocaMiolo(pose = 'feliz') {
     let s = '';
-    try { s = String((PC.arte && PC.arte.pipoca && PC.arte.pipoca('feliz')) || ''); } catch (err) { s = ''; }
+    try { s = String((PC.arte && PC.arte.pipoca && PC.arte.pipoca(pose)) || ''); } catch (err) { s = ''; }
     const ini = s.indexOf('>'), fim = s.lastIndexOf('</svg>');
     if (!/^<svg[\s>]/.test(s) || ini < 0 || fim < ini) return '';
     s = s.slice(ini + 1, fim);
@@ -660,6 +663,23 @@
     const miolo = pipocaMiolo();
     if (!miolo) return null;
     return adesivo(miolo + medalha(), { k: PIP.k, transform: `translate(${PIP.x} ${PIP.y}) scale(${PIP.k})` });
+  }
+  // a Pipoca lendo: pose normal (mãos no colo em 110,222 e 140,222) com um livro aberto no colo e as mãos por cima
+  function livro() {
+    // k = -1: página da esquerda; k = 1: página da direita
+    const pg = k => p(`M125 214 Q ${125 + k * 18} 205 ${125 + k * 38} 208 L ${125 + k * 38} 242 Q ${125 + k * 18} 239 125 248 Z`, '#FFFDF4', 3.5) +
+      l(`M${125 + k * 9} 220 Q ${125 + k * 20} 215 ${125 + k * 31} 217 M${125 + k * 9} 228 Q ${125 + k * 20} 223 ${125 + k * 31} 225`, '#B9B3CC', 2.6);
+    const letra = (x, t, cor) => `<text x="${x}" y="242" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="15" fill="${cor}">${t}</text>`;
+    // livro grande (escala 1,4 em volta do meio) com capa coral, para aparecer bem no mapa; as mãos seguram as beiradas
+    return '<g transform="translate(125 226) scale(1.4) translate(-125 -226)">' +
+      p('M84 210 Q 104 202 125 212 Q 146 202 166 210 L 166 248 Q 146 242 125 252 Q 104 242 84 248 Z', '#FF7A6B', 4) +
+      pg(-1) + pg(1) + l('M125 214 V 248', T, 2.6) + letra(108, 'A', '#4DA3FF') + letra(142, 'b', '#2EC4B6') + '</g>' +
+      c(80, 232, 11, '#F3D3A8', 4.5) + c(170, 232, 11, '#F3D3A8', 4.5);
+  }
+  function pipocaLendo() {
+    const miolo = pipocaMiolo('normal');
+    if (!miolo) return null;
+    return adesivo(miolo + livro(), { k: PIP.k, transform: `translate(${PIP.x} ${PIP.y}) scale(${PIP.k})` });
   }
   const soMedalha = () => adesivo(medalha(), { k: 2.2, transform: 'translate(-175 -326.8) scale(2.2)' });
 
@@ -675,10 +695,19 @@
     L('onça-pintada', 'mamifero'), L('bicho-preguiça', 'mamifero'), L('tucano', 'ave'), L('arara-azul', 'ave'),
     L('mico-leão-dourado', 'mamifero'), L('quati', 'mamifero'), L('coruja-buraqueira', 'ave'), L('beija-flor', 'ave'),
     L('cogumelo', 'fungo', 'Cogumelos!'), L('Pipoca com medalha', 'pipoca', 'A Pipoca ganhou uma medalha!'),
+    // ---------------- estações de letras
+    L('bem-te-vi', 'ave'), L('sabiá-laranjeira', 'ave'), L('tatu-bola', 'mamifero'), L('ema', 'ave'), L('carcará', 'ave'),
+    L('papagaio', 'ave'), L('vaga-lume', 'inseto'), L('gafanhoto', 'inseto'), L('caju', 'planta'), L('flor-de-maracujá', 'planta'),
+    L('boto-cor-de-rosa', 'mamifero'), L('tracajá', 'reptil'), L('pirarucu', 'peixe'), L('arraia', 'peixe'), L('cervo-do-pantanal', 'mamifero'),
+    L('colhereiro', 'ave'), L('anta', 'mamifero'), L('jaçanã', 'ave'), L('sucuri', 'reptil'), L('aguapé', 'planta'),
+    L('sagui', 'mamifero'), L('harpia', 'ave'), L('jabuti', 'reptil'), L('cutia', 'mamifero'), L('jiboia', 'reptil'),
+    L('sapinho-ponta-de-flecha', 'anfibio'), L('bromélia', 'planta'), L('pau-brasil', 'planta'), L('castanheira', 'planta'),
+    L('Pipoca lendo', 'pipoca', 'A Pipoca aprendeu a ler!'),
   ];
   const REGIOES = ['prado', 'lagoa', 'floresta'];
   const lista = DADOS.map((d, i) => {
-    const item = { id: 'fig' + String(i + 1).padStart(2, '0'), nome: d.nome, regiao: REGIOES[Math.floor(i / 10)], tipo: d.tipo };
+    const item = { id: 'fig' + String(i + 1).padStart(2, '0'), nome: d.nome, regiao: REGIOES[Math.floor(i / 10) % 3],
+      materia: i < 30 ? 'numeros' : 'letras', tipo: d.tipo };
     if (d.fala) item.fala = d.fala;
     return Object.freeze(item);
   });
@@ -691,8 +720,8 @@
     if (cache[id]) return cache[id];
     let s;
     try {
-      if (id === 'fig30') {
-        s = pipocaComMedalha();
+      if (id === 'fig30' || id === 'fig60') {
+        s = id === 'fig30' ? pipocaComMedalha() : pipocaLendo();
         if (!s) return soMedalha();              // a arte da Pipoca ainda não está pronta: não guarda no cache
       } else if (D[id]) {
         const d = D[id]();                     // texto, ou { desenho, k, transform } para quem desenha num quadro maior
@@ -715,5 +744,9 @@
     obter: id => porId[id] || null,
     fala(id) { const f = porId[id]; return f ? (f.fala || maiuscula(f.nome) + '!') : ''; },
     daRegiao: regiao => lista.filter(f => f.regiao === regiao),
+    /** Desenhos de outros arquivos: { fig31: () => texto | { desenho, k, transform } }. */
+    registrar(obj) { Object.keys(obj).forEach(k => { D[k] = obj[k]; delete cache[k]; }); },
+    /** As peças de desenho deste arquivo (mesmas regras de traço e cor). */
+    pecas: { T, r2, c, e, p, l, tc, olho, bochecha, brilho, uniao, cn, florzinha, estrela, galho, folha, agua, adesivo },
   };
 })();

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Traçar: esqueleto das letras da Fredoka 700</title>
+<style>
+  @font-face { font-family: 'Fredoka'; font-weight: 700; src: url('../fontes/fredoka-700.woff2') format('woff2'); }
+  body { margin: 0; background: #234; }
+</style>
+</head>
+<body>
+<!-- Ferramenta de conferência (não vai para o APK): desenha cada letra da Fredoka 700 num canvas (fonte de 500 px),
+     afina o desenho até sobrar o "esqueleto" (Zhang-Suen) e expõe window.esqueletos = { A: { avanco, pts: 'x,y;...' } }
+     em milésimos de "em" (x a partir da caneta, y a partir da linha de base, negativo para cima). -->
+<script>
+  window.PC = { pronto: false };
+  const LETRAS = 'AEIOUPBMLTVCDFRNJ'.split('');
+  const F = 500, OX = 100, OY = 600, W = 900, H = 750;
+  function afinar(img, w, h) {
+    const m = new Uint8Array(w * h);
+    for (let i = 0; i < w * h; i++) m[i] = img[i * 4 + 3] > 127 ? 1 : 0;
+    let mudou = true;
+    const del = [];
+    while (mudou) {
+      mudou = false;
+      for (let passo = 0; passo < 2; passo++) {
+        del.length = 0;
+        for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+          const i = y * w + x;
+          if (!m[i]) continue;
+          const p2 = m[i - w], p3 = m[i - w + 1], p4 = m[i + 1], p5 = m[i + w + 1], p6 = m[i + w], p7 = m[i + w - 1], p8 = m[i - 1], p9 = m[i - w - 1];
+          const b = p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9;
+          if (b < 2 || b > 6) continue;
+          const a = (!p2 && p3) + (!p3 && p4) + (!p4 && p5) + (!p5 && p6) + (!p6 && p7) + (!p7 && p8) + (!p8 && p9) + (!p9 && p2);
+          if (a !== 1) continue;
+          if (passo === 0) { if (p2 * p4 * p6) continue; if (p4 * p6 * p8) continue; }
+          else { if (p2 * p4 * p8) continue; if (p2 * p6 * p8) continue; }
+          del.push(i);
+        }
+        if (del.length) mudou = true;
+        del.forEach(i => { m[i] = 0; });
+      }
+    }
+    return m;
+  }
+  document.fonts.load('700 500px Fredoka').then(() => {
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const c = cv.getContext('2d', { willReadFrequently: true });
+    const r = {};
+    LETRAS.forEach(L => {
+      c.clearRect(0, 0, W, H);
+      c.font = '700 ' + F + 'px Fredoka'; c.fillStyle = '#000'; c.textBaseline = 'alphabetic';
+      c.fillText(L, OX, OY);
+      const mt = c.measureText(L);
+      const img = c.getImageData(0, 0, W, H).data;
+      const m = afinar(img, W, H);
+      const pts = [];
+      for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (m[y * W + x]) pts.push(((x - OX + 0.5) * 2).toFixed(0) + ',' + ((y - OY + 0.5) * 2).toFixed(0));
+      r[L] = { avanco: Math.round(mt.width * 2), esq: Math.round(-mt.actualBoundingBoxLeft * 2), dir: Math.round(mt.actualBoundingBoxRight * 2),
+        topo: Math.round(-mt.actualBoundingBoxAscent * 2), base: Math.round(mt.actualBoundingBoxDescent * 2), pts: pts.join(';') };
+    });
+    window.esqueletos = r;
+    window.PC.pronto = true;
+  });
+</script>
+</body>
+</html>

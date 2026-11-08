@@ -1,19 +1,19 @@
 @echo off
-rem Pipoca Conta: instala o PipocaConta.apk nos aparelhos ligados no cabo USB (adb install -r).
+rem Pipoca Aprende: instala o PipocaAprende.apk nos aparelhos ligados no cabo USB (adb install -r).
 rem Para rodar sem a pausa no fim (scripts): set SEM_PAUSA=1
 setlocal EnableExtensions EnableDelayedExpansion
 chcp 65001 >nul
-title Pipoca Conta - instalar no celular
+title Pipoca Aprende - instalar no celular
 cd /d "%~dp0"
 
 echo.
 echo  ==================================================
-echo    Pipoca Conta - instalar no celular ou tablet
+echo    Pipoca Aprende - instalar no celular ou tablet
 echo  ==================================================
 echo.
 
-if not exist "PipocaConta.apk" (
-  echo  [ERRO] Ainda não existe o PipocaConta.apk nesta pasta.
+if not exist "PipocaAprende.apk" (
+  echo  [ERRO] Ainda não existe o PipocaAprende.apk nesta pasta.
   echo         Primeiro dê dois cliques em gerar-apk.bat.
   goto :falhou
 )
@@ -33,7 +33,7 @@ if not defined ADB (
 "%ADB%" start-server >nul 2>nul
 
 rem --- aparelhos ligados no cabo, com a depuração USB autorizada
-set "LISTA=%TEMP%\pipoca-conta-aparelhos.txt"
+set "LISTA=%TEMP%\pipoca-aprende-aparelhos.txt"
 "%ADB%" devices > "%LISTA%" 2>nul
 set /a PRONTOS=0
 set /a SEM_AUTORIZACAO=0
@@ -56,7 +56,7 @@ if %PRONTOS%==0 (
     echo   1. O cabo USB transmite dados ^(alguns cabos só carregam^).
     echo   2. No aparelho: Configurações ^> Sobre o telefone ^> toque 7 vezes em "Número da versão".
     echo   3. Depois: Opções do desenvolvedor ^> ligue a "Depuração USB".
-    echo  Sem cabo: mande o PipocaConta.apk para o aparelho e abra o arquivo lá.
+    echo  Sem cabo: mande o PipocaAprende.apk para o aparelho e abra o arquivo lá.
   )
   goto :falhou
 )
@@ -64,19 +64,19 @@ if %PRONTOS%==0 (
 set /a FALHAS=0
 for %%s in (%SERIAIS%) do (
   echo  Instalando no aparelho %%s ...
-  "%ADB%" -s %%s install -r "PipocaConta.apk"
+  "%ADB%" -s %%s install -r "PipocaAprende.apk"
   if errorlevel 1 set /a FALHAS+=1
 )
 if %FALHAS% gtr 0 (
   echo.
   echo  A instalação falhou em %FALHAS% aparelho^(s^).
-  echo  Se apareceu INSTALL_FAILED_UPDATE_INCOMPATIBLE: o Pipoca Conta instalado tem outra assinatura
+  echo  Se apareceu INSTALL_FAILED_UPDATE_INCOMPATIBLE: o Pipoca Aprende instalado tem outra assinatura
   echo  ^(por exemplo, veio da Play^). Desinstale-o do aparelho e rode este arquivo de novo.
   goto :falhou
 )
 
 echo.
-echo  Pronto! O Pipoca Conta está instalado. Procure o ícone da Pipoca no aparelho.
+echo  Pronto! O Pipoca Aprende está instalado. Procure o ícone da Pipoca no aparelho.
 echo.
 if not defined SEM_PAUSA pause
 exit /b 0

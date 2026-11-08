@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Figurinhas da Lagoa (letras)</title>
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; padding: 16px 24px; background: #DFF3D2; font-family: Fredoka, sans-serif; color: #3A2A5A; }
+  h2 { margin: 6px 0; font-size: 18px; }
+  .grade { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-bottom: 8px; }
+  .item { text-align: center; font-size: 14px; }
+  .item div { width: var(--t, 200px); height: var(--t, 200px); }
+  .item svg, .item img { width: 100%; height: 100%; }
+  .peq { --t: 104px; }
+</style>
+</head>
+<body>
+<h2>Novas (200 px)</h2>
+<div class="grade" id="grande"></div>
+<h2>Novas (104 px, como no mapa — como &lt;img&gt;) e antigas para comparar</h2>
+<div class="grade peq" id="pequena"></div>
+<script src="../js/nucleo.js"></script>
+<script src="../js/arte.js"></script>
+<script src="../js/figurinhas.js"></script>
+<script src="../js/figurinhas-lagoa.js"></script>
+<script>
+  // ?so=41,42 mostra só essas; ?grande=1 sem a fileira pequena
+  const so = (location.search.match(/so=([\d,]+)/) || [])[1];
+  const novas = PC.figurinhas.daRegiao('lagoa').filter(f => f.materia === 'letras')
+    .filter(f => !so || so.split(',').includes(f.id.slice(3)));
+  const antigas = ['fig11', 'fig12', 'fig15', 'fig17', 'fig19', 'fig20'].map(PC.figurinhas.obter);
+  const poe = (alvo, f, comoImg) => {
+    const d = document.createElement('div');
+    d.className = 'item';
+    const svg = PC.figurinhas.desenho(f.id);
+    const arte = comoImg ? `<img alt="" src="data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}">` : svg;
+    d.innerHTML = `<div>${arte}</div>${Number(f.id.slice(3))}. ${f.nome}`;
+    document.getElementById(alvo).appendChild(d);
+  };
+  novas.forEach(f => poe('grande', f, false));
+  novas.forEach(f => poe('pequena', f, true));
+  antigas.forEach(f => poe('pequena', f, true));
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-/* Pipoca Conta — atividade "torre" (PROJETO.md 5.1): produzir N com cubinhos de encaixe.
+/* Pipoca Aprende — atividade "torre" (PROJETO.md 5.1): produzir N com cubinhos de encaixe.
    Cena: balde de cubinhos à esquerda (fonte infinita), a base no chão (x ≈ 850) onde a torre cresce, a placa do alvo à
    direita (algarismo; pontinhos só com params.pontos) e, com confirmar, o botão Pronto.
    Pôr: arrastar um cubinho do balde até a torre OU tocar no balde (um cubinho voa por vez; toques extras são ignorados

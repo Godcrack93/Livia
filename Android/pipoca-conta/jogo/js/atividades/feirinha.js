@@ -1,4 +1,4 @@
-/* Pipoca Conta — atividade "feirinha" (PROJETO.md 5.4): a Feirinha da Pipoca, com moedinhas de brinquedo.
+/* Pipoca Aprende — atividade "feirinha" (PROJETO.md 5.4): a Feirinha da Pipoca, com moedinhas de brinquedo.
    Barraca de feira (toldo listrado, caixotes) com 3 ou 4 produtos brasileiros; cada caixote tem a plaquinha de preço
    (algarismo e pontinhos). Um freguês (tucano, arara ou quati) quer um produto (balãozinho de pensamento, sem fala:
    só a Pipoca fala).

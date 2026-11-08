@@ -1,4 +1,4 @@
-/* Pipoca Conta — componente de torre de cubinhos de encaixe (PC.Torre).
+/* Pipoca Aprende — componente de torre de cubinhos de encaixe (PC.Torre).
    Usado pela Torre, Juntar, Separar e Brincar livre. Coordenadas sempre no palco virtual.
    (x, y) é o CENTRO DA BASE da torre: os cubinhos sobem a partir dali e a plaquinha com o número fica logo abaixo.
    Até 10 cubinhos: uma pilha. De 11 a 20: a pilha da dezena (com fitinha) e, ao lado, a pilha das unidades. */

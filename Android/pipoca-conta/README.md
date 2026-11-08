@@ -1,9 +1,9 @@
-# Pipoca Conta
+# Pipoca Aprende
 
-Jogo de números para crianças de 4 a 6 anos, com a capivara **Pipoca**. Funciona em celular e tablet Android (sempre deitado) e também abre no navegador do computador para testes.
+Jogo de letras e números para crianças de 4 a 6 anos, com a macaquinha **Pipoca**. (Até novembro de 2026 se chamava Pipoca Conta e só tinha números; a pasta ainda tem o nome antigo.) Funciona em celular e tablet Android (sempre deitado) e também abre no navegador do computador para testes.
 
 - **Zero anúncios.** As estações 1 a 4 são grátis; o resto vem com a **assinatura mensal**, que tem **7 dias de teste grátis** (Google Play).
-- 30 estações em três regiões (Prado, Lagoa e Floresta) e 7 brincadeiras: Torre de cubinhos, Pintinhos, Traçar números, Juntar, Separar, Feirinha da Pipoca (moedinhas) e Sapinho (sequências). Mais o álbum de figurinhas da fauna e flora do Brasil e o Brincar livre.
+- 60 estações em três regiões (Prado, Lagoa e Floresta), intercalando números e letras. Números: Torre de cubinhos, Pintinhos, Traçar números, Juntar, Separar, Feirinha da Pipoca (moedinhas) e Sapinho (sequências). Letras: Tambor das sílabas, Com que letra começa?, Rimas, Traçar letras, Montar a palavra, Pares de letras (maiúscula e minúscula) e Ler palavrinhas. Mais o álbum de figurinhas da fauna e flora do Brasil e o Brincar livre.
 - Tudo é falado: a criança não precisa saber ler.
 - Área dos pais (protegida por um desafio para adultos): assinatura, volume e velocidade da voz, efeitos sonoros, tempo de uso, limite diário, progresso por estação, privacidade.
 
@@ -32,10 +32,10 @@ No computador, a tecla **Esc** faz o papel do botão voltar.
 ## Como gerar o APK e instalar no celular ou tablet
 
 1. Dê dois cliques em `gerar-apk.bat`. Na primeira vez ele baixa o Gradle e as bibliotecas (precisa de internet e demora alguns minutos).
-2. O arquivo `PipocaConta.apk` aparece nesta pasta.
+2. O arquivo `PipocaAprende.apk` aparece nesta pasta.
 3. Para instalar:
    - **Pelo cabo**: ative a "Depuração USB" no aparelho (Configurações > Sobre o telefone > toque 7 vezes em "Número da versão" > Opções do desenvolvedor > Depuração USB), ligue no PC e dê dois cliques em `instalar-no-celular.bat`.
-   - **Sem cabo**: mande o `PipocaConta.apk` para o aparelho (Google Drive, WhatsApp para você mesmo etc.), abra o arquivo e permita "instalar apps desconhecidos" quando o Android pedir.
+   - **Sem cabo**: mande o `PipocaAprende.apk` para o aparelho (Google Drive, WhatsApp para você mesmo etc.), abra o arquivo e permita "instalar apps desconhecidos" quando o Android pedir.
 
 > O APK de teste usa a chave de depuração. A assinatura **não funciona** num APK instalado assim: o Google Play só libera compras para apps baixados pela própria Play (faixa de teste interno). Para testar o jogo completo sem pagar, use o código de revisão (ver abaixo) ou o `#assinante=1` no navegador.
 
@@ -45,9 +45,9 @@ O código já está pronto para estes nomes (não mude depois de publicar):
 
 | Item | Valor |
 |---|---|
-| Pacote (applicationId) | `br.livia.pipocaconta` |
+| Pacote (applicationId) | `br.livia.pipocaaprende` |
 | ID da assinatura | `pipoca_mensal` |
-| Nome visível | Pipoca Conta – assinatura mensal |
+| Nome visível | Pipoca Aprende – assinatura mensal |
 | Plano básico | `mensal` (renovação automática todo mês) |
 | Oferta | `teste-gratis`: 7 dias grátis, elegibilidade "nunca teve esta assinatura" |
 | Preço | definido no Play Console (sugestão: entre R$ 9,90 e R$ 19,90 por mês) |
@@ -56,7 +56,7 @@ Passo a passo no Play Console:
 
 1. **Conta**: decidir entre conta pessoal (exige teste fechado com 12 testadores por 14 dias seguidos antes da produção) ou de organização (CNPJ + número D-U-N-S). Cuidado: o endereço do perfil de pagamentos aparece publicamente na Play.
 2. **Perfil de pagamentos** (conta de comerciante) e verificação de vendedor (nome, endereço, CPF/CNPJ).
-3. Criar o app "Pipoca Conta: números" e enviar o primeiro **AAB** para o **teste interno** (a assinatura só pode ser criada depois que um build com a biblioteca de cobrança estiver na Play).
+3. Criar o app "Pipoca Aprende: letras e números" e enviar o primeiro **AAB** para o **teste interno** (a assinatura só pode ser criada depois que um build com a biblioteca de cobrança estiver na Play).
 4. Criar a assinatura e a oferta da tabela acima.
 5. **Testadores de licença**: em Configurações > Testes de licença, cadastrar os e-mails de quem vai testar compras (com cartões de teste o teste grátis dura ~3 min e a renovação mensal ~5 min).
 6. **Conteúdo do app**: política de privacidade (URL), Segurança dos dados ("nenhum dado coletado nem compartilhado"), Público-alvo (5 anos ou menos e 6 a 8 anos), Anúncios: não, Classificação indicativa (IARC), Recursos financeiros: não oferece, **Acesso ao app** (texto abaixo).
@@ -70,7 +70,7 @@ Most content requires a monthly subscription. To review all content for free:
 2. A parental gate asks you to tap three numbers that are written as Portuguese words. Use this table:
    um=1, dois=2, três=3, quatro=4, cinco=5, seis=6, sete=7, oito=8, nove=9.
 3. In the parents' area, tap "Tenho um código de acesso" ("I have an access code") and enter: <CÓDIGO DE REVISÃO>
-4. All 30 stations and the free-play mode are unlocked for 30 days. Tap the back arrow, then "Jogar" (Play).
+4. All 60 stations and the free-play mode are unlocked for 30 days. Tap the back arrow, then "Jogar" (Play).
 The app has no ads, no account and no login.
 ```
 

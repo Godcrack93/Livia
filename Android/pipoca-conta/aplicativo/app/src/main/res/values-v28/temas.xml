@@ -2,7 +2,7 @@
 <resources>
     <!-- Android 9+: o jogo desenha também atrás do recorte da câmera nas bordas curtas; os insets do recorte vão
          para o JavaScript, que mantém os botões fora dele. -->
-    <style name="Tema.PipocaConta" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Tema.PipocaAprende" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/fundo</item>
         <item name="android:colorAccent">@color/tinta</item>
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>

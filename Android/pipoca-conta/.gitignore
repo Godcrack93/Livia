@@ -1,4 +1,4 @@
-# Pipoca Conta — arquivos que não vão para o git.
+# Pipoca Aprende — arquivos que não vão para o git.
 
 # Configurações locais e segredos (modelos: aplicativo/*.properties.example)
 local.properties

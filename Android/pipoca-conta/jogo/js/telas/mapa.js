@@ -1,4 +1,4 @@
-/* Pipoca Conta — tela "mapa": a trilha das 30 estações (PROJETO.md 4.2, 6.5 e 9.2).
+/* Pipoca Aprende — tela "mapa": a trilha das 60 estações (PROJETO.md 4.2, 6.5 e 9.2).
    A trilha rola para os lados com o dedo (com inércia) e atravessa Prado, Lagoa e Floresta, cada região com o seu
    cenário e um portal com o nome. Cada estação mostra o ícone da sua atividade e um destes estados:
      concluída  colorida, com estrelinha e, ao lado, o bichinho da figurinha ganha ("o mundo cresce");
@@ -43,6 +43,7 @@
   const FALA_CONVITE = 'Vamos brincar? Toque aqui!';
 
   /** Altura da trilha em cada x do mundo: uma onda suave. */
+  const COR_LETRAS = '#FF8FC2';        // anel rosa: estações de letras (as de números usam a cor da região)
   const ondaY = x => 565 + 78 * Math.sin((x - X1) / 330);
 
   // Estação concluída pela PRIMEIRA vez desde a última visita ao mapa (o Parabéns da moldura grava o progresso e o
@@ -485,7 +486,7 @@
         const disco = U.el('div', { class: 'pc-mapa-disco', html: PC.arte.medalhao ? PC.arte.medalhao(f) : PC.arte.icone(f.atividade) });
         const pulso = U.el('div', { class: 'pc-mapa-pulso' }, disco);
         const el = U.el('div', { class: 'pc-mapa-estacao', teste: 'estacao-' + f.n, role: 'button',
-          style: `left:${p.x - LADO / 2}px;top:${p.y - LADO / 2}px;--cor:${reg ? reg.cor : '#5CC84A'}` }, pulso);
+          style: `left:${p.x - LADO / 2}px;top:${p.y - LADO / 2}px;--cor:${f.materia === 'letras' ? COR_LETRAS : (reg ? reg.cor : '#5CC84A')}` }, pulso);
         el.dataset.n = String(f.n);
         EL[f.n] = el;
         PULSO[f.n] = pulso;

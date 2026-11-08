@@ -1,4 +1,4 @@
-/* Pipoca Conta — tela de abertura (dono: agente de arte).
+/* Pipoca Aprende — tela de abertura (dono: agente de arte).
    Logo, a Pipoca acenando (tocar nela: ela se apresenta), o botão grande Jogar (ícone play) e o cadeado dos adultos.
    Depois do primeiro toque, a Pipoca pede uma vez: "Toque no botão verde para jogar!" (apontando para o botão).
    Toques de adulto (no cadeado e no portão aberto por cima da abertura) não contam como primeiro toque.
@@ -8,7 +8,7 @@
   'use strict';
   const PC = window.PC, U = PC.util;
 
-  const FALA_OI = 'Oi! Eu sou a Pipoca! Vamos brincar com números?';
+  const FALA_OI = 'Oi! Eu sou a Pipoca! Vamos brincar e aprender?';
   const FALA_JOGAR = 'Toque no botão verde para jogar!';
   const AVISO_VOZ = 'Falta a voz em português: toque no cadeado';
 
@@ -76,7 +76,7 @@
           style: `left:${x}px;animation-duration:${dur}s;animation-delay:-${atraso}s` }));
       });
 
-      const logo = U.el('h1', { class: 'logo pc-abertura-logo', html: PC.arte.logo(), 'aria-label': 'Pipoca Conta' });
+      const logo = U.el('h1', { class: 'logo pc-abertura-logo', html: PC.arte.logo(), 'aria-label': 'Pipoca Aprende' });
 
       // ------------------------------------------------------------ a Pipoca (tocar: ela se apresenta)
       const pip = U.el('div', { class: 'pc-abertura-pipoca', teste: 'pipoca', role: 'button', tabindex: '0', 'aria-label': 'Pipoca, a macaquinha' });

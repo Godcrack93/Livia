@@ -1,4 +1,4 @@
-// Pipoca Conta — servidor local para abrir o jogo no navegador (só para desenvolvimento).
+// Pipoca Aprende — servidor local para abrir o jogo no navegador (só para desenvolvimento).
 // Uso: node ferramentas/servidor.mjs [--porta=5181]
 // Abre a pasta jogo/ em http://localhost:<porta>/ (a raiz mostra o index.html).
 import http from 'node:http';
@@ -48,6 +48,6 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const arg = process.argv.find(a => a.startsWith('--porta='));
   const porta = Number(arg ? arg.split('=')[1] : process.env.PORT) || 5181;
   ligar(porta).then(({ url }) => {
-    console.log(`\n  Pipoca Conta no ar: ${url}\n  (Ctrl+C para desligar)\n`);
+    console.log(`\n  Pipoca Aprende no ar: ${url}\n  (Ctrl+C para desligar)\n`);
   }).catch(e => { console.error('Não foi possível ligar o servidor:', e.message); process.exit(1); });
 }

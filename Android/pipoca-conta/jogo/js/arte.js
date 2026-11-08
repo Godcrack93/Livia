@@ -1,4 +1,4 @@
-/* Pipoca Conta — arte desenhada em código (SVG). Dono: agente de arte (histórico em HISTORICO-ARTE.md).
+/* Pipoca Aprende — arte desenhada em código (SVG). Dono: agente de arte (histórico em HISTORICO-ARTE.md).
    PC.arte.pipoca(pose)   -> texto SVG da macaquinha Pipoca (viewBox 0 0 250 270). Poses: normal, fala, feliz, aponta,
                              pensa, danca, acena. Classes que o CSS do núcleo usa: pip-boca-aberta, pip-boca-fechada,
                              pip-olhos, pip-piscar, pip-braco-aceno (o braço que acena gira em volta do ombro, 152,182).
@@ -9,7 +9,7 @@
                              chão fica em y ≈ 800 (PC.layout.chao). opcoes (opcional): { sol: false } tira o sol.
                              Nome desconhecido: prado (e aviso no console só com PC.config.debug).
    PC.arte.mao()          -> texto SVG da mãozinha de dica.
-   PC.arte.logo()         -> HTML do logo "Pipoca Conta" (letras coloridas; o pingo do i é a flor de ipê).
+   PC.arte.logo()         -> HTML do logo "Pipoca Aprende" (letras coloridas; o pingo do i é a flor de ipê).
    PC.arte.flor()         -> texto SVG da flor de ipê-amarelo (a marca da Pipoca), viewBox -32 -32 64 64.
    PC.arte.cores          -> cores da Pipoca. PC.arte.nomesIcones() / nomesCenarios() / poses() -> listas de nomes.
    PC.arte.novoId(prefixo) -> id único para <defs> (gradientes, máscaras) de quem desenha SVG.
@@ -538,11 +538,11 @@
       .logo .pc-arte-pingo svg { width: 100%; height: 100%; display: block; overflow: visible; }
     `);
   }
-  /** Logo "Pipoca Conta" (texto HTML, para dentro de um elemento com a classe .logo). */
+  /** Logo "Pipoca Aprende" (texto HTML, para dentro de um elemento com a classe .logo). */
   function logo() {
     estiloLogo();
     let k = 0;
-    return 'Pipoca Conta'.split(' ').map(p =>
+    return 'Pipoca Aprende'.split(' ').map(p =>
       `<span class="logo-palavra">${[...p].map(ch => {
         const i = k++;
         const ehI = ch === 'i';

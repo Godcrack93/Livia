@@ -1,4 +1,4 @@
-/* Pipoca Conta — atividade "sapinho" (PROJETO.md 5.5): sequências na reta numérica.
+/* Pipoca Aprende — atividade "sapinho" (PROJETO.md 5.5): sequências na reta numérica.
    Uma lagoa (desenhada por cima do cenário, dentro do palco) com uma fileira EM LINHA RETA de vitórias-régias, os
    números crescendo para a direita. O sapinho Pulo (verde-limão, bochechas rosadas) anda folha por folha e a voz diz
    o número de cada folha em que ele pousa. A próxima folha vazia mostra "?" e três bolhas de número boiam na água
@@ -141,12 +141,13 @@
     return m;
   }
 
-  /** Até a estação 14, nunca duas lacunas seguidas (PROJETO.md 5.5). Sem estação (teste), segue as primeiras estações. */
+  /** Até a 14ª estação de números (estação 27 da trilha intercalada), nunca duas lacunas seguidas (PROJETO.md 5.5).
+     Sem estação (teste), segue as primeiras estações. */
   function permiteSeguidas(params) {
     if (typeof params.seguidas === 'boolean') return params.seguidas;
     let estacao = null;
     try { const p = PC.telas.params(); estacao = p && p.estacao; } catch (e) { estacao = null; }
-    return Number(estacao) > 14;
+    return Number(estacao) > 27;
   }
 
   /** Índices (na ordem do Pulo) das lacunas: nunca as duas primeiras folhas nem a última. */

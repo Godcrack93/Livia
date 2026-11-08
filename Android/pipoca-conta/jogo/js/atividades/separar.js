@@ -1,4 +1,4 @@
-/* Pipoca Conta — atividade "separar" (PROJETO.md 5.3): retirar cubinhos até ficar N (subtração).
+/* Pipoca Aprende — atividade "separar" (PROJETO.md 5.3): retirar cubinhos até ficar N (subtração).
    Uma torre de T cubinhos (padrão de 5 em 5) fica na tabuinha e a placa do alvo N (0 ≤ N < T) à direita. A torre
    não tem plaquinha de número: quem conta é a criança (o padrão de 5 em 5 ajuda).
    Tirar: tocar na torre tira o cubinho de cima (ele pula para a pilhinha, na esteira ao lado) OU arrastar a alça

@@ -1,4 +1,4 @@
-# Pipoca Conta — projeto e contrato técnico (versão 2)
+# Pipoca Aprende — projeto e contrato técnico (versão 3)
 
 Documento de referência para todos que trabalham no jogo (pessoas e agentes). A versão 2 incorpora seis revisões independentes: pedagogia, experiência da criança, originalidade, Android e cobrança, políticas do Google Play e arquitetura. Se algo aqui mudar, atualize este arquivo primeiro.
 
@@ -6,14 +6,14 @@ Documento de referência para todos que trabalham no jogo (pessoas e agentes). A
 
 | | |
 |---|---|
-| Nome | **Pipoca Conta** (na loja: "Pipoca Conta: números") |
+| Nome | **Pipoca Aprende** (na loja: "Pipoca Aprende: letras e números"). Até novembro de 2026 se chamava Pipoca Conta e só tinha números. |
 | Público | crianças de 4 a 6 anos que ainda não leem: toda instrução é **falada e mostrada** (número grande, pontinhos, mãozinha) |
 | Plataforma | Android (tablet e celular), sempre deitado, funciona sem internet |
 | Modelo | **zero anúncios**; teste grátis de 7 dias e **assinatura mensal** pelo Google Play Billing; estações 1 a 4 sempre grátis |
 | Idioma | português do Brasil |
 | Stack | jogo em HTML/CSS/JavaScript puro (sem framework, sem build) dentro de um app Android (Kotlin) com WebView — o mesmo padrão do `Android/parafusinhos` |
 
-O jogo ensina: contar e produzir quantidades (até 20), reconhecer quantidades de relance, comparar (mais, menos, igual), o zero ("nenhum"), escrever os algarismos de 0 a 10, juntar (soma), separar (subtração), amigos do 10, dezena e unidades, sequências (de 1 em 1, para trás, de 2 em 2, de 10 em 10 até 100) e um pouco de dinheiro de brinquedo (pagar e dar troco de 5).
+O jogo ensina **letras** (consciência de sílabas e rimas, as vogais e 12 consoantes pelo nome, letra inicial, traçado das letras de forma, maiúsculas e minúsculas, montar e ler palavras simples) e **números**: contar e produzir quantidades (até 20), reconhecer quantidades de relance, comparar (mais, menos, igual), o zero ("nenhum"), escrever os algarismos de 0 a 10, juntar (soma), separar (subtração), amigos do 10, dezena e unidades, sequências (de 1 em 1, para trás, de 2 em 2, de 10 em 10 até 100) e um pouco de dinheiro de brinquedo (pagar e dar troco de 5).
 
 ## 2. Originalidade (obrigatório)
 
@@ -56,11 +56,11 @@ limite diário atingido ──> descanso (só um adulto libera, pelo portão)
    Botões: Início (casinha), Álbum, Brincar livre, cadeado dos adultos.
 3. **Atividade**: moldura com cenário da região, HUD (voltar, bolinhas das rodadas, ouvir de novo), a Pipoca no canto. O voltar (HUD ou Android) pergunta **"Quer parar?"** (casinha = sair; play grande pulsando = continuar; sem resposta em 8 s, continua). A rodada em andamento fica guardada e a estação recomeça dali.
 4. **Parabéns**: confete, Pipoca dançando, figurinha nova; os botões aparecem depois da animação: **Continuar** (grande, verde, pulsando, ícone play) e **De novo** (menor, ícone de seta circular). "De novo" sorteia números novos.
-5. **Álbum ("álbum que brinca")**: uma cena por região (Prado, Lagoa, Floresta); cada figurinha ganha fica colada no seu lugar da cena; tocar nela → som, pulinho e a Pipoca diz o nome. As que faltam aparecem como moldura tracejada vazia (sem silhueta, sem "?"). Contador "12 de 30".
+5. **Álbum ("álbum que brinca")**: duas cenas por região (Prado, Lagoa e Floresta, cada uma com a cena "123" dos números e a "ABC" das letras); cada figurinha ganha fica colada no seu lugar da cena; tocar nela → som, pulinho e a Pipoca diz o nome. As que faltam aparecem como moldura tracejada vazia (sem silhueta, sem "?"). Contador "12 de 60".
 6. **Brincar livre**: mesa com balde de cubinhos; montar, juntar e separar à vontade; cada torre com sua plaquinha; tocar numa torre → a Pipoca conta. **Grátis limitado** (até 2 torres e 10 cubinhos por torre); com assinatura, até 8 torres e 20 cubinhos. Botão de limpar.
 7. **Área dos pais** (depois do portão; textos com no mínimo 34 px virtuais): assinatura (estado, ver planos, restaurar, gerenciar, "tenho um código de acesso"), voz (volume, "falar mais devagar", aviso e botão "instalar voz em português" se faltar), efeitos sonoros liga/desliga, tempo de uso (hoje e semana), limite diário (desligado, 15, 30, 45, 60 min; aviso visível quando ligado), esconder ofertas de assinatura, progresso por estação (vezes, erros, dicas, tempo) e **zerar progresso** (confirmação dupla), privacidade (resumo + link para a política), créditos e licenças (Fredoka, SIL OFL 1.1), versão. No navegador: "Simular assinatura (só no navegador)".
 8. **Assinatura (paywall)**, aberta só pela área dos pais. Dois estados, conforme o Google Play:
-   - **com teste disponível**: "Experimente 7 dias grátis. Depois, R$ X por mês, cobrados automaticamente na sua conta Google Play todo mês até você cancelar. Cancele até o fim do teste e não paga nada. Para cancelar: Google Play > Pagamentos e assinaturas > Assinaturas. Sem assinar, as estações 1 a 4 continuam liberadas." + o que a assinatura libera (26 estações, Brincar livre completo) + botão **Começar teste grátis**;
+   - **com teste disponível**: "Experimente 7 dias grátis. Depois, R$ X por mês, cobrados automaticamente na sua conta Google Play todo mês até você cancelar. Cancele até o fim do teste e não paga nada. Para cancelar: Google Play > Pagamentos e assinaturas > Assinaturas. Sem assinar, as estações 1 a 4 continuam liberadas." + o que a assinatura libera (56 estações, Brincar livre completo) + botão **Começar teste grátis**;
    - **sem teste**: o mesmo texto sem o teste + botão **Assinar por R$ X por mês**.
    O preço vem sempre do Google Play. Sem preço (sem internet ou Play indisponível): botão desligado e "Conecte à internet para ver o preço". Compra pendente: "Aguardando pagamento ou aprovação". Play indisponível (ex.: modo infantil do fabricante): "O Google Play não está disponível neste aparelho". Nunca usar a moedinha da feirinha como ícone de compra. X grande para fechar.
 9. **Portão dos adultos** (`PC.portao.pedir()` → Promise<boolean>, uma camada por cima da tela atual): "Para adultos: toque nos números sete, dois, nove." Três números por extenso (sem sequências fáceis como 1-2-3 ou 1-1-1), teclado 1 a 9, **sem voz**, X grande para fechar; errou → desafio novo; 3 erros seguidos → espera de 5 s; 20 s sem toque → fecha (false). Protege: área dos pais, assinatura, assinar, gerenciar, links externos, liberar tempo.
@@ -106,7 +106,7 @@ Regras gerais (valem para todas): não existe "perdeu"; **toda ação de arrasta
 ### 5.5 Sapinho — sequências na reta numérica
 - Lagoa com uma fileira **em linha reta** de vitórias-régias, números crescendo para a direita. O sapinho Pulo anda folha por folha e a voz diz o número de cada folha em que pousa.
 - A próxima folha vazia mostra "?"; 3 bolhas de número boiam na água (balançam sem girar). Acertou: o número vai para a folha e o Pulo pula. Errou: a bolha afunda (sai de jogo) e há retorno com conteúdo ("Esse é o sete. Vamos contar: cinco, seis...?").
-- Regras do gerador: as duas primeiras folhas e a última sempre visíveis; até a estação 14, nunca duas lacunas seguidas; bolhas erradas nunca negativas nem repetidas, de preferência o erro típico (passo 1: n−1 e n+1; passo −1: o número de contar para frente; passo 2: n−1 e n+1; passo 10: n−9 e n+10).
+- Regras do gerador: as duas primeiras folhas e a última sempre visíveis; até a estação 27 (a 14ª de números), nunca duas lacunas seguidas; bolhas erradas nunca negativas nem repetidas, de preferência o erro típico (passo 1: n−1 e n+1; passo −1: o número de contar para frente; passo 2: n−1 e n+1; passo 10: n−9 e n+10).
 - Instruções com as palavras da BNCC: "Qual número vem depois do quatro?", "E qual fica entre o seis e o oito?". Às vezes com ordinais: "O Pulo está na terceira folha."
 - **Contagem regressiva** (passo −1): as folhas continuam crescendo para a direita; o Pulo começa no 10, à direita, e pula para a esquerda: "dez, nove, ..., um, zero!".
 - **2 em 2**: embaixo de cada folha, os pares acumulados (2, 4, 6... como pares de pontinhos). **10 em 10** (`barras: true`): embaixo de cada folha, barras de dez iguais à dezena da Torre (a folha 30 mostra três barras).
@@ -123,6 +123,44 @@ Regras gerais (valem para todas): não existe "perdeu"; **toda ação de arrasta
 - Os traços de cada algarismo ficam em dados no arquivo (pontos de controle, início, sentido, número de traços). Arrastar o dedo pinta de giz; é preciso passar pelos pontos de controle em ordem; a **tolerância é medida em dp** (≈ 1 cm para cada lado). Levantar o dedo não apaga: continua do último ponto alcançado. Sair muito do caminho só para de pintar.
 - Ao terminar: o número brilha, a voz diz o número e aparecem N estrelinhas arrumadas num quadro de 10, contadas. No 0: "Zero! Nenhuma estrelinha." (quadro vazio). O 10 é traçado como 1 seguido de 0.
 - `params`: `{ digitos: [...], demo }` (uma rodada por algarismo).
+- **Letras** (estações de português): `params: { letras: ['A', 'E'], demo }`. A mesma lousa com a **letra de forma maiúscula** pontilhada, no desenho da Fredoka, com os traços na ordem ensinada na escola (de cima para baixo e da esquerda para a direita; letras de mais de um traço mostram o número do traço só pela bolinha verde de início de cada um, sem algarismo). Ao terminar: a letra brilha, a Pipoca diz "Á! Á de arara!" (nome da letra + uma palavra do banco que começa com ela) e a figura da palavra aparece ao lado da lousa no lugar das estrelinhas. Letras desta versão: A E I O U P B M L T V C D F R N J.
+
+### 5.8 Regras das brincadeiras de letras (valem para 5.9 a 5.14)
+- Público: 4 a 6 anos, **que ainda não leem**. Toda instrução é falada; a criança decide olhando figuras, cartinhas e ouvindo.
+- **Banco de palavras**: `PC.palavras` (`js/palavras.js`): palavras em maiúsculas de forma, separadas em sílabas, com figura (objeto desenhado em `palavras-arte-*.js` ou o bicho do álbum), letra inicial e grupo de rima. Use só ele (não invente palavras soltas no código da atividade). Sorteios com `PC.util.escolher/embaralhar`.
+- **Voz**: a palavra é falada com `PC.palavras.nome(p)`; uma sílaba sozinha com `PC.palavras.falaSilaba('BA')` → "bá"; uma letra com `PC.palavras.falaLetra('B')` → "bê". **Nunca** peça nem fale o som isolado de uma consoante ("fff"). Frases curtas, sem algarismos.
+- **Letras sem rosto**: letras aparecem só em cartinhas, lousa, plaquinhas, folhas e ovinhos (Fredoka 700, contorno `#3A2A5A`). Nunca olhos, boca, braços, pernas ou nome de personagem (PROJETO.md 2).
+- **Figuras**: `PC.palavras.desenho(p)` devolve um SVG 200×200 (use num `<img src="data:image/svg+xml...">` ou `innerHTML`); a figura sempre vem num cartão branco arredondado de pelo menos `alvoPrincipal` (170 px) quando é tocável.
+- Cores das cartinhas: papel creme `#FFF8E6`, letra `#3A2A5A`; a cor nunca indica a resposta.
+- Retornos de erro descritivos e gentis ("Essa é a bola. Bola começa com bê."), dicas em degraus pela moldura (6.2), medalhão próprio registrado com `PC.arte.registrarMedalhao` (veja `js/medalhoes.js`).
+
+### 5.9 Tambor das sílabas (`tambor`)
+- A figura da palavra no alto (cartão), um **tamborzinho** grande no chão (x ≈ 850) e uma fileira de bolinhas vazias abaixo da figura (uma por toque, até 5) e o botão **Pronto** (x ≈ 1420, y ≈ 700).
+- A Pipoca diz: "Bata no tambor: um toque para cada pedaço. Banana!". Cada toque no tambor acende uma bolinha (som de tambor, o tambor pula). Tocar numa bolinha acesa apaga a última (desfazer). Pronto: a Pipoca bate junto, devagar, falando as sílabas ("ba… na… na…") e acendendo uma por uma; certo → acertou; errado → retorno "Banana tem três pedaços: ba, na, na."
+- `params`: `{ silabas: [min, max], bichos, rodadas, demo }`. Ajuda (nível 2): a Pipoca fala a palavra bem devagar, separando as sílabas, sem bater.
+
+### 5.10 Com que letra começa? (`inicial`)
+- **modo letra** (padrão): a figura grande à esquerda do centro; à direita, 2 ou 3 **cartinhas** grandes com letras maiúsculas. "Arara! Com que letra começa arara?". Toque na cartinha. Certo: "Á! Arara começa com á!". Errado: "Essa é a letra ó. Arara começa com á." As letras da rodada vêm de `params.letras`; as cartinhas erradas também (ou vogais, se faltar).
+- **modo bicho**: uma cartinha grande com a letra e 3 figuras para escolher: "Qual começa com bê?".
+- `params`: `{ modo: 'letra' | 'bicho', letras: [...], opcoes: 2 | 3, rodadas, demo }`. Ajuda: a Pipoca repete a palavra devagar, esticando o começo ("Aaa… rara"), e a cartinha certa dá um pulinho.
+
+### 5.11 Rimas (`rimas`)
+- **modo rima** (padrão): a figura-modelo à esquerda ("Pato!") e 2 ou 3 figuras para escolher: "Pato rima com…?". Só uma rima (mesmo grupo em `PC.palavras.gruposDeRima()`). Certo: "Pato, gato! Rimou!". Errado: a figura sai de jogo e a Pipoca diz só que não rima e repete a pergunta, **sem entregar a resposta** ("Bola não rima. Pato rima com…?"); as dicas em degraus ajudam nos erros seguintes.
+- **modo intruso**: 3 figuras, duas rimam: "Qual não rima?". Errado: "Pato rima com gato. Qual não rima?". Certo: "Isso! Bola não rima. Pato, gato!".
+- Falas sempre curtas e inteiras: nunca juntar numa frase só duas palavras sorteadas que não rimam ("bola não rima com pato"), porque cada combinação vira uma gravação (milhares de vozes).
+- `params`: `{ modo: 'rima' | 'intruso', opcoes, rodadas, demo }`. Ajuda: a Pipoca fala cada figura destacando o fim ("pa-TO… ga-TO…").
+
+### 5.12 Montar a palavra (`montar`)
+- A figura no alto e, abaixo, espaços vazios (um por sílaba). As sílabas vêm em **folhinhas** soltas no chão (embaralhadas, mais `despiste` sílabas que não fazem parte). Tocar numa folhinha: a Pipoca fala a sílaba. Arrastar até um espaço: se for a sílaba certa daquele espaço, encaixa; senão volta e retorno ("Essa é bá. Aqui vai pá."). Os espaços se preenchem em qualquer ordem. Completa: a Pipoca lê a palavra pelas sílabas e inteira ("Pa… to… Pato!").
+- `params`: `{ silabas: [min, max], despiste, bichos, rodadas, demo }`. Ajuda: a Pipoca fala a sílaba que falta e a folhinha certa pulsa.
+
+### 5.13 Pares de letras (`pares`)
+- Ninhos no alto com **maiúsculas** (plaquinha no ninho) e ovinhos embaixo com as **minúsculas**. Arrastar cada ovinho para o ninho da mesma letra. Certo: "Á grande e á pequeno!" e o ovinho encaixa. Errado: volta com "Esse é o bê pequeno.". A rodada termina com todos os pares.
+- `params`: `{ letras: [...], pares: 3 | 4, rodadas, demo }`. Ajuda: o ninho certo do ovinho que a criança pegou brilha.
+
+### 5.14 Ler palavrinhas (`ler`)
+- A palavra escrita grande numa plaquinha, com as sílabas levemente separadas (cada sílaba é tocável e falada sozinha), e 2 ou 3 figuras abaixo. A Pipoca **não** fala a palavra na instrução: "Leia comigo! Que palavra é essa?" Toque na figura. Certo: a Pipoca lê ("Pa… to… Pato!"). Errado: "Essa é a bola. Leia de novo: toque nos pedacinhos."
+- `params`: `{ silabas: [min, max], opcoes, rodadas, demo }`. Ajuda (nível 2): a Pipoca fala as sílabas uma por uma, acendendo cada uma, sem juntar.
 
 ## 6. Regras comuns
 
@@ -153,9 +191,11 @@ Ao acertar uma rodada, a moldura congela a rodada, comemora (som, elogio variado
 ### 6.5 Sem truques para prender a criança
 Sem notificações, sem sequência de dias, sem prêmio diário, sem contagem regressiva, sem Pipoca triste quando a criança sai, sem recompensa por tempo de uso, sem itens aleatórios (as figurinhas são fixas por estação). Motivos bons para voltar: mundo que cresce no mapa, álbum que brinca, comemorações variadas, "De novo" sempre com números novos.
 
-## 7. Trilha (30 estações)
+## 7. Trilha (60 estações)
 
-As 4 primeiras são grátis. `demo` = demonstração na 1ª rodada; `conf` = botão Pronto/Pagar.
+60 estações intercaladas: as **ímpares são de números** e as **pares são de letras** (`jogo/js/fases.js`). Regiões: Prado 1–20, Lagoa 21–40, Floresta 41–60. As 4 primeiras são grátis (2 de números e 2 de letras). `demo` = demonstração na 1ª rodada; `conf` = botão Pronto/Pagar. No mapa, as estações de letras têm o anel rosa.
+
+### 7.0 Números (a estação no mapa é 2 × # − 1)
 
 | # | Região | Atividade | Parâmetros | BNCC |
 |---|---|---|---|---|
@@ -192,6 +232,41 @@ As 4 primeiras são grátis. `demo` = demonstração na 1ª rodada; `conf` = bot
 
 Regras: no máximo uma novidade por estação; cada faixa numérica nova estreia numa atividade de montar (Torre) antes das de escolher. Prado e Lagoa = Educação Infantil; Floresta = 1º ano.
 
+### 7.0b Letras (a estação no mapa é 2 × #)
+
+| # | Estação | Região | Atividade | Parâmetros |
+|---|---|---|---|---|
+| 1 | 2 | Prado | Tambor | 1–2 sílabas, 3 rodadas, demo |
+| 2 | 4 | Prado | Traçar | A, E, demo |
+| 3 | 6 | Prado | Letra inicial | vogais, 2 cartinhas, 4 rodadas, demo |
+| 4 | 8 | Prado | Rimas | 2 figuras, 4 rodadas, demo |
+| 5 | 10 | Prado | Traçar | I, O, U |
+| 6 | 12 | Prado | Tambor | 2–3 sílabas, 4 rodadas |
+| 7 | 14 | Prado | Letra inicial | vogais, 3 cartinhas, 4 rodadas |
+| 8 | 16 | Prado | Rimas | 3 figuras, 4 rodadas |
+| 9 | 18 | Prado | Tambor | 1–4 sílabas, 4 rodadas |
+| 10 | 20 | Prado | Letra inicial | vogais, 3 cartinhas, 5 rodadas (revisão) |
+| 11 | 22 | Lagoa | Traçar | P, B, M |
+| 12 | 24 | Lagoa | Letra inicial | P, B, M, 3 cartinhas, 4 rodadas |
+| 13 | 26 | Lagoa | Montar | 2 sílabas, sem despiste, 3 rodadas, demo |
+| 14 | 28 | Lagoa | Rimas | 3 figuras, 4 rodadas |
+| 15 | 30 | Lagoa | Traçar | L, T, V |
+| 16 | 32 | Lagoa | Letra inicial | P, B, M, L, T, V, 3 cartinhas, 5 rodadas |
+| 17 | 34 | Lagoa | Montar | 2 sílabas, 1 despiste, 4 rodadas, demo |
+| 18 | 36 | Lagoa | Tambor | nomes de bichos, 2–4 sílabas, 4 rodadas |
+| 19 | 38 | Lagoa | Montar | 3 sílabas, sem despiste, 3 rodadas, demo |
+| 20 | 40 | Lagoa | Letra inicial | modo bicho ("qual começa com bê?"), 4 rodadas, demo |
+| 21 | 42 | Floresta | Traçar | C, D, F |
+| 22 | 44 | Floresta | Pares | vogais, 4 pares, 2 rodadas, demo |
+| 23 | 46 | Floresta | Ler | 2 sílabas, 2 figuras, 4 rodadas, demo |
+| 24 | 48 | Floresta | Montar | 3 sílabas, 1 despiste, 4 rodadas |
+| 25 | 50 | Floresta | Traçar | R, N, J |
+| 26 | 52 | Floresta | Pares | consoantes, 4 pares, 2 rodadas |
+| 27 | 54 | Floresta | Ler | 2 sílabas, 3 figuras, 4 rodadas |
+| 28 | 56 | Floresta | Rimas | qual não rima?, 3 figuras, 4 rodadas, demo |
+| 29 | 58 | Floresta | Montar | nomes de bichos, 2–3 sílabas, 2 despistes, 4 rodadas |
+| 30 | 60 | Floresta | Ler | 3 sílabas, 3 figuras, 4 rodadas (final) |
+
 ### 7.1 Figurinhas (fauna e flora do Brasil)
 Nenhuma mostra número como personagem nem cubinho com rosto. Desenho próprio, fofo, com borda branca de adesivo.
 
@@ -199,15 +274,20 @@ Nenhuma mostra número como personagem nem cubinho com rosto. Desenho próprio, 
 |---|---|
 | Prado (fig01–fig10) | ipê-amarelo, joão-de-barro, tamanduá-bandeira, seriema, lobo-guará, borboleta-azul, joaninha, abelha jataí, girassol, quero-quero |
 | Lagoa (fig11–fig20) | vitória-régia, garça-branca, ariranha, martim-pescador, tuiuiú, libélula, jacaré-de-papo-amarelo, peixinho lambari, sapo-cururu, capivara |
-| Floresta (fig21–fig30) | onça-pintada, bicho-preguiça, tucano, arara-azul, mico-leão-dourado, quati, coruja-buraqueira, beija-flor, cogumelo, a Pipoca com uma medalha (final) |
+| Floresta (fig21–fig30) | onça-pintada, bicho-preguiça, tucano, arara-azul, mico-leão-dourado, quati, coruja-buraqueira, beija-flor, cogumelo, a Pipoca com uma medalha (final dos números) |
+| Prado, letras (fig31–fig40) | bem-te-vi, sabiá-laranjeira, tatu-bola, ema, carcará, papagaio, vaga-lume, gafanhoto, caju, flor-de-maracujá |
+| Lagoa, letras (fig41–fig50) | boto-cor-de-rosa, tracajá, pirarucu, arraia, cervo-do-pantanal, colhereiro, anta, jaçanã, sucuri, aguapé |
+| Floresta, letras (fig51–fig60) | sagui, harpia, jabuti, cutia, jiboia, sapinho-ponta-de-flecha, bromélia, pau-brasil, castanheira, a Pipoca lendo um livro (final da trilha) |
+
+As figurinhas das estações de números ficam em `figurinhas.js` (fig01–fig30, e a fig60); as das estações de letras em `figurinhas-prado.js`, `figurinhas-lagoa.js` e `figurinhas-floresta.js`. O álbum tem duas cenas por região (123 e ABC).
 
 ## 8. Assinatura, teste grátis e acesso de revisão
 
-- **Google Play**: assinatura `pipoca_mensal` (nome visível: "Pipoca Conta – assinatura mensal"), plano básico `mensal` com renovação automática, oferta `teste-gratis` (7 dias grátis, elegibilidade "nunca teve esta assinatura"). Preço só no Play Console.
+- **Google Play**: assinatura `pipoca_mensal` (nome visível: "Pipoca Aprende – assinatura mensal"), plano básico `mensal` com renovação automática, oferta `teste-gratis` (7 dias grátis, elegibilidade "nunca teve esta assinatura"). Preço só no Play Console.
 - **Fluxo nativo (Billing Library 9.1.0)**: um `BillingClient` com `enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())` e `enableAutoServiceReconnection()`; `startConnection` na abertura; `queryPurchasesAsync(SUBS)` ao abrir e a cada `onResume`; `queryProductDetailsAsync` (tratando `unfetchedProductList`); oferta: filtrar `basePlanId == 'mensal'`, usar `teste-gratis` se vier (fase com preço 0 = teste; fase recorrente `P1M` = preço), senão o plano básico; `launchBillingFlow` na thread principal; acknowledge só de compras `PURCHASED` e não reconhecidas (repetir no próximo início se falhar); `PENDING` → estado pendente; erros `USER_CANCELED`, `ITEM_ALREADY_OWNED` (refazer consulta), `BILLING_UNAVAILABLE` (Play bloqueada), `SERVICE_UNAVAILABLE`, `NETWORK_ERROR` → mensagem ao adulto.
 - **Cache só no Android** (SharedPreferences) `{ativa, confirmadoEm}`: resposta OK sem compra ativa revoga na hora; erro de serviço/rede/indisponível usa o cache até **7 dias** após a última confirmação; depois, modo grátis (figurinhas ganhas ficam). O JS só recebe o estado decidido.
 - **Acesso de revisão** (para a equipe do Google Play): na área dos pais, "Tenho um código de acesso" → mensagem `codigoRevisao`; o Android compara com um código lido de `aplicativo/revisao.properties` (fora do git) e, se certo, libera tudo por 30 dias (`origem: 'revisao'`). Texto em inglês para o Play Console fica no README.
-- **Grátis**: estações 1 a 4 (jogáveis de novo com números novos) e Brincar livre limitado. **Assinatura**: estações 5 a 30 e Brincar livre completo. Assinatura que acaba: estações feitas continuam com estrela no mapa (só fechadas para jogar), sem mensagem de perda. Mudança de assinatura no meio de uma estação vale a partir da próxima.
+- **Grátis**: estações 1 a 4 (jogáveis de novo com números novos) e Brincar livre limitado. **Assinatura**: estações 5 a 60 e Brincar livre completo. Assinatura que acaba: estações feitas continuam com estrela no mapa (só fechadas para jogar), sem mensagem de perda. Mudança de assinatura no meio de uma estação vale a partir da próxima.
 - **No navegador**, a assinatura é simulada (`#assinante=1` ou o botão da área dos pais); a ponte falsa (`#ponte=falsa&assinatura=...`) simula o app.
 
 ## 9. Arquitetura do jogo (pasta `jogo/`)
@@ -340,7 +420,7 @@ O Android usa `WebViewCompat.addWebMessageListener(webView, "PipocaAndroid", set
 |---|---|
 | `{tipo:'pronto', versao}` | o jogo está ouvindo; o Android responde `estado` |
 | `{tipo:'falar', texto, id, velocidade, volume}` / `{tipo:'pararFala'}` | TextToSpeech pt-BR (`QUEUE_FLUSH`, `KEY_PARAM_UTTERANCE_ID`, `KEY_PARAM_VOLUME`) |
-| `{tipo:'assinar'}` / `{tipo:'restaurar'}` / `{tipo:'gerenciar'}` | Billing; gerenciar abre `https://play.google.com/store/account/subscriptions?sku=pipoca_mensal&package=br.livia.pipocaconta` |
+| `{tipo:'assinar'}` / `{tipo:'restaurar'}` / `{tipo:'gerenciar'}` | Billing; gerenciar abre `https://play.google.com/store/account/subscriptions?sku=pipoca_mensal&package=br.livia.pipocaaprende` |
 | `{tipo:'codigoRevisao', codigo}` | confere o código de revisão |
 | `{tipo:'abrirAjustesVoz'}` | `TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA` |
 | `{tipo:'abrirPrivacidade'}` | abre a URL da política no navegador |
@@ -360,7 +440,7 @@ O Android usa `WebViewCompat.addWebMessageListener(webView, "PipocaAndroid", set
 ## 11. App Android (pasta `aplicativo/`)
 
 - **Versões (fixas, conferidas no build)**: Gradle 8.13, Android Gradle Plugin 8.13.2, Kotlin 2.3.21, core 1.18.0, **compileSdk 36, targetSdk 36**, `minSdk 26`, buildTools 36.0.0, Java 17. Plano B se a opção A falhar: AGP 9.3 + Gradle 9.5 com Kotlin embutido e compileSdk 37 (já instalado). Dependências: `com.android.billingclient:billing:9.1.0`, `androidx.activity:activity` 1.13.x, `androidx.core:core` 1.17.x, `androidx.webkit:webkit` 1.18.x (recuar se pedirem compileSdk maior).
-- `applicationId`/namespace **`br.livia.pipocaconta`** (confirmar antes do primeiro envio; depois não muda). Uma `ComponentActivity`.
+- `applicationId`/namespace **`br.livia.pipocaaprende`** (trocado em novembro de 2026, antes do primeiro envio; depois de publicar não muda). Uma `ComponentActivity`.
 - **Manifesto**: `android:appCategory="game"` (mantém a tela deitada em tablets com target 36); `screenOrientation="sensorLandscape"`; `configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density|uiMode|keyboard|keyboardHidden|navigation"`; `<queries>` com `android.intent.action.TTS_SERVICE`; `usesCleartextTraffic="false"`; meta-data `android.webkit.WebView.MetricsOptOut=true`; **sem** `INTERNET` declarada pelo app (o manifesto mesclado é o que vale: conferir; se aparecer `AD_ID` ou localização, remover com `tools:node="remove"`); backup do progresso decidido em `dataExtractionRules`.
 - **WebView**: `javaScriptEnabled`, `domStorageEnabled`, `mediaPlaybackRequiresUserGesture=false`, `allowFileAccess=false`, `allowContentAccess=false`, `blockNetworkLoads=true`, zoom desligado, `textZoom=100`, sem toque longo; `shouldInterceptRequest` serve os assets de `https://appassets.androidplatform.net/` (e devolve 404, nunca null); `shouldOverrideUrlLoading` bloqueia outras origens; `onRenderProcessGone` recria a WebView; `setWebContentsDebuggingEnabled` só no debug. **A origem nunca muda entre versões** (é a chave do localStorage).
 - **Assets**: `jogo/` (sem `teste/`) entra no APK por `sourceSets`/tarefa de cópia, sem duplicar arquivos no repositório; inclui `fontes/LICENCA-Fredoka.txt`.
@@ -368,7 +448,7 @@ O Android usa `WebViewCompat.addWebMessageListener(webView, "PipocaAndroid", set
 - **Voltar**: `OnBackPressedCallback` ligado/desligado por `podeVoltar`; quando ligado, manda `voltar` ao JS; na abertura, desligado (o sistema faz o voltar preditivo).
 - **Voz**: `TextToSpeech` criado no `onCreate`, fala só depois do `onInit`; `setLanguage(Locale("pt","BR"))` tratando `LANG_MISSING_DATA`/`LANG_NOT_SUPPORTED`; preferir voz pt-BR com `isNetworkConnectionRequired == false`; pedidos antes do `onInit` ficam guardados; `UtteranceProgressListener` → `voz-fim` na thread principal; `stop()` no `onPause`, `shutdown()` no `onDestroy`.
 - **Billing**: seção 8. Cache em SharedPreferences. Código de revisão lido de `aplicativo/revisao.properties` (fora do git) para o `BuildConfig`.
-- **Build**: `gerar-apk.bat` (raiz do jogo) gera o APK de debug e copia para `Android/pipoca-conta/PipocaConta.apk`; `bundleRelease` gera o AAB assinado com a chave de upload (`aplicativo/keystore.properties`, fora do git). `local.properties` com `sdk.dir` (fora do git). Wrapper do Gradle gerado com uma distribuição do Gradle.
+- **Build**: `gerar-apk.bat` (raiz do jogo) gera o APK de debug e copia para `Android/pipoca-conta/PipocaAprende.apk`; `bundleRelease` gera o AAB assinado com a chave de upload (`aplicativo/keystore.properties`, fora do git). `local.properties` com `sdk.dir` (fora do git). Wrapper do Gradle gerado com uma distribuição do Gradle.
 
 ## 12. Testes
 
@@ -382,7 +462,7 @@ O Android usa `WebViewCompat.addWebMessageListener(webView, "PipocaAndroid", set
 Nenhum número flutuando; nenhuma cor ligada a quantidade; cubinhos sem rosto e sem reação; só a Pipoca fala; nenhuma palavra proibida; pintinhos com cara de ave; sons originais; figurinhas da seção 7.1.
 
 ## 14. Loja, privacidade e Google Play
-- Título "Pipoca Conta: números" (≤ 30 caracteres, sem "grátis"); descrição curta ≤ 80; descrição diz que as estações 1 a 4 são grátis e o resto exige assinatura mensal com teste de 7 dias. Sem palavras proibidas, sem "alternativa a/igual a". Ícone: rosto da Pipoca com a flor de ipê.
+- Título "Pipoca Aprende: letras e números" (≤ 30 caracteres, sem "grátis"); descrição curta ≤ 80; descrição diz que as estações 1 a 4 são grátis e o resto exige assinatura mensal com teste de 7 dias. Sem palavras proibidas, sem "alternativa a/igual a". Ícone: rosto da Pipoca com a flor de ipê.
 - **Política de privacidade** em `privacidade/index.html` (preencher nome e e-mail do desenvolvedor e publicar numa URL fixa). Segurança dos dados: "nenhum dado coletado nem compartilhado" (o Billing fala com o Google; não afirmar "sem internet nenhuma").
 - Política para Famílias: sem anúncios, sem SDKs de terceiros, compras só na área dos pais (portão), sem táticas de pressão. ECA Digital: supervisão (tempo de uso, limite diário, esconder ofertas), configuração protetora por padrão, sem caixas de recompensa. Play Age Signals: avaliar quando sair da fase beta (registrar no README).
 - Checklist do Play Console, texto em inglês do "Acesso ao app" e o plano de teste fechado (12 testadores × 14 dias para contas pessoais) ficam no README.

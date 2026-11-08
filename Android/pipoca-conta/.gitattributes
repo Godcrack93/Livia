@@ -1,0 +1,2 @@
+# Arquivos .bat do Windows precisam de CRLF (com LF o cmd lê os comandos pela metade)
+*.bat text eol=crlf
