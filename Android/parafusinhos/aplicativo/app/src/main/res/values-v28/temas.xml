@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 9+: a tela vai até a borda do recorte; a página recebe as margens seguras via CSS. -->
+    <style name="Tema.Parafusinhos" parent="Base.Tema.Parafusinhos">
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>

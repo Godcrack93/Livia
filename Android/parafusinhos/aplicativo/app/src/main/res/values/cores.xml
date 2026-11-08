@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mesmo azul do topo do jogo (variável CSS fundo-topo): sem clarão branco ao abrir. -->
+    <color name="fundo_jogo">#BFE3FF</color>
+    <color name="fundo_icone">#FFC857</color>
+</resources>

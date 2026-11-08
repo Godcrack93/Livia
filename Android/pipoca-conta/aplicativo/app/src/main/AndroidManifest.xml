@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pipoca Conta — manifesto (PROJETO.md, seção 11).
+     O app NÃO declara a permissão INTERNET: o jogo vem todo de dentro do APK e a WebView bloqueia a rede.
+     O manifesto mesclado é o que vale. Com a Billing 9.1.0 ele fica com:
+       com.android.vending.BILLING    (cobrança: conversa com o app da Play Store)
+       INTERNET e ACCESS_NETWORK_STATE (datatransport, que a biblioteca de cobrança usa para mandar os registros dela)
+       br.livia.pipocaconta.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION (androidx.core; interna, só o próprio app)
+     Confira de novo a cada atualização de biblioteca (app/build/intermediates/merged_manifest/). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- App para crianças: nada de identificador de publicidade nem localização, mesmo que alguma
+         biblioteca peça (Política para Famílias do Google Play). -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" tools:node="remove" />
+
+    <!-- A partir do Android 11, o app só enxerga os motores de voz (TextToSpeech) declarados aqui. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="true"
+        android:appCategory="game"
+        android:dataExtractionRules="@xml/regras_extracao"
+        android:enableOnBackInvokedCallback="true"
+        android:fullBackupContent="@xml/regras_backup"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/nome_app"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Tema.PipocaConta"
+        android:usesCleartextTraffic="false"
+        tools:targetApi="33">
+
+        <!-- A WebView não manda estatísticas de uso para o Google. -->
+        <meta-data
+            android:name="android.webkit.WebView.MetricsOptOut"
+            android:value="true" />
+        <!-- O conteúdo é só o jogo de dentro do APK (sem rede): a checagem de endereços do Safe Browsing não tem o que fazer. -->
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="false" />
+
+        <!-- configChanges: girar, mudar densidade, tema, teclado, tamanho da fonte ou idioma do sistema não recria a
+             tela (a WebView e o jogo continuam; o textZoom=100 já ignora a fonte do sistema).
+             sensorLandscape: sempre deitado. No Android 16, tablets ignoram a orientação fixa de apps comuns,
+             mas não a de jogos (appCategory="game", acima). -->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|density|uiMode|keyboard|keyboardHidden|navigation|fontScale|fontWeightAdjustment|locale|layoutDirection"
+            android:exported="true"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="adjustNothing|stateHidden"
+            tools:ignore="DiscouragedApi">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

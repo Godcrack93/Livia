@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ouvir as falas da Pipoca</title>
+<style>
+  :root { --fundo: #fffaf0; --tinta: #3a2a5a; --suave: #8a7fa0; --linha: #eadfcf; --destaque: #ffe08a; --ruim: #ffd6d6; --botao: #5cc84a; }
+  body { margin: 0; font: 16px/1.4 system-ui, sans-serif; background: var(--fundo); color: var(--tinta); }
+  header { position: sticky; top: 0; background: var(--fundo); border-bottom: 2px solid var(--linha); padding: 12px 16px; z-index: 1; }
+  h1 { margin: 0 0 8px; font-size: 20px; }
+  .barra { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button { font: inherit; border: 0; border-radius: 10px; padding: 6px 12px; background: var(--botao); color: #fff; cursor: pointer; }
+  button.leve { background: #e9e2f5; color: var(--tinta); }
+  input[type=search] { font: inherit; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--linha); min-width: 220px; }
+  #comando { font-family: ui-monospace, monospace; background: #fff; border: 1px solid var(--linha); border-radius: 8px; padding: 6px 10px; flex: 1; min-width: 240px; }
+  table { border-collapse: collapse; width: 100%; }
+  td { padding: 6px 10px; border-bottom: 1px solid var(--linha); vertical-align: middle; }
+  td.id { color: var(--suave); width: 3.5em; text-align: right; font-variant-numeric: tabular-nums; }
+  td.onde { color: var(--suave); width: 7em; font-size: 13px; }
+  td.tag { color: #9b6b00; font-size: 13px; width: 13em; }
+  tr.tocando { background: var(--destaque); }
+  tr.ruim { background: var(--ruim); }
+  tr.falta td.texto { color: var(--suave); font-style: italic; }
+  .vazio { padding: 40px 16px; color: var(--suave); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Falas da Pipoca</h1>
+  <div class="barra">
+    <button id="tudo">▶ Tocar em sequência</button>
+    <button id="parar" class="leve">■ Parar</button>
+    <input id="filtro" type="search" placeholder="Filtrar (texto, tag ou estação)">
+    <span id="resumo"></span>
+  </div>
+  <p style="margin:8px 0 0">Marque ✗ nas que ficaram estranhas. Depois rode este comando para regravar só elas:</p>
+  <div class="barra"><code id="comando">(nenhuma marcada)</code><button id="copiar" class="leve">Copiar</button></div>
+</header>
+<table><tbody id="lista"></tbody></table>
+<div id="vazio" class="vazio" hidden>Ainda não há lista. Rode o GERAR-VOZES.bat primeiro.</div>
+<script src="ouvir-dados.js"></script>
+<script>
+  const frases = (window.FRASES_PIPOCA || []);
+  const corpo = document.getElementById('lista');
+  const marcadas = new Set(JSON.parse(localStorageGet('pipoca-ruins') || '[]'));
+  function localStorageGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function salvar() { try { localStorage.setItem('pipoca-ruins', JSON.stringify([...marcadas])); } catch (e) { /* ok */ } atualizarComando(); }
+  const audio = new Audio();
+  let fila = [], linhaAtual = null;
+
+  function atualizarComando() {
+    const l = [...marcadas].sort((a, b) => a - b);
+    document.getElementById('comando').textContent = l.length ? 'GERAR-VOZES.bat --refazer ' + l.join(',') : '(nenhuma marcada)';
+  }
+
+  function tocar(f, tr) {
+    if (linhaAtual) linhaAtual.classList.remove('tocando');
+    linhaAtual = tr; tr.classList.add('tocando');
+    tr.scrollIntoView({ block: 'nearest' });
+    audio.src = '../jogo/vozes/' + f.arquivo + '?v=' + Date.now();
+    audio.play().catch(() => proxima());
+  }
+  function proxima() {
+    if (linhaAtual) linhaAtual.classList.remove('tocando');
+    const p = fila.shift();
+    if (p) tocar(p.f, p.tr); else linhaAtual = null;
+  }
+  audio.onended = () => setTimeout(proxima, 350);
+
+  function montar() {
+    corpo.innerHTML = '';
+    if (!frases.length) { document.getElementById('vazio').hidden = false; return; }
+    for (const f of frases) {
+      const tr = document.createElement('tr');
+      tr.dataset.busca = (f.texto + ' ' + f.tag + ' ' + f.onde).toLowerCase();
+      if (!f.gravada) tr.classList.add('falta');
+      if (marcadas.has(f.id)) tr.classList.add('ruim');
+      tr.innerHTML = '<td class="id"></td><td><button class="leve">▶</button></td><td class="texto"></td><td class="tag"></td><td class="onde"></td><td><button class="leve">✗</button></td>';
+      tr.children[0].textContent = f.id;
+      tr.children[2].textContent = f.texto + (f.gravada ? '' : '  (ainda não gravada)');
+      tr.children[3].textContent = f.tag;
+      tr.children[4].textContent = f.onde;
+      tr.children[1].firstChild.onclick = () => { fila = []; if (f.gravada) tocar(f, tr); };
+      tr.children[5].firstChild.onclick = () => {
+        if (marcadas.has(f.id)) marcadas.delete(f.id); else marcadas.add(f.id);
+        tr.classList.toggle('ruim', marcadas.has(f.id)); salvar();
+      };
+      tr._f = f;
+      corpo.appendChild(tr);
+    }
+    const g = frases.filter(f => f.gravada).length;
+    document.getElementById('resumo').textContent = `${g} de ${frases.length} gravadas`;
+  }
+
+  document.getElementById('tudo').onclick = () => {
+    const linhas = [...corpo.children].filter(tr => !tr.hidden && tr._f.gravada);
+    const inicio = linhaAtual ? Math.max(0, linhas.indexOf(linhaAtual)) : 0;
+    fila = linhas.slice(inicio).map(tr => ({ f: tr._f, tr }));
+    audio.pause(); proxima();
+  };
+  document.getElementById('parar').onclick = () => { fila = []; audio.pause(); if (linhaAtual) linhaAtual.classList.remove('tocando'); };
+  document.getElementById('filtro').oninput = ev => {
+    const q = ev.target.value.trim().toLowerCase();
+    for (const tr of corpo.children) tr.hidden = !!q && !tr.dataset.busca.includes(q);
+  };
+  document.getElementById('copiar').onclick = () => {
+    const t = document.getElementById('comando').textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(t).catch(() => {});
+  };
+  montar(); atualizarComando();
+</script>
+</body>
+</html>

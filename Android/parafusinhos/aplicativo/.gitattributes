@@ -1,0 +1,4 @@
+# O gradlew roda no bash e quebra com CRLF (o Git deste PC usa autocrlf=true).
+gradlew text eol=lf
+*.bat text eol=crlf
+*.jar binary

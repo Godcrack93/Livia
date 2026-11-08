@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Medalhões das estações</title>
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; padding: 24px; background: #CFEAFF; font-family: Fredoka, sans-serif; color: #3A2A5A; }
+  h1 { margin: 0 0 6px; font-size: 28px; }
+  .grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 18px; }
+  .item { background: #ffffffaa; border-radius: 22px; padding: 14px; }
+  .item h2 { margin: 0 0 10px; font-size: 17px; font-weight: 600; }
+  .linha { display: flex; gap: 14px; align-items: center; }
+  .rot { font-size: 12px; text-align: center; margin-top: 4px; }
+  .disco { width: 140px; height: 140px; border-radius: 50%; display: grid; place-items: center; background: #fff; border: 6px solid #3A2A5A;
+    box-shadow: inset 0 0 0 10px var(--cor), 0 9px 0 rgba(58, 42, 90, .3); box-sizing: border-box; }
+  .disco.velho svg { width: 80px; height: 80px; }
+  .disco.novo svg { width: 108px; height: 108px; border-radius: 50%; display: block; }
+  .disco.peq { width: 100px; height: 100px; border-width: 5px; box-shadow: inset 0 0 0 7px #CFCADB; }
+  .disco.peq svg { width: 78px !important; height: 78px !important; }
+  .disco.fechado { background: #ECE9F1; border-color: #8D86A3; box-shadow: inset 0 0 0 10px #CFCADB, 0 9px 0 rgba(58, 42, 90, .16); }
+  .disco.fechado svg { filter: saturate(.3) brightness(1.12) contrast(.85); }
+  body.zoom .disco:not(.peq) { width: 300px; height: 300px; border-width: 10px; box-shadow: inset 0 0 0 18px var(--cor); }
+  body.zoom .disco.novo svg { width: 246px; height: 246px; }
+  body.zoom .disco.velho svg { width: 170px; height: 170px; }
+  body.zoom .grade { grid-template-columns: repeat(auto-fill, minmax(700px, 1fr)); }
+</style>
+</head>
+<body>
+<h1>Medalhões das estações: antes × depois</h1>
+<p>Cada estação: ícone atual, medalhão novo, medalhão fechado (sem assinatura) e o novo no tamanho de um celular pequeno.</p>
+<div class="grade" id="grade"></div>
+<script src="../js/nucleo.js"></script>
+<script src="../js/arte.js"></script>
+<script src="../js/medalhoes.js"></script>
+<script>window.PC.atividades = window.PC.atividades || { obter: () => null };</script>
+<script src="../js/fases.js"></script>
+<script>
+  const g = document.getElementById('grade');
+  if (location.search.includes('zoom')) document.body.classList.add('zoom');
+  const so = (location.search.match(/so=([\d,]+)/) || [])[1];
+  for (const f of PC.fases) {
+    if (so && !so.split(',').includes(String(f.n))) continue;
+    const reg = PC.regioes.find(r => r.id === f.regiao);
+    const d = document.createElement('div');
+    d.className = 'item';
+    d.style.setProperty('--cor', reg.cor);
+    d.innerHTML = `<h2>${f.n}. ${f.atividade} ${f.params.modo ? '(' + f.params.modo + ')' : ''}</h2><div class="linha">
+      <div><div class="disco velho">${PC.arte.icone(f.atividade)}</div><div class="rot">antes</div></div>
+      <div><div class="disco novo">${PC.arte.medalhao(f)}</div><div class="rot">depois</div></div>
+      <div><div class="disco novo fechado peq">${PC.arte.medalhao(f)}</div><div class="rot">fechado</div></div></div>`;
+    g.appendChild(d);
+  }
+</script>
+</body>
+</html>

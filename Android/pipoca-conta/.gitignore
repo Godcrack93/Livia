@@ -1,0 +1,27 @@
+# Pipoca Conta — arquivos que não vão para o git.
+
+# Configurações locais e segredos (modelos: aplicativo/*.properties.example)
+local.properties
+revisao.properties
+keystore.properties
+*.jks
+*.keystore
+
+# Gerados pelo Gradle, pelo Kotlin e pelo Android Studio
+build/
+.gradle/
+.kotlin/
+.idea/
+*.iml
+captures/
+.cxx/
+
+# Pacotes gerados (gerar-apk.bat e bundleRelease)
+*.apk
+*.aab
+
+# Fotos e relatórios dos testes automáticos
+ferramentas/saida/
+
+# Chave do ElevenLabs (cada um usa a sua; nunca vai para o git)
+gravacao/chave-elevenlabs.txt

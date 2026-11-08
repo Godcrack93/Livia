@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Pipoca: propostas</title>
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; padding: 20px; background: #DFF3D2; font-family: Fredoka, sans-serif; color: #3A2A5A; }
+  .grade { display: flex; gap: 16px; }
+  .item { background: #ffffffaa; border-radius: 22px; padding: 12px; text-align: center; width: 320px; }
+  .item svg { width: 300px; height: 324px; }
+  h2 { margin: 6px 0 2px; font-size: 22px; }
+  p { margin: 0; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="grade" id="grade"></div>
+<script src="../js/nucleo.js"></script>
+<script src="../js/arte.js"></script>
+<script>
+const T = '#3A2A5A', CORPO = '#C98A55', SOMBRA = '#A9703F', BARRIGA = '#EBC594', FOC = '#B57844', ESC = '#2B1A2E';
+const c = (x, y, r, cor, sw = 5) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${cor}"${sw ? ` stroke="${T}" stroke-width="${sw}"` : ''}/>`;
+const e = (x, y, rx, ry, cor, sw = 5, rot = 0) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ''} fill="${cor}"${sw ? ` stroke="${T}" stroke-width="${sw}"` : ''}/>`;
+const p = (d, cor, sw = 5) => `<path d="${d}" fill="${cor}"${sw ? ` stroke="${T}" stroke-width="${sw}" stroke-linejoin="round"` : ''}/>`;
+const l = (d, cor = T, sw = 5) => `<path d="${d}" fill="none" stroke="${cor}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const tc = (d, cor, w) => l(d, T, w + 10) + l(d, cor, w);
+const brilho = (x, y, rx, ry, rot = 0, op = .2) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(${rot} ${x} ${y})" fill="#fff" opacity="${op}"/>`;
+const boch = (x, y, rx = 10, ry = 6) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#FF8FA0" opacity=".45"/>`;
+// olhinho calmo de capivara: pálpebra baixa e dois brilhos
+const olho = (x, y, r = 8) => `<path d="M${x - r} ${y - r * .3} C ${x - r * .85} ${y - r} ${x + r * .85} ${y - r} ${x + r} ${y - r * .3} C ${x + r * 1.1} ${y + r * .7} ${x + r * .55} ${y + r * 1.15} ${x} ${y + r * 1.15} C ${x - r * .55} ${y + r * 1.15} ${x - r * 1.1} ${y + r * .7} ${x - r} ${y - r * .3} Z" fill="${T}"/>` +
+  c(x + r * .36, y - r * .1, r * .4, '#fff', 0) + `<circle cx="${x - r * .35}" cy="${y + r * .6}" r="${r * .18}" fill="#fff" opacity=".8"/>`;
+const flor = (x, y, s = .8, rot = 14) => {
+  const svg = PC.arte.flor();
+  return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">${svg.slice(svg.indexOf('>') + 1, svg.lastIndexOf('</svg>'))}</g>`;
+};
+const dente = (x, y, h = 8) => `<rect x="${x}" y="${y}" width="5.6" height="${h}" rx="1.6" fill="#fff" stroke="${T}" stroke-width="1.8"/>`;
+const sombraChao = `<ellipse cx="125" cy="263" rx="92" ry="8" fill="rgba(58,42,90,.18)"/>`;
+const pe = (x, y) => e(x, y, 22, 10, SOMBRA) + l(`M${x - 7} ${y + 1} v 6 M${x + 7} ${y + 1} v 6`, T, 2.6);
+const svg = s => `<svg viewBox="0 0 250 270" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+const cilios = (x, y, lado) => l(`M${x + lado * 7} ${y - 6} l ${lado * 5} -4 M${x + lado * 9} ${y - 1} l ${lado * 6} -1`, T, 3);
+const perna = (x, y1, y2, cor, w) => tc(`M${x} ${y1} L ${x} ${y2}`, cor, w);
+
+// ---------------------------------------------------------------- Girafa: alta, de pescoção, em pé nas quatro patas
+const girafa = () => {
+  const AM = '#F7C55C', MA = '#D9853A', CL = '#FDE7B8', CAS = '#7A4A2A';
+  const mancha = (x, y, s) => p(`M${x - 8 * s} ${y - 4 * s} L ${x - 1 * s} ${y - 9 * s} L ${x + 8 * s} ${y - 5 * s} L ${x + 9 * s} ${y + 4 * s} L ${x + 1 * s} ${y + 9 * s} L ${x - 8 * s} ${y + 5 * s} Z`, MA, 0);
+  const pesc = 'M96 176 C 104 132 128 98 150 72 L 182 84 C 164 108 148 140 140 182 Z';
+  const cab = 'M146 56 C 144 36 160 24 178 26 C 196 28 212 42 218 60 C 222 76 214 90 198 90 L 172 90 C 156 88 148 72 146 56 Z';
+  return svg(sombraChao +
+    perna(62, 180, 246, AM, 11) + perna(118, 184, 246, AM, 11) +
+    e(62, 252, 9, 7, CAS) + e(118, 252, 9, 7, CAS) +
+    tc('M34 166 C 24 176 22 188 26 198', AM, 5) + e(26, 202, 6, 9, CAS, 4) +
+    e(84, 172, 56, 30, AM) + mancha(60, 166, 1.2) + mancha(90, 160, 1) + mancha(70, 186, .9) + mancha(110, 178, 1) + mancha(40, 178, .8) +
+    e(84, 172, 56, 30, 'none') + brilho(70, 152, 24, 6, -6, .3) +
+    perna(80, 190, 246, AM, 11) + perna(134, 186, 246, AM, 11) +
+    e(80, 252, 9, 7, CAS) + e(134, 252, 9, 7, CAS) +
+    p(pesc, AM) + mancha(126, 128, .9) + mancha(146, 100, .8) + mancha(118, 160, .9) + p(pesc, 'none') +
+    l('M150 74 C 130 98 112 128 100 168', CAS, 6) + l('M150 74 C 130 98 112 128 100 168', MA, 3) +
+    tc('M168 32 L 164 10', AM, 7) + c(164, 9, 7, CAS) + tc('M186 30 L 188 8', AM, 7) + c(188, 7, 7, CAS) +
+    e(144, 46, 16, 7, AM, 5, -20) + e(144, 46, 8, 3, '#F4A3AE', 0, -20) +
+    p(cab, AM) + p('M190 56 C 206 52 220 62 218 76 C 216 86 208 90 198 90 L 186 90 C 182 78 182 62 190 56 Z', CL, 0) + p(cab, 'none') +
+    mancha(170, 40, .6) + brilho(168, 36, 10, 4, -20, .35) +
+    olho(176, 56, 8) + cilios(176, 56, -1) + boch(172, 74, 8, 5) +
+    e(210, 66, 2.8, 4.2, ESC, 0, 20) + l('M200 80 Q 207 85 214 80', T, 3.5) +
+    flor(130, 34, .7, -20));
+};
+
+// ---------------------------------------------------------------- Elefantinho: redondão, de lado, tromba para cima
+const elefante = () => {
+  const CZ = '#A9B5DA', ES = '#8894BF', RS = '#F4B6C8';
+  const pata = x => perna(x, 196, 244, CZ, 24) + e(x, 250, 16, 8, CZ) + c(x - 6, 252, 2.6, '#fff', 0) + c(x + 6, 252, 2.6, '#fff', 0);
+  return svg(sombraChao +
+    pata(58) + pata(138) +
+    tc('M30 160 C 20 172 20 184 24 192', CZ, 5) + l('M20 192 l 4 8 M26 192 l 0 8', T, 3) +
+    e(96, 168, 72, 52, CZ) + brilho(76, 136, 30, 9, -10, .3) + l('M52 188 Q 70 200 92 198', ES, 3) +
+    pata(84) + pata(160) +
+    c(176, 110, 50, CZ) +
+    // tromba levantada, de festa
+    tc('M212 126 C 226 120 232 102 226 84 C 222 72 228 62 236 64', CZ, 18) + l('M222 122 l 4 6 M230 112 l 6 3', ES, 3) +
+    e(150, 116, 32, 42, CZ, 5, -8) + e(152, 118, 20, 30, RS, 0, -8) +
+    p('M196 140 C 200 150 206 154 212 152', '#fff', 4) +
+    olho(192, 100, 8.5) + boch(196, 120, 8, 5) +
+    l('M200 136 Q 206 140 210 136', T, 3.5) +
+    brilho(172, 72, 16, 6, -20, .3) +
+    flor(170, 58, .78, -10));
+};
+
+// ---------------------------------------------------------------- Macaquinho: cabeção, braços compridos e rabo enrolado
+const macaco = () => {
+  const MR = '#9A6338', CL = '#F3D3A8', ES = '#7A4A2A';
+  return svg(sombraChao +
+    tc('M150 236 C 196 242 222 206 204 180 C 192 164 170 174 176 190 C 180 200 192 198 192 190', MR, 10) +
+    e(125, 204, 40, 46, MR) + e(125, 214, 25, 30, CL, 0) + brilho(106, 182, 10, 6, -30, .3) +
+    e(100, 238, 20, 16, MR) + e(150, 238, 20, 16, MR) +
+    e(92, 252, 17, 8, CL) + e(158, 252, 17, 8, CL) +
+    tc('M96 182 C 82 200 92 220 108 220', MR, 12) + c(110, 220, 8, CL, 4) +
+    tc('M158 182 C 186 170 202 150 208 128', MR, 12) + c(210, 120, 10, CL, 4) +
+    l('M206 112 l -2 -5 M212 111 l 0 -6 M218 114 l 2 -5', T, 3) +
+    '<g transform="translate(0 18)">' + c(72, 104, 17, MR) + c(72, 104, 9, CL, 0) + c(178, 104, 17, MR) + c(178, 104, 9, CL, 0) +
+    c(125, 100, 50, MR) +
+    l('M116 52 q 4 -10 12 -8 M128 52 q 2 -12 12 -10', MR, 7) + l('M116 52 q 4 -10 12 -8 M128 52 q 2 -12 12 -10', T, 2) +
+    p('M125 92 C 112 70 80 74 82 100 C 84 128 104 146 125 146 C 146 146 166 128 168 100 C 170 74 138 70 125 92 Z', CL, 0) +
+    brilho(104, 66, 16, 6, -20, .3) +
+    olho(108, 100, 8.5) + olho(142, 100, 8.5) +
+    c(120, 118, 2.6, ES, 0) + c(130, 118, 2.6, ES, 0) +
+    l('M108 126 Q 125 142 142 126', T, 4.5) + boch(96, 120, 8, 5) + boch(154, 120, 8, 5) +
+    flor(162, 60, .78) + '</g>');
+};
+
+const itens = [
+  ['Girafa', 'Alta, de pescoção, em pé nas quatro patas', girafa()],
+  ['Elefantinho', 'Redondão, de lado, com a tromba erguida', elefante()],
+  ['Macaquinha', 'Sentada, braço comprido acenando e rabo enrolado', macaco()],
+];
+for (const [t, d, s] of itens) {
+  const el = document.createElement('div');
+  el.className = 'item';
+  el.innerHTML = s + `<h2>${t}</h2><p>${d}</p>`;
+  document.getElementById('grade').appendChild(el);
+}
+</script>
+</body>
+</html>

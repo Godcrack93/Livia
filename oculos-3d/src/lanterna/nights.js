@@ -1,0 +1,132 @@
+// As cinco noites. Para uma noite nova: um objeto aqui (os tipos de fantasma ficam em ghosts.js).
+// approach: segundos do nascimento até o fantasma chegar; gap: intervalo entre nascimentos;
+// arc: a que distância do olhar (em radianos) eles podem nascer; intro: tipo novo apresentado pela coruja.
+export const NIGHTS = [
+  {
+    name: ["Primeiros", "fantasminhas"],
+    duration: 110,
+    approach: 12,
+    max: 1,
+    gap: [6, 8],
+    arc: [0.7, 1.5],
+    cone: 0.46,
+    types: { bolota: 1 },
+  },
+  {
+    name: ["Atrás", "de você!"],
+    duration: 135,
+    approach: 11,
+    max: 2,
+    gap: [4.6, 6.4],
+    arc: [0.7, Math.PI],
+    cone: 0.44,
+    types: { bolota: 3, pipoca: 2, sorrateiro: 2 },
+    intro: "sorrateiro",
+  },
+  {
+    name: ["Esconde-", "-esconde"],
+    duration: 150,
+    approach: 10.5,
+    max: 2,
+    gap: [4.2, 6],
+    arc: [0.7, Math.PI],
+    cone: 0.42,
+    types: { bolota: 2, pipoca: 2, sorrateiro: 2, timida: 3 },
+    intro: "timida",
+  },
+  {
+    name: ["Batatinha", "frita 1, 2, 3"],
+    duration: 160,
+    approach: 10,
+    max: 3,
+    gap: [3.8, 5.6],
+    arc: [0.7, Math.PI],
+    cone: 0.4,
+    types: { bolota: 2, pipoca: 2, sorrateiro: 2, timida: 2, sombra: 3 },
+    intro: "sombra",
+  },
+  {
+    name: ["Fantasmão", "Soneca"],
+    duration: 175,
+    approach: 9.5,
+    max: 3,
+    gap: [3.6, 5.2],
+    arc: [0.7, Math.PI],
+    cone: 0.4,
+    types: { bolota: 2, pipoca: 2, sorrateiro: 2, timida: 2, sombra: 2 },
+    boss: "soneca",
+  },
+];
+
+// Ritmo de montanha-russa de cada noite (frações da duração): calma, onda, respiro, onda, silêncio, final.
+export const PHASES = [
+  { until: 0.08, rate: 0 },
+  { until: 0.42, rate: 1 },
+  { until: 0.52, rate: 0 },
+  { until: 0.8, rate: 1.2 },
+  { until: 0.88, rate: 0.7, sneaky: true },
+  { until: 1, rate: 1.5, final: true },
+];
+
+// Níveis de susto. boo: distância do "BUU!" (0 = sem BUU); scary: cara assustadora no escuro;
+// eyes: pares de olhos no escuro; moon: força do luar; failure: a lanterna falha uma vez; pairs: fantasmas em dupla.
+export const LEVELS = [
+  {
+    label: "SEM SUSTO",
+    color: ["#8ce99a", "#2f9e44"],
+    boo: 0,
+    scary: false,
+    eyes: 0,
+    hush: false,
+    falseAlarm: false,
+    heartbeat: false,
+    detune: 0,
+    moon: 1.3,
+    failure: false,
+    pairs: false,
+  },
+  {
+    label: "SUSTINHO",
+    color: ["#74c0fc", "#1c7ed6"],
+    boo: 1.5,
+    scary: false,
+    eyes: 0,
+    hush: true,
+    falseAlarm: false,
+    heartbeat: false,
+    detune: 0,
+    moon: 1.05,
+    failure: false,
+    pairs: false,
+  },
+  {
+    label: "MEDINHO",
+    color: ["#b197fc", "#7048e8"],
+    boo: 1.2,
+    scary: true,
+    eyes: 2,
+    hush: true,
+    falseAlarm: true,
+    heartbeat: true,
+    detune: 14,
+    moon: 0.8,
+    failure: false,
+    pairs: false,
+  },
+  {
+    label: "SUSTÃO",
+    color: ["#ff8787", "#c92a2a"],
+    boo: 1.0,
+    scary: true,
+    eyes: 4,
+    hush: true,
+    falseAlarm: true,
+    heartbeat: true,
+    detune: 22,
+    moon: 0.62,
+    failure: true,
+    pairs: true,
+  },
+];
+
+export const DEFAULT_LEVEL = 2;

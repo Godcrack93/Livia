@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nenhuma <uses-permission>: o jogo vem inteiro dos assets do APK, sem internet. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+    Sem backup na nuvem. A partir do Android 12 a transferência direta para um celular novo
+    continua levando o progresso, o que aqui é desejável (por isso não há dataExtractionRules).
+    O voltar com OnBackInvokedCallback só existe do Android 13 em diante (targetApi 33).
+    appCategory "game": no Android 16, em telas grandes (tablets, dobráveis abertos), apps com
+    targetSdk 36 perdem a trava de orientação, exceto os jogos; assim o jogo continua em pé.
+    -->
+    <application
+        android:allowBackup="false"
+        android:appCategory="game"
+        android:enableOnBackInvokedCallback="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/nome_app"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/Tema.Parafusinhos"
+        tools:ignore="DataExtractionRules"
+        tools:targetApi="33">
+
+        <!-- Sem telemetria do WebView nem consultas ao Safe Browsing: o conteúdo é todo local. -->
+        <meta-data
+            android:name="android.webkit.WebView.MetricsOptOut"
+            android:value="true" />
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="false" />
+
+        <!-- O jogo é desenhado como uma coluna em pé: só retrato. -->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|uiMode|density|fontScale|layoutDirection|locale"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

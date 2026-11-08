@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base comum; values-v28 acrescenta o desenho na área do recorte da câmera. -->
+    <style name="Base.Tema.Parafusinhos" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/fundo_jogo</item>
+        <!-- Cor das barras só até o Android 14; do 15 em diante o app é de ponta a ponta e o
+             sistema as desenha transparentes. -->
+        <item name="android:statusBarColor">@color/fundo_jogo</item>
+        <item name="android:navigationBarColor">@color/fundo_jogo</item>
+        <!-- Ícones escuros quando a barra aparece por cima do fundo claro. -->
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Tema.Parafusinhos" parent="Base.Tema.Parafusinhos" />
+</resources>

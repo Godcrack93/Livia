@@ -1,0 +1,12 @@
+# Pipoca Conta — configurações que NÃO vão para o git.
+# Copie este arquivo para "revisao.properties" (na mesma pasta) e preencha. Depois gere o app de novo.
+
+# Código de acesso para a equipe de revisão do Google Play (área dos pais > "Tenho um código de acesso").
+# Libera tudo por 30 dias naquele aparelho. Use letras e números (maiúsculas e minúsculas valem igual),
+# troque a cada versão e escreva o mesmo código no texto de "Acesso ao app" do Play Console (veja o README).
+# Vazio = o acesso de revisão fica desligado. O app guarda só um resumo (SHA-256) do código, nunca o código.
+CODIGO_REVISAO=
+
+# Endereço público (https) da política de privacidade (privacidade/index.html publicado numa URL fixa).
+# Vazio = o botão "Ver a política completa" da área dos pais não abre nada.
+PRIVACIDADE_URL=

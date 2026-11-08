@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { createAudio as createBolhasAudio } from "./bolhas/audio.js";
 import { createHub } from "./hub/vr-hub.js";
 import { createAudio as createLabirintoAudio } from "./labirinto/audio.js";
+import { createAudio as createLanternaAudio } from "./lanterna/audio.js";
 import { updatePointScale } from "./shared/points.js";
 import { HIGH, setHigh } from "./shared/quality.js";
 import { createStats } from "./shared/stats.js";
@@ -25,6 +26,7 @@ const LABIRINTO_KEY = "labirinto-progresso";
 const LOADERS = {
   bolhas: () => import("./bolhas/index.js").then((m) => m.createBolhas(context("bolhas"))),
   labirinto: () => import("./labirinto/index.js").then((m) => m.createLabirinto(context("labirinto"))),
+  lanterna: () => import("./lanterna/index.js").then((m) => m.createLanterna(context("lanterna"))),
 };
 
 const canvas = document.querySelector("#view");
@@ -51,7 +53,7 @@ vr.rig.rotation.order = "YXZ";
 const stats = createStats(renderer, HIGH ? "bonitos" : "leves");
 qualityBtn.textContent = HIGH ? "Gráficos: bonitos" : "Gráficos: leves";
 
-const audios = { bolhas: createBolhasAudio(), labirinto: createLabirintoAudio() };
+const audios = { bolhas: createBolhasAudio(), labirinto: createLabirintoAudio(), lanterna: createLanternaAudio() };
 const hub = createHub({ vr, audio: audios.bolhas, onPick: pick });
 setSound(readFlag(SOUND_KEY, true));
 
@@ -211,6 +213,7 @@ resetBtn.addEventListener("click", () => {
 setTimeout(() => {
   void import("./bolhas/index.js").catch(() => undefined);
   void import("./labirinto/index.js").catch(() => undefined);
+  void import("./lanterna/index.js").catch(() => undefined);
 }, 1500);
 
 const clock = new THREE.Clock();

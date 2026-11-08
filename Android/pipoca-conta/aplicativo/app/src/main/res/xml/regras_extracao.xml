@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Backup (Android 12 ou mais novo). Decisão (PROJETO.md, seção 11): vai SÓ o progresso do jogo, que mora no
+     localStorage da WebView (estações, figurinhas, ajustes e tempo de uso), para a criança não perder o álbum ao
+     trocar de aparelho. Na nuvem, só com criptografia de ponta a ponta (aparelho com bloqueio de tela).
+     Fica de fora todo o resto, inclusive o cache da assinatura e o acesso de revisão (SharedPreferences): num
+     aparelho novo, quem decide a assinatura é o Google Play. -->
+<data-extraction-rules>
+    <cloud-backup disableIfNoEncryptionCapabilities="true">
+        <include domain="root" path="app_webview/Default/Local Storage/" />
+        <include domain="root" path="app_webview/Local Storage/" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="root" path="app_webview/Default/Local Storage/" />
+        <include domain="root" path="app_webview/Local Storage/" />
+    </device-transfer>
+</data-extraction-rules>

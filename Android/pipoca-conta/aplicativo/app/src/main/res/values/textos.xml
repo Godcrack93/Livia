@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nome_app">Pipoca Conta</string>
+    <!-- Só aparece se a WebView do aparelho for antiga demais para a ponte com o jogo (Android System WebView < 82). -->
+    <string name="aviso_webview">Para jogar o Pipoca Conta, atualize o \"Android System WebView\" (ou o Google Chrome) na Play Store e abra o jogo de novo.</string>
+</resources>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Pipoca: propostas</title>
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; padding: 20px; background: #DFF3D2; font-family: Fredoka, sans-serif; color: #3A2A5A; }
+  .grade { display: flex; gap: 16px; }
+  .item { background: #ffffffaa; border-radius: 22px; padding: 12px; text-align: center; width: 320px; }
+  .item svg { width: 300px; height: 324px; }
+  h2 { margin: 6px 0 2px; font-size: 22px; }
+  p { margin: 0; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="grade" id="grade"></div>
+<script src="../js/nucleo.js"></script>
+<script src="../js/arte.js"></script>
+<script>
+const T = '#3A2A5A', CORPO = '#C98A55', SOMBRA = '#A9703F', BARRIGA = '#EBC594', FOC = '#B57844', ESC = '#2B1A2E';
+const c = (x, y, r, cor, sw = 5) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${cor}"${sw ? ` stroke="${T}" stroke-width="${sw}"` : ''}/>`;
+const e = (x, y, rx, ry, cor, sw = 5, rot = 0) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ''} fill="${cor}"${sw ? ` stroke="${T}" stroke-width="${sw}"` : ''}/>`;
+const p = (d, cor, sw = 5) => `<path d="${d}" fill="${cor}"${sw ? ` stroke="${T}" stroke-width="${sw}" stroke-linejoin="round"` : ''}/>`;
+const l = (d, cor = T, sw = 5) => `<path d="${d}" fill="none" stroke="${cor}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const tc = (d, cor, w) => l(d, T, w + 10) + l(d, cor, w);
+const brilho = (x, y, rx, ry, rot = 0, op = .2) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(${rot} ${x} ${y})" fill="#fff" opacity="${op}"/>`;
+const boch = (x, y, rx = 10, ry = 6) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#FF8FA0" opacity=".45"/>`;
+// olhinho calmo de capivara: pálpebra baixa e dois brilhos
+const olho = (x, y, r = 8) => `<path d="M${x - r} ${y - r * .3} C ${x - r * .85} ${y - r} ${x + r * .85} ${y - r} ${x + r} ${y - r * .3} C ${x + r * 1.1} ${y + r * .7} ${x + r * .55} ${y + r * 1.15} ${x} ${y + r * 1.15} C ${x - r * .55} ${y + r * 1.15} ${x - r * 1.1} ${y + r * .7} ${x - r} ${y - r * .3} Z" fill="${T}"/>` +
+  c(x + r * .36, y - r * .1, r * .4, '#fff', 0) + `<circle cx="${x - r * .35}" cy="${y + r * .6}" r="${r * .18}" fill="#fff" opacity=".8"/>`;
+const flor = (x, y, s = .8, rot = 14) => {
+  const svg = PC.arte.flor();
+  return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">${svg.slice(svg.indexOf('>') + 1, svg.lastIndexOf('</svg>'))}</g>`;
+};
+const dente = (x, y, h = 8) => `<rect x="${x}" y="${y}" width="5.6" height="${h}" rx="1.6" fill="#fff" stroke="${T}" stroke-width="1.8"/>`;
+const sombraChao = `<ellipse cx="125" cy="263" rx="92" ry="8" fill="rgba(58,42,90,.18)"/>`;
+const pe = (x, y) => e(x, y, 22, 10, SOMBRA) + l(`M${x - 7} ${y + 1} v 6 M${x + 7} ${y + 1} v 6`, T, 2.6);
+const svg = s => `<svg viewBox="0 0 250 270" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+
+// Cabeça "feijão" de lado (inspirada na referência): nuca alta e redonda, focinho grande e rombudo na frente,
+// num tom mais escuro, narina em risquinho, boquinha em "w", olhinho pequeno e orelhinha lá atrás.
+const CAB = 'M44 120 C 40 74 72 34 120 32 C 164 30 200 56 214 92 C 222 112 224 134 212 150 C 202 162 182 166 162 166 L 86 168 C 60 168 46 148 44 120 Z';
+const FOCINHO = 'M158 64 C 194 60 224 88 224 122 C 224 148 204 166 174 166 C 148 166 134 144 136 118 C 138 90 144 68 158 64 Z';
+function cabeca(o) {
+  const olhos = o.olho === 'calmo'
+    ? l('M116 92 Q 128 82 140 92', T, 5.5)
+    : olho(130, 88, 9);
+  return e(82, 46, 13, 11, SOMBRA, 5, -24) + e(82, 46, 6, 5, '#7A4A2A', 0, -24) +
+    p(CAB, CORPO) + p(FOCINHO, '#AE6E40', 0) + brilho(186, 78, 12, 5, 30, .2) + p(CAB, 'none') +
+    brilho(96, 50, 26, 8, -18) +
+    l('M66 116 q 5 6 3 13 M78 130 q 4 5 2 11 M60 98 q 4 5 3 11', '#A9703F', 3.2) +
+    olhos + boch(118, 118, 10, 6) +
+    e(208, 98, 3.4, 5.6, ESC, 0, 28) +
+    l('M207 106 Q 204 118 194 126', '#7A4A2A', 3) +
+    (o.boca === 'aberta'
+      ? p('M176 132 Q 192 152 208 130 Q 192 136 176 132 Z', '#4A1F2A', 4) + dente(187, 133, 6) + dente(192.8, 133, 6)
+      : l('M174 130 Q 181 137 188 131 Q 195 137 202 130', T, 4.5)) +
+    flor(118, 30, .8, -12);
+}
+// em pé, de pelúcia (como a Pipoca de hoje, mas de cabeça de lado)
+const emPe = o => svg(sombraChao +
+  p('M60 214 C 58 178 88 158 126 158 C 166 158 196 180 194 216 C 192 246 164 257 126 257 C 88 257 62 246 60 214 Z', CORPO) +
+  e(130, 222, 40, 28, BARRIGA, 0) +
+  (o.bracos === 'cima'
+    ? tc('M84 190 C 68 180 58 164 52 148', '#BD7F4C', 20) + tc('M170 190 C 186 180 198 168 210 156', '#BD7F4C', 20)
+    : tc('M96 188 C 92 202 96 212 108 214', '#BD7F4C', 20) + tc('M162 188 C 166 202 162 212 150 214', '#BD7F4C', 20)) +
+  pe(96, 252) + pe(158, 252) + cabeca(o));
+// sentadinha de lado, como capivara de verdade (corpo de pão atrás da cabeça)
+const sentada = o => svg(sombraChao +
+  p('M18 206 C 16 172 44 152 84 152 L 132 152 C 168 152 190 176 188 210 C 186 242 166 256 136 256 L 56 256 C 30 256 20 236 18 206 Z', CORPO) +
+  e(108, 240, 54, 12, BARRIGA, 0) + l('M48 206 Q 56 180 86 174', '#A9703F', 4) + brilho(56, 170, 22, 7, -18) +
+  e(48, 252, 24, 9, SOMBRA) +
+  tc('M150 196 L 148 244', '#BD7F4C', 22) + e(150, 252, 17, 8, SOMBRA) +
+  tc('M178 196 L 180 244', '#BD7F4C', 22) + e(182, 252, 17, 8, SOMBRA) +
+  `<g transform="translate(20 0)">${cabeca(o)}</g>`);
+
+const itens = [
+  ['Hoje', 'A atual', PC.arte.pipoca('normal')],
+  ['1 · Em pé, olhinho aberto', 'Cabeça de lado, como na referência; as poses de hoje continuam', emPe({})],
+  ['2 · Em pé, olhinho calmo', 'O olhar tranquilo da referência; falando e de braços para cima', emPe({ olho: 'calmo', boca: 'aberta', bracos: 'cima' })],
+  ['3 · Sentadinha', 'Corpo de capivara de verdade, deitado atrás da cabeça', sentada({})],
+];
+for (const [t, d, s] of itens) {
+  const el = document.createElement('div');
+  el.className = 'item';
+  el.innerHTML = s + `<h2>${t}</h2><p>${d}</p>`;
+  document.getElementById('grade').appendChild(el);
+}
+</script>
+</body>
+</html>

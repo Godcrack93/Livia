@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "parafusinhos",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5180", "--bind", "127.0.0.1", "--directory", "C:\\ProjetosCursor\\Livia\\Android\\parafusinhos\\jogo"],
+      "port": 5180
+    },
+    {
+      "name": "pipoca-conta",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["C:\\ProjetosCursor\\Livia\\Android\\pipoca-conta\\ferramentas\\servidor.mjs", "--porta=5181"],
+      "port": 5181
+    }
+  ]
+}

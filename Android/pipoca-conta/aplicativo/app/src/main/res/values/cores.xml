@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Céu das telas do jogo (o mesmo theme-color do jogo/index.html): evita o clarão branco ao abrir. -->
+    <color name="fundo">#BFE8FF</color>
+    <!-- Contorno e tinta do jogo (PC.cores.tinta). -->
+    <color name="tinta">#3A2A5A</color>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Backup no Android 8 a 11: a mesma decisão de regras_extracao.xml (só o progresso do jogo, guardado no
+     localStorage da WebView; o cache da assinatura e o acesso de revisão ficam de fora). -->
+<full-backup-content>
+    <include domain="root" path="app_webview/Default/Local Storage/" requireFlags="clientSideEncryption" />
+    <include domain="root" path="app_webview/Local Storage/" requireFlags="clientSideEncryption" />
+</full-backup-content>

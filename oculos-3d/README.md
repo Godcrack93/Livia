@@ -3,13 +3,16 @@
 Jogos de óculos VR (Cardboard) para celular, controlados só com o olhar (não precisa de botão). É tudo numa página só: um toque na tela ao abrir e, daí em diante, tudo se escolhe olhando, inclusive trocar de jogo. Não é preciso tirar o celular do óculos.
 
 - **Estoura-Bolhas**: olhe para as bolhas de sabão para estourá-las.
+- **Lanterna na Floresta**: à noite, a luz vai para onde ela olha. Fantasminhas chegam de todos os lados (inclusive pelas costas), o som 3D avisa de onde vêm, e eles somem rindo quando iluminados. São 5 noites.
 - **Labirinto Mágico**: incline um tabuleiro flutuante e leve o pintinho, dentro de uma bolinha de vidro, até a toca. São 10 níveis com dificuldade crescente e um grande final.
+
+A sala de jogos é um planetinha no espaço, com estrelas, planetas coloridos, estrelas cadentes e um foguete estacionado atrás. Os três jogos ficam em cartões à frente.
 
 ## Como abrir
 
 1. Abra o endereço e toque em qualquer lugar da tela (ou em **Começar**). Esse toque libera a tela cheia, o giroscópio e o som; o navegador só deixa fazer isso com um toque de verdade.
 2. Encaixe o celular no óculos. Aparece a **sala de jogos**, com um cartão para cada jogo e o botão **SOM**. Olhe para um cartão até a bolinha da mira encher.
-3. Dentro dos jogos, a bolha **JOGOS** (Estoura-Bolhas, à esquerda das outras bolhas da tela de título) e o botão **JOGOS** (Labirinto, embaixo do mapa) voltam para a sala.
+3. Dentro dos jogos, a bolha **JOGOS** (Estoura-Bolhas, à esquerda das outras bolhas da tela de título) e o botão **JOGOS** (Labirinto, embaixo do mapa; Lanterna, embaixo das noites) voltam para a sala.
 
 Se a sala ficar de lado (porque o celular foi encaixado olhando para outro canto), basta virar a cabeça: ela vem para a frente sozinha. Um botão que acabou de ser escolhido, como o do som, só vale de novo depois de olhar para outro lado.
 
@@ -112,7 +115,41 @@ O recorde, o melhor tempo do modo Números e o álbum ficam salvos no navegador 
 
 O tema da Peppa Pig em `src/bolhas/songs.js` foi tirado de ouvido e é aproximado; dá para ajustar as notas ali. Como a melodia tem direitos autorais, o jogo é para uso em casa e não deve ser publicado com ela.
 
-## Nos dois jogos
+## Lanterna na Floresta
+
+### Como jogar
+
+- Use fone de ouvido: o som 3D é o que avisa de onde os fantasmas vêm (e quem vem por trás soa abafado).
+- Ela está num piquenique noturno, com 6 brigadeiros no prato aos pés dela. Para onde ela olha, a lanterna ilumina. Segurar a luz num fantasminha faz cócegas: ele ri, faz POF e vira um vaga-lume que voa para a lanterna.
+- Se um fantasma chega perto, ele faz "BUU!", pega um brigadeiro e foge para trás dela. Iluminar o fujão a tempo traz o brigadeiro DE VOLTA. Não existe game over.
+- Cada noite dura de 2 a 3 minutos e o céu vai clareando até amanhecer. Estrelas: 5 ou 6 brigadeiros salvos dão 3, de 3 a 4 dão 2, e menos que isso dá 1. Terminar uma noite libera a próxima.
+- A Dona Coruja, no toco à frente, fala com a voz do celular, chama a Lívia pelo nome e vira a cabeça para o lado do fantasma escondido. Nas primeiras noites, um vaga-lume guia aparece na borda da visão.
+- Na tela de título, um fantasminha bonzinho fica por perto para treinar a lanterna.
+
+### Noites
+
+| Noite | Novidade |
+|---|---|
+| 1 Primeiros fantasminhas | Só Bolotas, pela frente e pelos lados |
+| 2 Atrás de você! | Pipoca (vem pulando) e Sorrateiro (só vem por trás, depois que a floresta fica em silêncio) |
+| 3 Esconde-esconde | Tímida: se esconde atrás das árvores e só dá para iluminar quando espia |
+| 4 Batatinha frita 1, 2, 3 | Sombra: só anda quando ela não está olhando |
+| 5 Fantasmão Soneca | Chefão grandão que precisa de luz por mais tempo e vira 3 Bolotas |
+
+### Nível de susto (botão na tela de título)
+
+| Nível | Como fica |
+|---|---|
+| Sem susto | Sem BUU; o fantasma só pega o docinho e sai rindo |
+| Sustinho | BUU a 1,5 m com cara boba |
+| Medinho (padrão) | No escuro os fantasmas têm olhos fundos e boca em "O" e ficam fofos quando a luz bate; olhos piscando entre as árvores, nuvem cobrindo a lua, caixinha de música desafinada, coraçãozinho batendo quando tem alguém atrás, alarme falso (era só um sapinho) e BUU a 1,2 m |
+| Sustão | Tudo do Medinho, mais: a lanterna falha uma vez por noite, fantasmas em dupla (frente e costas) e BUU a 1 m |
+
+O que não muda em nenhum nível: a câmera nunca se mexe sozinha, o volume tem limitador, e toda noite termina com o amanhecer e o tchau dos fantasmas. O nome dela só é dito pela coruja.
+
+Para testar: `?jogo=lanterna&noite=3` começa direto na noite 3 (com `&todas`, mesmo sem ter vencido as anteriores). O progresso fica salvo em `lanterna-progresso`.
+
+## Nos três jogos
 
 ### Computador
 
@@ -120,7 +157,7 @@ Arraste o mouse para olhar; a mira segue o ponteiro, e um clique escolhe na hora
 
 ### Ajustes
 
-- **SOM** (na sala de jogos, pelo olhar): liga ou desliga a música e os efeitos dos dois jogos. Fica salvo.
+- **SOM** (na sala de jogos, pelo olhar): liga ou desliga a música e os efeitos dos três jogos. Fica salvo.
 - **Gráficos: bonitos/leves** (tela de abertura): "bonitos" usa sombras, antisserrilhado e mais detalhes; "leves" é para celulares mais fracos. A página recarrega, por isso fica antes do toque.
 - **Medidor** (tela de abertura): mostra no canto, durante o jogo, o FPS, os triângulos e os desenhos (draw calls) de cada quadro. Ao sair, a tela de abertura mostra o resumo.
 - **Sair** (canto da tela, só pelo toque): volta para a tela de abertura.
@@ -131,4 +168,4 @@ Use o endereço `https` que o `dev:https` mostrar, na mesma rede Wi-Fi. O girosc
 
 ### Para programar
 
-`src/main.js` cria o renderizador, o VR e o som uma vez só e troca a cena ativa. A sala de jogos é `src/hub/vr-hub.js`. Cada jogo é um módulo (`src/bolhas/index.js`, `src/labirinto/index.js`) com `scene`, `enter()`, `leave()` e `frame()`, carregado na primeira vez que é escolhido.
+`src/main.js` cria o renderizador, o VR e o som uma vez só e troca a cena ativa. A sala de jogos é `src/hub/vr-hub.js`. Cada jogo é um módulo (`src/bolhas/index.js`, `src/labirinto/index.js`, `src/lanterna/index.js`) com `scene`, `enter()`, `leave()` e `frame()`, carregado na primeira vez que é escolhido. A Lanterna tem som 3D próprio (`PannerNode` em HRTF) em `src/lanterna/audio.js`; os outros jogos usam só esquerda e direita.

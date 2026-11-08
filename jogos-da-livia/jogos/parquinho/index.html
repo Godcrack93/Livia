@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Parquinho Sprunki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Lilita+One&display=swap">
+<style>
+/* Layout: caixa de areia — painel escuro de ferramentas à esquerda (abas + itens), coluna de botões e o cenário com céu e blocos à direita. */
+:root {
+  color-scheme: dark;
+  --ui: #1F2230; --ui2: #2A2E3D; --ui3: #353A4C; --line: #454B62; --deep: #171922;
+  --txt: #EEF0F7; --mut: #A7ADC2; --gold: #FFC93C; --red: #E2453C;
+  --f-display: 'Lilita One', 'Baloo 2', 'Arial Rounded MT Bold', 'Trebuchet MS', sans-serif;
+  --f-ui: 'Baloo 2', 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
+  --pw: clamp(140px, 24vw, 300px);
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--deep); color: var(--txt); font-family: var(--f-ui); overflow: hidden; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; overscroll-behavior: none; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+#app { display: grid; grid-template-columns: var(--pw) 54px 1fr; height: 100%; padding-left: env(safe-area-inset-left, 0px); }
+#app.collapsed { grid-template-columns: 0 54px 1fr; }
+
+/* painel */
+#panel { display: flex; flex-direction: column; min-width: 0; overflow: hidden; background: var(--ui); }
+.tabs { display: flex; gap: 8px; padding: 10px; background: var(--deep); }
+.tab { flex: 1; max-width: 76px; aspect-ratio: 1; border: 3px solid transparent; border-radius: 12px; background: var(--ui3); display: grid; place-items: center; cursor: pointer; transition: transform .12s; }
+.tab:active { transform: scale(.93); }
+.tab[aria-selected="true"] { border-color: var(--gold); background: #3A3420; }
+.tab svg { width: 58%; height: 58%; }
+.tabname { padding: 2px 12px 0; font: 400 18px/1.2 var(--f-display); letter-spacing: .02em; color: var(--gold); }
+#items { flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; padding: 8px 10px 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-content: start; overscroll-behavior: contain; scrollbar-width: thin; }
+.it { position: relative; min-width: 0; aspect-ratio: 1; border: 3px solid transparent; border-radius: 14px; background: var(--ui2); box-shadow: inset 0 0 0 2px var(--line); padding: 4px; cursor: grab; touch-action: pan-y; display: grid; place-items: center; transition: transform .12s; }
+.it:active { transform: scale(.94); }
+.it[aria-pressed="true"] { border-color: var(--gold); background: #33301F; }
+.it svg, .it img { width: 100%; height: 100%; display: block; object-fit: contain; pointer-events: none; }
+.it.pix img { width: 62%; height: 62%; image-rendering: pixelated; margin-bottom: 14px; }
+.it.wpn img { width: 86%; height: 62%; margin-bottom: 14px; }
+.lbl { position: absolute; left: 4px; right: 4px; bottom: 5px; text-align: center; font: 800 12px/1.05 var(--f-ui); color: var(--txt); pointer-events: none; }
+.it.h { background: #2B1D22; box-shadow: inset 0 0 0 2px #5A2A33; }
+.it.h[aria-pressed="true"] { background: #3A2420; }
+
+/* coluna de botões */
+.side { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 10px 0; background: var(--deep); }
+.sbtn { width: 42px; height: 42px; border: 0; border-radius: 11px; background: var(--ui3); display: grid; place-items: center; cursor: pointer; transition: transform .12s, background .15s; }
+.sbtn:active { transform: scale(.92); }
+.sbtn svg { width: 24px; height: 24px; }
+.sbtn[aria-pressed="true"] { background: var(--red); }
+#btnClear.armed { background: var(--red); animation: shake .4s ease; }
+@keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+#app.collapsed #btnPanel svg { transform: scaleX(-1); }
+
+/* cenário */
+#scene { position: relative; min-width: 0; overflow: hidden; touch-action: none; background: #8FD3FF; }
+#cv { position: absolute; inset: 0; display: block; touch-action: none; }
+#scene.erasing #cv { cursor: crosshair; }
+.title { position: absolute; left: 14px; top: 12px; font: 400 clamp(18px, 2.4vw, 28px)/1 var(--f-display); letter-spacing: .02em; color: #fff; pointer-events: none;
+  text-shadow: 0 2px 0 #2A1B4D, 2px 2px 0 #2A1B4D, -2px 2px 0 #2A1B4D, 2px -2px 0 #2A1B4D, -2px -2px 0 #2A1B4D; }
+.title b { color: var(--gold); font-weight: 400; }
+.hud { position: absolute; right: 12px; top: 10px; display: flex; gap: 10px; padding: 6px; border-radius: 999px; background: rgba(23, 25, 34, .55); }
+.hbtn { width: 46px; height: 46px; border: 0; border-radius: 50%; background: #262A38; color: #fff; display: grid; place-items: center; cursor: pointer; box-shadow: 0 3px 0 rgba(0, 0, 0, .35); text-decoration: none; transition: transform .12s; }
+.hbtn:active { transform: scale(.92); }
+.hbtn svg { width: 24px; height: 24px; }
+.hbtn[aria-pressed="true"] { background: var(--red); }
+#hint { position: absolute; left: 50%; top: 24%; transform: translateX(-50%); max-width: calc(100% - 32px); padding: 10px 18px 8px; border-radius: 18px; background: #fff; color: #2A1B4D;
+  font: 800 clamp(15px, 1.8vw, 19px)/1.25 var(--f-ui); text-align: center; pointer-events: none; box-shadow: 0 6px 0 rgba(0, 0, 0, .15), 0 14px 30px rgba(0, 0, 0, .2); animation: bob 1.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translate(-50%, -6px); } }
+#toast { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); max-width: calc(100% - 32px); padding: 10px 16px; border-radius: 14px; background: #2A1B4D; color: #fff; font: 700 15px/1.25 var(--f-ui); text-align: center; pointer-events: none; }
+#paused { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); padding: 12px 26px; border-radius: 20px; background: rgba(23, 25, 34, .7); font: 400 clamp(26px, 4vw, 44px)/1 var(--f-display); color: #fff; pointer-events: none; }
+/* controle de zoom */
+.zoom { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 62px; height: min(340px, 58%); border-radius: 999px; touch-action: none; cursor: ns-resize;
+  background: linear-gradient(180deg, rgba(23, 25, 34, .82), rgba(23, 25, 34, .38)); box-shadow: 0 6px 18px rgba(0, 0, 0, .25); }
+.zsign { position: absolute; left: 0; right: 0; text-align: center; font: 400 22px/1 var(--f-display); color: rgba(255, 255, 255, .8); pointer-events: none; }
+.zplus { top: 10px; } .zminus { bottom: 12px; }
+.ztrack { position: absolute; left: 50%; top: 52px; bottom: 52px; width: 6px; margin-left: -3px; border-radius: 3px; background: rgba(255, 255, 255, .18); pointer-events: none; }
+.zfill { position: absolute; left: 0; right: 0; bottom: 0; border-radius: 3px; background: rgba(255, 201, 60, .7); }
+.zknob { position: absolute; left: 50%; top: 50%; width: 50px; height: 50px; margin: -25px 0 0 -25px; border-radius: 50%; display: grid; place-items: center;
+  background: #262A38; box-shadow: 0 0 0 3px rgba(255, 255, 255, .14), 0 4px 10px rgba(0, 0, 0, .4); }
+.zknob svg { width: 28px; height: 28px; }
+.zoom:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+#hint b { display: block; font-size: 1.1em; }
+#ghost { position: fixed; left: 0; top: 0; z-index: 50; width: 84px; height: 84px; pointer-events: none; filter: drop-shadow(0 10px 12px rgba(0, 0, 0, .35)); }
+#ghost svg, #ghost img { width: 100%; height: 100%; object-fit: contain; }
+#ghost.pix img { image-rendering: pixelated; width: 64%; height: 64%; margin: 18%; }
+[hidden] { display: none !important; }
+
+@media (max-width: 700px), (max-height: 480px) {
+  :root { --pw: clamp(124px, 30vw, 190px); }
+  #app { grid-template-columns: var(--pw) 46px 1fr; }
+  #app.collapsed { grid-template-columns: 0 46px 1fr; }
+  .sbtn { width: 36px; height: 36px; } .sbtn svg { width: 21px; height: 21px; }
+  .tabs { gap: 6px; padding: 8px; } .tab { border-radius: 10px; }
+  #items { gap: 7px; padding: 6px 8px 12px; }
+  .hbtn { width: 38px; height: 38px; } .hbtn svg { width: 20px; height: 20px; }
+  .title { display: none; }
+  .lbl { font-size: 10px; }
+  .zoom { width: 48px; right: 10px; } .ztrack { top: 40px; bottom: 40px; } .zsign { font-size: 18px; } .zplus { top: 7px; } .zminus { bottom: 9px; }
+  .zknob { width: 40px; height: 40px; margin: -20px 0 0 -20px; } .zknob svg { width: 22px; height: 22px; }
+}
+@media (prefers-reduced-motion: reduce) { #hint { animation: none; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="panel" aria-label="Itens">
+    <div class="tabs" role="tablist">
+      <button class="tab" type="button" role="tab" data-tab="sprunkis" aria-selected="true" title="Sprunkis" aria-label="Sprunkis">
+        <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.3-9.2C1.5 8.6 3.4 5 7 5c2.2 0 3.8 1.3 5 3 1.2-1.7 2.8-3 5-3 3.6 0 5.5 3.6 4.3 6.8C19.5 16.4 12 21 12 21z" fill="#fff"/></svg></button>
+      <button class="tab" type="button" role="tab" data-tab="blocos" aria-selected="false" title="Blocos" aria-label="Blocos">
+        <svg viewBox="0 0 24 24"><path d="M12 2.5 21 7v10l-9 4.5L3 17V7z" fill="#C98A4B"/><path d="M12 2.5 21 7l-9 4.5L3 7z" fill="#5DA83A"/><path d="M12 11.5v10L3 17V7z" fill="#8B5A2B"/><path d="M12 2.5 21 7v10l-9 4.5L3 17V7z M3 7l9 4.5L21 7 M12 11.5v10" fill="none" stroke="#2A1B10" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
+      <button class="tab" type="button" role="tab" data-tab="armas" aria-selected="false" title="Armas" aria-label="Armas">
+        <svg viewBox="0 0 24 24"><path d="M2.5 7.5h17l1.5 1.5v2.5h-9.5l-1 1.2v2.3l-1.2 4.5H5.7l1.1-5.2-1.8-1.8H2.5z" fill="#fff"/><path d="M12 11.5h2.5" stroke="#1F2230" stroke-width="1.5"/></svg></button>
+    </div>
+    <div class="tabname" id="tabname">Sprunkis</div>
+    <div id="items"></div>
+  </aside>
+
+  <nav class="side" aria-label="Ferramentas">
+    <button class="sbtn" id="btnPanel" type="button" title="Esconder o painel" aria-label="Esconder o painel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg></button>
+    <button class="sbtn" id="btnErase" type="button" aria-pressed="false" title="Borracha: toque para apagar" aria-label="Borracha">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V4.5h5V7M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg></button>
+    <button class="sbtn" id="btnClear" type="button" title="Limpar tudo" aria-label="Limpar tudo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v5h-5"/></svg></button>
+  </nav>
+
+  <main id="scene">
+    <canvas id="cv"></canvas>
+    <div class="title">Parquinho <b>Sprunki</b></div>
+    <div class="hud">
+      <button class="hbtn" id="btnMute" type="button" aria-pressed="false" title="Som" aria-label="Desligar o som">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="#fff"/><path class="wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="off" d="M16 9.5l5 5M21 9.5l-5 5" style="display:none"/></svg></button>
+      <button class="hbtn" id="btnPause" type="button" aria-pressed="false" title="Pausar" aria-label="Pausar">
+        <svg viewBox="0 0 24 24"><g class="pa"><rect x="6" y="5" width="4" height="14" rx="1.5" fill="#fff"/><rect x="14" y="5" width="4" height="14" rx="1.5" fill="#fff"/></g><path class="pl" d="M8 5.5v13l10-6.5z" fill="#fff" style="display:none"/></svg></button>
+      <a class="hbtn" href="../../index.html" title="Início" aria-label="Voltar para o início">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11.5 12 4l8.5 7.5"/><path d="M5.5 10v9.5h4.5v-5.5h4v5.5h4.5V10"/></svg></a>
+    </div>
+    <div class="zoom" id="zoom" role="slider" tabindex="0" aria-label="Zoom" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" title="Zoom: arraste a lupa">
+      <span class="zsign zplus" aria-hidden="true">+</span>
+      <div class="ztrack"><div class="zfill" id="zfill"></div>
+        <div class="zknob" id="zknob"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg></div></div>
+      <span class="zsign zminus" aria-hidden="true">−</span>
+    </div>
+    <div id="hint"><b>Escolha um Sprunki e toque aqui!</b>Arraste o céu para passear pelo mapa e use a lupa para o zoom.</div>
+    <div id="paused" hidden>Pausado</div>
+    <div id="toast" hidden></div>
+  </main>
+</div>
+<div id="ghost" hidden></div>
+
+<script src="../comum/personagens.js"></script>
+<script src="sons.js"></script>
+<script src="sprites.js"></script>
+<script src="mundo.js"></script>
+<script src="jogo.js"></script>
+</body>
+</html>

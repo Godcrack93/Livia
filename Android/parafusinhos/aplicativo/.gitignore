@@ -1,0 +1,11 @@
+# Gerados pelo Gradle e pelo Android Studio
+.gradle/
+build/
+app/build/
+local.properties
+.idea/
+*.iml
+.kotlin/
+captures/
+.cxx/
+.externalNativeBuild/

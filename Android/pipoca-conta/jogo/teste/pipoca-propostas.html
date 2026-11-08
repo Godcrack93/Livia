@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Pipoca: propostas</title>
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; padding: 20px; background: #DFF3D2; font-family: Fredoka, sans-serif; color: #3A2A5A; }
+  .grade { display: flex; gap: 16px; }
+  .item { background: #ffffffaa; border-radius: 22px; padding: 12px; text-align: center; width: 320px; }
+  .item svg { width: 300px; height: 324px; }
+  h2 { margin: 6px 0 2px; font-size: 22px; }
+  p { margin: 0; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="grade" id="grade"></div>
+<script src="../js/nucleo.js"></script>
+<script src="../js/arte.js"></script>
+<script>
+const T = '#3A2A5A', CORPO = '#C98A55', SOMBRA = '#A9703F', BARRIGA = '#EBC594', FOC = '#B57844', ESC = '#2B1A2E';
+const c = (x, y, r, cor, sw = 5) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${cor}"${sw ? ` stroke="${T}" stroke-width="${sw}"` : ''}/>`;
+const e = (x, y, rx, ry, cor, sw = 5, rot = 0) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}"${rot ? ` transform="rotate(${rot} ${x} ${y})"` : ''} fill="${cor}"${sw ? ` stroke="${T}" stroke-width="${sw}"` : ''}/>`;
+const p = (d, cor, sw = 5) => `<path d="${d}" fill="${cor}"${sw ? ` stroke="${T}" stroke-width="${sw}" stroke-linejoin="round"` : ''}/>`;
+const l = (d, cor = T, sw = 5) => `<path d="${d}" fill="none" stroke="${cor}" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const tc = (d, cor, w) => l(d, T, w + 10) + l(d, cor, w);
+const brilho = (x, y, rx, ry, rot = 0, op = .2) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(${rot} ${x} ${y})" fill="#fff" opacity="${op}"/>`;
+const boch = (x, y, rx = 10, ry = 6) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#FF8FA0" opacity=".45"/>`;
+// olhinho calmo de capivara: pálpebra baixa e dois brilhos
+const olho = (x, y, r = 8) => `<path d="M${x - r} ${y - r * .3} C ${x - r * .85} ${y - r} ${x + r * .85} ${y - r} ${x + r} ${y - r * .3} C ${x + r * 1.1} ${y + r * .7} ${x + r * .55} ${y + r * 1.15} ${x} ${y + r * 1.15} C ${x - r * .55} ${y + r * 1.15} ${x - r * 1.1} ${y + r * .7} ${x - r} ${y - r * .3} Z" fill="${T}"/>` +
+  c(x + r * .36, y - r * .1, r * .4, '#fff', 0) + `<circle cx="${x - r * .35}" cy="${y + r * .6}" r="${r * .18}" fill="#fff" opacity=".8"/>`;
+const flor = (x, y, s = .8, rot = 14) => {
+  const svg = PC.arte.flor();
+  return `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})">${svg.slice(svg.indexOf('>') + 1, svg.lastIndexOf('</svg>'))}</g>`;
+};
+const dente = (x, y, h = 8) => `<rect x="${x}" y="${y}" width="5.6" height="${h}" rx="1.6" fill="#fff" stroke="${T}" stroke-width="1.8"/>`;
+const sombraChao = `<ellipse cx="125" cy="263" rx="92" ry="8" fill="rgba(58,42,90,.18)"/>`;
+const pe = (x, y) => e(x, y, 22, 10, SOMBRA) + l(`M${x - 7} ${y + 1} v 6 M${x + 7} ${y + 1} v 6`, T, 2.6);
+const svg = s => `<svg viewBox="0 0 250 270" xmlns="http://www.w3.org/2000/svg">${s}</svg>`;
+
+// ---------------------------------------------------------------- A: três quartos, de focinho comprido para o lado
+const A = () => {
+  const cab = 'M40 100 C 36 64 62 40 100 38 L 166 42 C 200 44 222 66 222 98 C 222 130 202 150 170 152 L 94 154 C 58 154 42 130 40 100 Z';
+  return svg(sombraChao +
+    p('M50 208 C 48 170 82 148 124 148 C 170 148 204 170 202 210 C 200 244 168 258 124 258 C 82 258 52 242 50 208 Z', CORPO) +
+    e(128, 220, 44, 29, BARRIGA, 0) + brilho(84, 182, 16, 6, -30) +
+    tc('M92 184 C 88 198 92 210 104 212', '#BD7F4C', 20) + tc('M162 184 C 166 198 162 210 150 212', '#BD7F4C', 20) +
+    pe(92, 252) + pe(158, 252) +
+    '<g transform="translate(-2 14)">' + e(72, 46, 13, 11, SOMBRA, 5, -20) + e(72, 46, 6, 5, '#7A4A2A', 0, -20) +
+    e(104, 38, 12, 10, SOMBRA, 5, -6) + e(104, 38, 5.5, 4.5, '#7A4A2A', 0) +
+    p(cab, CORPO) +
+    p('M176 48 C 204 54 222 72 222 98 C 222 128 204 148 174 152 C 192 124 192 78 176 48 Z', FOC, 0) + p(cab, 'none') +
+    brilho(92, 56, 28, 8, -6) +
+    olho(108, 86, 9) + olho(164, 80, 7) +
+    p('M206 66 C 216 70 222 80 222 92 C 216 94 208 90 204 82 C 202 76 202 70 206 66 Z', '#7A4A2A', 0) + l('M209 74 q 5 4 5 11', ESC, 4.5) +
+    c(176, 112, 2.4, '#A97049', 0) + c(184, 120, 2.4, '#A97049', 0) + c(172, 124, 2.4, '#A97049', 0) +
+    l('M214 124 Q 204 134 190 130', T, 4.5) + dente(198, 129.5, 8) + dente(204.2, 128.5, 8) +
+    boch(130, 118) + flor(130, 40, .8, -10) + '</g>');
+};
+
+// ---------------------------------------------------------------- B: de perfil, sentadinha (o "pãozinho")
+const B = () => {
+  const cab = 'M112 98 C 108 62 134 40 166 40 L 196 44 C 224 48 240 66 238 94 C 236 118 220 132 196 134 L 148 136 C 124 136 114 120 112 98 Z';
+  return svg(sombraChao +
+    p('M22 210 C 20 170 54 146 100 146 L 150 146 C 192 146 216 172 214 212 C 212 246 188 258 150 258 L 66 258 C 36 258 24 238 22 210 Z', CORPO) +
+    e(126, 238, 62, 14, BARRIGA, 0) + l('M56 206 Q 64 178 94 172', '#A9703F', 4) + brilho(70, 170, 24, 7, -18) +
+    e(56, 252, 24, 9, SOMBRA) +
+    tc('M172 196 L 170 244', '#BD7F4C', 24) + e(172, 252, 18, 8, SOMBRA) + l('M166 252 v 5 M178 252 v 5', T, 2.6) +
+    '<g transform="translate(-16 26)">' + e(140, 46, 13, 11, SOMBRA, 5, -20) + e(140, 46, 6, 5, '#7A4A2A', 0, -20) +
+    p(cab, CORPO) +
+    p('M204 46 C 226 52 240 70 238 94 C 236 118 220 132 198 134 C 214 108 214 72 204 46 Z', FOC, 0) + p(cab, 'none') +
+    brilho(150, 56, 24, 7, -8) +
+    olho(176, 78, 9) +
+    p('M228 60 C 236 66 240 78 238 90 C 232 92 226 88 224 80 C 222 72 223 64 228 60 Z', '#7A4A2A', 0) + l('M229 68 q 5 4 5 11', ESC, 4.5) +
+    c(206, 106, 2.4, '#A97049', 0) + c(214, 114, 2.4, '#A97049', 0) + c(202, 118, 2.4, '#A97049', 0) +
+    l('M234 116 Q 226 126 212 122', T, 4.5) + dente(222, 121.5, 8) +
+    boch(170, 106) + flor(158, 42, .8, -10) + '</g>');
+};
+
+// ---------------------------------------------------------------- C: de frente, mas de cara comprida
+const C = () => {
+  const cab = 'M62 76 C 60 40 90 22 125 22 C 160 22 190 40 188 76 L 184 130 C 182 160 158 174 125 174 C 92 174 68 160 66 130 Z';
+  const foc = 'M84 112 C 84 98 104 92 125 92 C 146 92 166 98 166 112 L 168 140 C 168 162 150 172 125 172 C 100 172 82 162 82 140 Z';
+  return svg(sombraChao +
+    p('M52 214 C 50 172 84 150 125 150 C 166 150 200 172 198 214 C 196 245 166 257 125 257 C 84 257 54 245 52 214 Z', CORPO) +
+    e(125, 220, 44, 30, BARRIGA, 0) +
+    tc('M88 186 C 84 200 88 212 100 214', '#BD7F4C', 20) + tc('M162 186 C 166 200 162 212 150 214', '#BD7F4C', 20) +
+    pe(94, 253) + pe(156, 253) +
+    e(80, 32, 13, 10, SOMBRA, 5, -24) + e(80, 32, 6, 4.5, '#7A4A2A', 0, -24) +
+    e(170, 32, 13, 10, SOMBRA, 5, 24) + e(170, 32, 6, 4.5, '#7A4A2A', 0, 24) +
+    p(cab, CORPO) + brilho(100, 40, 26, 7, -8) +
+    olho(88, 70, 8.5) + olho(162, 70, 8.5) +
+    boch(74, 104, 9, 5.5) + boch(176, 104, 9, 5.5) +
+    p(foc, '#BF8250', 0) + l('M86 140 C 88 160 104 170 125 170 C 146 170 162 160 164 140', '#A9703F', 3) + brilho(125, 100, 26, 4, 0, .25) +
+    e(108, 120, 4.5, 8, ESC, 0, -22) + e(142, 120, 4.5, 8, ESC, 0, 22) +
+    c(98, 138, 2.4, '#8A5634', 0) + c(92, 146, 2.4, '#8A5634', 0) + c(152, 138, 2.4, '#8A5634', 0) + c(158, 146, 2.4, '#8A5634', 0) +
+    l('M125 124 V 142', T, 4.5) + dente(119.4, 151, 8.5) + dente(125.4, 151, 8.5) +
+    l('M108 148 Q 116.5 158 125 150 Q 133.5 158 142 148', T, 5) +
+    flor(184, 44, .82));
+};
+
+const itens = [
+  ['Hoje', 'A atual: de frente, focinho preto', PC.arte.pipoca('normal')],
+  ['A · Três quartos', 'Corpo de frente, cabeça virada com o focinho comprido de lado', A()],
+  ['B · De perfil', 'Sentadinha de lado, o formato "pãozinho" famoso', B()],
+  ['C · Frente comprida', 'De frente, mas com a cara comprida e o nariz grande', C()],
+];
+for (const [t, d, s] of itens) {
+  const el = document.createElement('div');
+  el.className = 'item';
+  el.innerHTML = s + `<h2>${t}</h2><p>${d}</p>`;
+  document.getElementById('grade').appendChild(el);
+}
+</script>
+</body>
+</html>

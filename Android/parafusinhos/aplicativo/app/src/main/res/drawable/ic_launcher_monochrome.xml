@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ícone temático (Android 13+): o círculo de raio 26 com a cruz vazada (evenOdd). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="evenOdd"
+        android:pathData="M28,54 a26,26 0 1 0 52,0 a26,26 0 1 0 -52,0 Z M50,44 A4,4 0 0 1 58,44 V50 H64 A4,4 0 0 1 64,58 H58 V64 A4,4 0 0 1 50,64 V58 H44 A4,4 0 0 1 44,50 H50 Z" />
+</vector>
