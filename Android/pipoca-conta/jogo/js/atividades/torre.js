@@ -728,7 +728,9 @@
       try {
         await ctx.esperar(250);
         K.pose('aponta');
-        await K.contar(colunas(), fimDaContagem(), { dezena: !modelo });
+        // com vozTotal a Pipoca já disse cada número ("Um!", "Dois!"): não reconta, só diz o total ("Três cubinhos!")
+        // e a moldura elogia em seguida. Sem vozTotal, ela conta a torre toda, porque a criança ainda não ouviu os números.
+        if (!vozTotal || modelo) await K.contar(colunas(), fimDaContagem(), { dezena: !modelo });
         revelarPlacas();
         await ctx.falar(fraseAcerto(), { mostrar: alvo });
         await K.semPausa();

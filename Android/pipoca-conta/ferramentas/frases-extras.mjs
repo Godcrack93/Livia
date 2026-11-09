@@ -463,7 +463,8 @@ function sapinho(f, p, estacao) {
   if (p.demo) f('Toque na bolha certa!');
   for (let g = 2; g <= n - 2; g++) {
     const c = valores[g - 1];
-    const deP = P > 1 ? `De ${ext(P)} em ${ext(P)}! ` : '';
+    // a regra só vai na repetição (texto completo); a pergunta de cara é curta (igual a sapinho.js)
+    const regra = passo < 0 ? (P > 1 ? `De ${ext(P)} em ${ext(P)} para trás! ` : 'Contando para trás! ') : (P > 1 ? `De ${ext(P)} em ${ext(P)}! ` : '');
     // perguntas: com e sem a folha seguinte visível (lacunas seguidas), primeira lacuna da rodada ou não
     for (const temProx of seguidas ? [true, false] : [true]) {
       const prox = temProx ? valores[g + 1] : null;
@@ -478,18 +479,18 @@ function sapinho(f, p, estacao) {
             const a = Math.min(c, prox), b = Math.max(c, prox);
             texto = `${Ev}${Q} fica entre o ${ext(a)} e o ${ext(b)}?`;
           } else if (tipo === 'antes') {
-            texto = P === 1 ? `${Ev}${Q} número vem antes do ${ext(prox)}?` : `${deP}Qual vem antes do ${ext(prox)}?`;
+            texto = P === 1 ? `${Ev}${Q} número vem antes do ${ext(prox)}?` : `${Ev}${Q} vem antes do ${ext(prox)}?`;
           } else if (passo < 0) {
-            texto = primeira ? `Contando para trás! Qual vem depois do ${ext(c)}?` : `Para trás! Qual vem depois do ${ext(c)}?`;
-            if (P > 1) texto = `De ${ext(P)} em ${ext(P)} para trás! Qual vem depois do ${ext(c)}?`;
+            texto = `${Ev}${Q} vem depois do ${ext(c)}?`;
           } else {
-            texto = P === 1 ? `${Ev}${Q} número vem depois do ${ext(c)}?` : `${deP}Qual vem depois do ${ext(c)}?`;
+            texto = P === 1 ? `${Ev}${Q} número vem depois do ${ext(c)}?` : `${Ev}${Q} vem depois do ${ext(c)}?`;
             if (P === 1 && valores[0] === 1 && g - 1 < ORDINAIS.length) {
               f(texto);
               texto = `O Pulo está na ${ORDINAIS[g - 1]} folha. ` + texto.replace(/^E qual/, 'Qual');
             }
           }
           f(texto);
+          if (regra) f(regra + texto.replace(/^E qual/, 'Qual'));
         });
       }
     }

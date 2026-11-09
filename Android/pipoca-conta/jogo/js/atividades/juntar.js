@@ -3,8 +3,8 @@
    na base; a placa do alvo fica à direita. A criança junta duas torres arrastando uma sobre a outra OU tocando numa
    (ela sobe e fica iluminada) e depois na outra. A área de toque de cada torre é a coluna inteira, com folga.
    Ao juntar, as partes mantêm cor e estampa, a lousinha mostra a conta ("3 + 2 = 5") e a Pipoca fala
-   "Três mais dois... cinco!" (a plaquinha da torre juntada só reaparece junto com o total). Deu N: "Três e dois fazem
-   cinco!" (no alvo 10: "Três e sete são amigos do dez!" e um quadro de 10 em duas cores) e a rodada acaba. Não deu:
+   "Três mais dois... cinco!" (a plaquinha da torre juntada só reaparece junto com o total). Deu N: a rodada acaba (no
+   alvo 10, antes: "Três e sete são amigos do dez!" e um quadro de 10 em duas cores). Não deu:
    retorno descritivo pela moldura (ctx.errou) e, 1,2 s depois, as torres se separam e voltam ao lugar.
    Ajudas: 2º erro → "contar a partir do maior" com lugares vazios em cima da maior torre do par certo; 3º erro e
    inatividade → mãozinha com proximoGesto(). Se a moldura pedir ajuda enquanto as torres ainda se separam (voz curta
@@ -450,9 +450,9 @@
           if (N === 10) {
             mostrarQuadro(a, b, regA.pintura, regB.pintura);
             await ctx.falar(`${maiuscula(ext(a))} e ${ext(b)} são amigos do dez!`);
-          } else {
-            await ctx.falar(`${maiuscula(ext(a))} e ${ext(b)} fazem ${ext(N)}!`);
           }
+          // (fora do dez, nada mais: o "Três mais dois... cinco!" acabou de dizer a conta; repetir "Três e dois fazem
+          // cinco!" deixava a rodada lenta)
           if (parou()) return;
           ctx.acertou();
           return;

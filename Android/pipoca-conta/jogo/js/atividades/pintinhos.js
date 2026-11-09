@@ -582,7 +582,8 @@
       try {
         if (ultimaFala) await ultimaFala;
         if (!vivo()) return;
-        if (vozConta) await ctx.falar(maiuscula(pintinhos(n)) + '!', { mostrar: n });
+        // (sem repetir "Três pintinhos!" aqui: a criança acabou de ouvir o "Três!" da contagem e a pergunta a seguir
+        // é justamente quantos são; o total vem depois que ela escolhe)
         await ctx.esperar(250);
         mostrarOpcoes();
         fase = 'escolhendo';
@@ -763,12 +764,12 @@
       terminar();
     }
 
-    async function lerComparar(sinal) {
+    async function lerComparar(sinal, curta) {
       PC.ui.pipoca.pose('aponta');
       cercados.forEach(c => { if (!c.fora) c.el.classList.add('lendo'); });
       await falarEm(sinal, 'Qual cercadinho tem mais pintinhos?');
       destacar(null);
-      if (!iguaisFora()) {
+      if (!iguaisFora() && !curta) {                      // curta: o botão de iguais já foi apresentado
         destacar(bIguais);
         await falarEm(sinal, 'Se forem iguais, toque aqui.');
         destacar(null);
@@ -776,15 +777,19 @@
     }
 
     // ------------------------------------------------------------ instrução, gesto e ajuda
-    /** Fala a instrução do momento. pulsar: o olho de espiar pulsa (a primeira ajuda da olhadinha). */
-    function falarInstrucao(pulsar) {
+    /**
+     * Fala a instrução do momento. pulsar: o olho de espiar pulsa (a primeira ajuda da olhadinha).
+     * curta: começo das rodadas seguintes (a criança já sabe o jeito): sem a parte que ensina o gesto.
+     */
+    function falarInstrucao(pulsar, curta) {
       if (!vivo() || fase === 'fim' || fase === 'transicao' || bloqueado || ajudando || espiando) return Promise.resolve();
       const ac = novaLeitura(), s = ac.signal;
       return (async () => {
         try {
           if (modo === 'contar') {
             if (fase === 'contando') {
-              if (!marcados) await falarEm(s, vozConta ? 'Quantos pintinhos? Toque em cada um!' : 'Quantos pintinhos? Toque em cada um e conte!');
+              if (!marcados) await falarEm(s, curta ? (vozConta ? 'Toque em cada um!' : 'Toque em cada um e conte!')
+                : (vozConta ? 'Quantos pintinhos? Toque em cada um!' : 'Quantos pintinhos? Toque em cada um e conte!'));
               else {
                 pintos.forEach((p, k) => { if (!p.marcado) pular(p, 20, k * 30); });
                 await falarEm(s, 'Toque nos pintinhos que faltam!');
@@ -793,13 +798,13 @@
           } else if (modo === 'olhadinha') {
             if (fase === 'olhar') {
               if (galinheiro) U.animar(galinheiro, [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-1deg)' }, { transform: 'rotate(1deg)' }, { transform: 'rotate(0deg)' }], { duration: 420 });
-              await falarEm(s, 'Toque na cerca para espiar os pintinhos!');
+              if (!curta) await falarEm(s, 'Toque na cerca para espiar os pintinhos!');   // curta: a cerca só balança
             } else {
               if (pulsar) olhoPulsar(true);
               await lerOpcoes(s, 'Quantos pintinhos você viu?');
             }
           } else {
-            await lerComparar(s);
+            await lerComparar(s, curta);
           }
         } catch (e) {
           if (!U.ehAbortado(e)) console.error(e);
@@ -938,7 +943,7 @@
     (async () => {
       try {
         await ctx.esperar(350);
-        await falarInstrucao(false);
+        await falarInstrucao(false, !ctx.primeiraDaVez);
         if (ctx.demo && !interagiu && vivo()) {
           const g = proximoGesto();
           if (g) ctx.dica(g.em, null);

@@ -280,12 +280,13 @@
     }
 
     // ------------------------------------------------------------ falas
-    const textoInstrucao = () => `Vamos montar ${nomeP}! Arraste as folhinhas para os espaços.`;
-    function instrucao() {
+    // nas rodadas seguintes a criança já sabe arrastar: só "Vamos montar pato!"
+    const textoInstrucao = curta => `Vamos montar ${nomeP}!` + (curta ? '' : ' Arraste as folhinhas para os espaços.');
+    function instrucao(curta) {
       if (destruido || resolvida || ctx.sinal.aborted || fase !== 'jogando') return Promise.resolve();
       if (ajudando || demoAC) return Promise.resolve();          // a ajuda ou a demonstração está falando
       pulsar(figura, 1.08);
-      return ctx.falar(textoInstrucao()).catch(() => {});
+      return ctx.falar(textoInstrucao(curta)).catch(() => {});
     }
     /** A Pipoca fala a sílaba sozinha ("bá…"); a mesma fala serve no toque, no encaixe e na leitura final. */
     const falarSilaba = s => ctx.falar(maiuscula(fala(s)) + '…');
@@ -384,6 +385,7 @@
     }
 
     function encaixar(f, esp, de) {
+      if (espacos.find(e => !e.folha) !== esp) foraDeOrdem = true;   // não preencheu da esquerda para a direita
       colocar(f, esp);
       ctx.avancou();
       PC.som.encaixar();
@@ -402,7 +404,12 @@
       ctx.errou({ fala: `Essa é ${fala(f.silaba)}. Aqui vai ${fala(esp.silaba)}.` });
     }
 
-    /** Palavra completa: a Pipoca lê pelas sílabas, acendendo cada folhinha, e depois inteira. */
+    /**
+     * Palavra completa. Se a criança montou da esquerda para a direita, ela já ouviu cada sílaba na ordem ao encaixar:
+     * a Pipoca diz só a última e a palavra ("Pô… Copo!"), sem reler tudo. Montada fora de ordem, a Pipoca lê pelas
+     * sílabas, acendendo cada folhinha, e depois inteira.
+     */
+    let foraDeOrdem = false;
     async function completar() {
       fase = 'lendo';
       ctx.ocupado(true);
@@ -411,7 +418,7 @@
       try {
         await ctx.esperar(380);
         PC.ui.pipoca.pose('aponta');
-        for (const e of espacos) {
+        for (const e of (foraDeOrdem ? espacos : espacos.slice(-1))) {
           if (!e.folha) continue;
           pulsar(desenhoDe(e.folha), 1.2);
           await falarSilaba(e.silaba);
@@ -596,7 +603,7 @@
         await ctx.esperar(380 + n * 110 + 300);
         fase = 'jogando';
         ctx.ocupado(false);
-        await instrucao();
+        await instrucao(!ctx.primeiraDaVez);
         if (ctx.demo) await demonstrar();
       } catch (e) {
         if (!U.ehAbortado(e)) console.error(e);

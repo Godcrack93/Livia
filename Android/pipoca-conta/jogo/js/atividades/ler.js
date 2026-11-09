@@ -283,14 +283,14 @@
     }
 
     // ------------------------------------------------------------ instrução, demonstração, gesto e ajuda
-    function falarInstrucao() {
+    function falarInstrucao(curta) {
       if (!vivo() || fase !== 'escolhendo' || bloqueado || ajudando || demonstrando) return Promise.resolve();
       const ac = novaLeitura(), s = ac.signal;
       return (async () => {
         try {
           PC.ui.pipoca.pose('aponta');
           U.animar(placa, [{ transform: 'rotate(0deg)' }, { transform: 'rotate(-1deg)' }, { transform: 'rotate(1deg)' }, { transform: 'rotate(0deg)' }], { duration: 420 });
-          await falarEm(s, 'Leia comigo! Que palavra é essa?');
+          await falarEm(s, curta ? 'Que palavra é essa?' : 'Leia comigo! Que palavra é essa?');   // curta: rodadas seguintes
         } catch (e) {
           if (!U.ehAbortado(e)) console.error(e);
         } finally { terminarLeitura(ac); }
@@ -399,7 +399,7 @@
     (async () => {
       try {
         await ctx.esperar(450);
-        await falarInstrucao();
+        await falarInstrucao(!ctx.primeiraDaVez);
         if (ctx.demo && !interagiu && vivo()) await demonstrar();
       } catch (e) {
         if (!U.ehAbortado(e)) console.error(e);

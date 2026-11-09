@@ -10,9 +10,10 @@
    Gerador: as duas primeiras folhas (na ordem do Pulo) e a última sempre visíveis; até a estação 14, nunca duas lacunas
    seguidas; bolhas erradas nunca negativas nem repetidas, de preferência o erro típico (passo 1: n−1 e n+1; passo −1:
    o número de contar para frente; passo 2: n−1 e n+1; passo 10: n−9 e n+10).
-   Perguntas com antes / depois / entre (e às vezes um ordinal: "O Pulo está na terceira folha."). De 2 em 2 e de 10 em
-   10 toda pergunta lembra a regra ("De dois em dois!"); na contagem para trás, "depois" segue a contagem ("Para trás!
-   Qual vem depois do sete?") e não há "antes" (ambíguo ali). O balão mostra fichinhas com os números da pergunta.
+   Perguntas com antes / depois / entre (e às vezes um ordinal: "O Pulo está na terceira folha."). A regra ("De dois
+   em dois!", "para trás") vem na abertura da rodada; as perguntas seguem curtas ("E qual vem depois do oito?") e só a
+   repetição (parada ou ajuda) lembra a regra de novo. Na contagem para trás, "depois" segue a contagem e não há
+   "antes" (ambíguo ali). O balão mostra fichinhas com os números da pergunta.
    Ajuda (2º erro seguido): o Pulo volta duas folhas e conta até a lacuna. Mãozinha: tocar a bolha certa.
    Demonstração (1ª rodada com demo): depois da pergunta, a mãozinha mostra a bolha certa ("Toque na bolha certa!").
    Com o "Quer parar?" aberto, o Pulo espera parado e a voz não conta por cima da pergunta da moldura.
@@ -552,7 +553,9 @@
       const c = valores[g - 1];                                  // a folha onde o Pulo está
       const temProx = g + 1 < n && !folhas[g + 1].lacuna;
       const prox = temProx ? valores[g + 1] : null;              // a folha depois da lacuna, na ordem do Pulo
-      const deP = P > 1 ? `De ${ext(P)} em ${ext(P)}! ` : '';
+      // a regra ("De dois em dois!", "Contando para trás!") não vai na pergunta falada de cara: a abertura da rodada
+      // acabou de dizê-la. Ela fica no texto completo, que é o da repetição (7 s parada, ajuda), longe da abertura.
+      const regra = passo < 0 ? (P > 1 ? `De ${ext(P)} em ${ext(P)} para trás! ` : 'Contando para trás! ') : (P > 1 ? `De ${ext(P)} em ${ext(P)}! ` : '');
       let tipos;
       if (passo > 0) tipos = ['depois', 'depois'].concat(temProx && P === 1 ? ['entre', 'entre'] : []).concat(temProx ? ['antes'] : []);
       else tipos = ['depois', 'depois'].concat(temProx && P === 1 ? ['entre'] : []);
@@ -564,16 +567,15 @@
         texto = `${E}${Q} fica entre o ${ext(a)} e o ${ext(b)}?`;
         lista = [a, '?', b];
       } else if (tipo === 'antes') {
-        texto = P === 1 ? `${E}${Q} número vem antes do ${ext(prox)}?` : `${deP}Qual vem antes do ${ext(prox)}?`;
+        texto = P === 1 ? `${E}${Q} número vem antes do ${ext(prox)}?` : `${E}${Q} vem antes do ${ext(prox)}?`;
         const seguinte = g + 2 < n && !folhas[g + 2].lacuna ? valores[g + 2] : null;
         lista = P > 1 && seguinte != null ? ['?', prox, seguinte] : ['?', prox];
       } else if (passo < 0) {
         // contagem para trás: o "?" fica à esquerda do Pulo e as fichas seguem a ordem das folhas (crescendo para a direita)
-        texto = primeira ? `Contando para trás! Qual vem depois do ${ext(c)}?` : `Para trás! Qual vem depois do ${ext(c)}?`;
-        if (P > 1) texto = `De ${ext(P)} em ${ext(P)} para trás! Qual vem depois do ${ext(c)}?`;
+        texto = `${E}${Q} vem depois do ${ext(c)}?`;
         lista = ['?', c, valores[g - 2]];
       } else {
-        texto = P === 1 ? `${E}${Q} número vem depois do ${ext(c)}?` : `${deP}Qual vem depois do ${ext(c)}?`;
+        texto = P === 1 ? `${E}${Q} número vem depois do ${ext(c)}?` : `${E}${Q} vem depois do ${ext(c)}?`;
         lista = P === 1 ? [c, '?'] : [valores[g - 2], c, '?'];
         // às vezes com ordinal: "O Pulo está na terceira folha." Só de um em um começando no um: aí a terceira folha é a
         // do três. Na fileira do dez ao vinte, "a oitava folha" seria a do dezessete e confundiria a criança.
@@ -581,14 +583,16 @@
           texto = `O Pulo está na ${ORDINAIS[g - 1]} folha. ` + texto.replace(/^E qual/, 'Qual');
         }
       }
-      return { tipo, texto, fichas: lista };
+      const completo = regra + texto.replace(/^(O Pulo está na \S+ folha\. )?E qual/, (m, o) => (o || '') + 'Qual');
+      return { tipo, texto, completo, fichas: lista };
     }
 
-    function falarPergunta() {
+    /** completa: com a regra da contagem (repetição e depois da ajuda); sem ela, logo depois da abertura ou da anterior. */
+    function falarPergunta(completa) {
       if (!pergunta || destruido || ctx.sinal.aborted) return Promise.resolve();
       pulsarInterrogacao();
       PC.ui.pipoca.pose('aponta');
-      return ctx.falar(pergunta.texto, { mostrar: fichas(pergunta.fichas) }).then(() => {
+      return ctx.falar(completa ? pergunta.completo : pergunta.texto, { mostrar: fichas(pergunta.fichas) }).then(() => {
         if (!destruido && !ctx.sinal.aborted && !PC.ui.pipoca.falando()) PC.ui.pipoca.pose('normal');
       }, () => {});
     }
@@ -596,7 +600,7 @@
     /** Repete a pergunta (botão ouvir, toque na Pipoca, 7 s parada). Enquanto o Pulo anda e conta, não interrompe. */
     function instrucao() {
       if (destruido || resolvida || ctx.sinal.aborted || fase !== 'pergunta') return Promise.resolve();
-      return falarPergunta();
+      return falarPergunta(true);
     }
 
     /** Retorno descritivo do erro: diz o número escolhido e reconta as duas folhas antes da lacuna, com a regra. */
@@ -744,7 +748,7 @@
         if (ac.signal.aborted || destruido) return;
         fase = 'pergunta';
         ctx.ocupado(false);
-        await falarPergunta();
+        await falarPergunta(true);
       } catch (e) {
         if (!U.ehAbortado(e)) console.error(e);
       } finally {

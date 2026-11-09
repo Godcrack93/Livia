@@ -42,6 +42,7 @@ export default function frasesLetras() {
       for (const w of W) {
         const sil = w.silabas.map(fs);
         f(`Bata no tambor: um toque para cada pedaço. ${Nome(w)}!`);
+        f(Nome(w) + '!');                                  // rodadas seguintes: só o nome
         sil.forEach(s => f(s));
         f(`${Nome(w)} tem ${PEDACOS[sil.length]}: ${sil.join(', ')}.`);
       }
@@ -123,7 +124,7 @@ export default function frasesLetras() {
       const daPalavra = new Set(W.flatMap(w => w.silabas));
       const despistes = p.despiste ? new Set(todas.flatMap(w => w.silabas)) : new Set();
       if (p.demo) f('Toque numa folhinha para ouvir.');
-      for (const w of W) { f(`Vamos montar ${nome(w)}! Arraste as folhinhas para os espaços.`); f(Nome(w) + '!'); }
+      for (const w of W) { f(`Vamos montar ${nome(w)}! Arraste as folhinhas para os espaços.`); f(`Vamos montar ${nome(w)}!`); f(Nome(w) + '!'); }
       for (const s of daPalavra) { f(M(fs(s)) + '…'); f(`Aqui vai ${fs(s)}.`); if (p.demo) f(`Olhe! ${M(fs(s))} vai aqui.`); }
       for (const s of new Set([...daPalavra, ...despistes])) { f(M(fs(s)) + '…'); f(`Essa é ${fs(s)}.`); }
     },
@@ -139,6 +140,7 @@ export default function frasesLetras() {
     ler(p, f) {
       const W = P.filtrar({ silabas: p.silabas });
       f('Leia comigo! Que palavra é essa?');
+      f('Que palavra é essa?');                           // rodadas seguintes
       f('Vamos ler devagar, pedacinho por pedacinho.');
       if (p.demo) { f('Olhe como eu leio: toco em cada pedacinho.'); f('Agora toque no pato!'); }
       for (const w of W) { f(Nome(w) + '!'); w.silabas.forEach(s => f(fs(s))); }

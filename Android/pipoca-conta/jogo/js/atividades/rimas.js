@@ -273,15 +273,18 @@
       destacar(null);
     }
 
-    function falarInstrucao() {
+    /** curta (começo das rodadas seguintes): sem o nome do modelo antes das figuras; ele vem na pergunta. */
+    function falarInstrucao(curta) {
       if (!vivo() || fase === 'fim' || bloqueado || ajudando) return Promise.resolve();
       const ac = novaLeitura(), s = ac.signal;
       return (async () => {
         try {
           PC.ui.pipoca.pose('aponta');
           if (modo === 'rima') {
-            destacar(modelo);
-            await falarEm(s, Nome(modelo.p) + '!');
+            if (!curta) {
+              destacar(modelo);
+              await falarEm(s, Nome(modelo.p) + '!');
+            }
             await lerFiguras(s);
             destacar(modelo);
             await falarEm(s, Nome(modelo.p) + ' rima com…?');
@@ -481,7 +484,7 @@
     (async () => {
       try {
         await ctx.esperar(450);
-        await falarInstrucao();
+        await falarInstrucao(!ctx.primeiraDaVez);
         if (ctx.demo && !interagiu && vivo()) {
           const g = proximoGesto();
           if (g) ctx.dica(g.em, null);

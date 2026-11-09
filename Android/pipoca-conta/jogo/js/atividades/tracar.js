@@ -616,20 +616,23 @@
       }
 
       // ------------------------------------------------------------ falas
-      function textoInstrucao() {
+      // curta: o começo das rodadas seguintes, sem o "Comece na bolinha verde." (a criança acabou de ouvir); a
+      // repetição por inatividade volta inteira
+      function textoInstrucao(curta) {
         const t = tracos[atual];
-        if (atual === 0 && s === 0 && modoLetra) return 'Vamos escrever a letra ' + nome + '! Comece na bolinha verde.';
-        if (atual === 0 && s === 0) return numero === 10 ? 'Vamos escrever o dez! Comece pelo um.' : 'Vamos escrever o ' + nome + '! Comece na bolinha verde.';
+        const verde = curta ? '' : ' Comece na bolinha verde.';
+        if (atual === 0 && s === 0 && modoLetra) return 'Vamos escrever a letra ' + nome + '!' + verde;
+        if (atual === 0 && s === 0) return numero === 10 ? 'Vamos escrever o dez! Comece pelo um.' : 'Vamos escrever o ' + nome + '!' + verde;
         if (s === 0 && t.fala) return t.fala + ' Comece na bolinha verde.';
         if (s === 0) return 'Agora este risquinho! Comece na bolinha verde.';
         return 'Continue da bolinha verde.';
       }
-      function instrucao() {
+      function instrucao(curta) {
         if (fase !== 'tracando' || destruida) return Promise.resolve();
         chamarAtencao();
         depois(mostrarCaminho, 500);
         ctx.pipoca.pose('aponta');
-        return falar(textoInstrucao(), { mostrar: mostrar() }).then(r => {
+        return falar(textoInstrucao(curta === true), { mostrar: mostrar() }).then(r => {
           // interrompida por outra fala (um retorno de erro, por exemplo): a outra fala cuida da pose
           if (r !== 'interrompida' && fase === 'tracando' && !destruida) ctx.pipoca.pose('normal');
           return r;
@@ -919,7 +922,7 @@
 
       // ------------------------------------------------------------ começo
       if (ctx.demo) demonstrar();
-      else instrucao();
+      else instrucao(!ctx.primeiraDaVez);
 
       return {
         instrucao,

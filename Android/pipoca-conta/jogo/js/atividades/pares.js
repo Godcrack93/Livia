@@ -526,9 +526,11 @@
     }
 
     // ------------------------------------------------------------ instrução, demonstração e ajuda
-    function instrucao() {
+    /** curta: começo das rodadas seguintes: os ninhos balançam, sem a frase (a criança acabou de ouvir). */
+    function instrucao(curta) {
       if (destruido || resolvida || terminando || ctx.sinal.aborted || ajudando) return Promise.resolve();
       ninhos.forEach((n, i) => { if (!n.ovo) setTimeout(() => { if (!destruido) balancarPlaca(n); }, U.duracao(i * 120)); });
+      if (curta === true) return Promise.resolve();
       return ctx.falar(FALA.instrucao).catch(() => {});
     }
 
@@ -651,7 +653,7 @@
     (async () => {
       try {
         await ctx.esperar(700);
-        await instrucao();
+        await instrucao(!ctx.primeiraDaVez);
         if (ctx.demo && !interagiu) await demonstrar();
       } catch (e) {
         if (!U.ehAbortado(e)) console.error(e);

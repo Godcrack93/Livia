@@ -154,6 +154,10 @@
             teste,
             /** primeira rodada de uma atividade nova: a atividade demonstra uma vez com a mãozinha */
             demo: !!params.demo && indice === 0,
+            /** primeira rodada jogada agora (a 1ª da estação ou a da retomada): a instrução vai inteira; nas
+             *  seguintes a atividade pode encurtar, porque a criança acabou de ouvir (a repetição por inatividade
+             *  continua inteira) */
+            primeiraDaVez: indice === primeira,
             /** Espera (segura enquanto o "Quer parar?" estiver aberto). Rejeita com AbortError quando a rodada acaba. */
             esperar: ms => U.esperar(ms, ac.signal).then(() => aguardarRetomada(ac.signal)),
             /** A Pipoca fala (depois do "Quer parar?", se aberto). Rejeita com AbortError se a rodada acabar. */

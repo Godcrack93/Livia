@@ -275,7 +275,8 @@
       destacar(null);
     }
 
-    function falarInstrucao() {
+    /** curta (começo das rodadas seguintes, modo letra): "Ipê!" e as opções, sem "Com que letra começa ipê?". */
+    function falarInstrucao(curta) {
       if (!vivo() || fase === 'fim' || bloqueado || ajudando) return Promise.resolve();
       const ac = novaLeitura(), s = ac.signal;
       return (async () => {
@@ -283,7 +284,7 @@
           PC.ui.pipoca.pose('aponta');
           if (modo === 'letra') {
             pular(figuraEl, 22);
-            await falarEm(s, maiuscula(nome(palavra)) + '! Com que letra começa ' + nome(palavra) + '?');
+            await falarEm(s, maiuscula(nome(palavra)) + '!' + (curta ? '' : ' Com que letra começa ' + nome(palavra) + '?'));
           } else {
             pular(letraEl, 22);
             await falarEm(s, 'Qual começa com ' + letraFalada(letra) + '?', { mostrar: mini(letra) });
@@ -431,7 +432,7 @@
     (async () => {
       try {
         await ctx.esperar(450);
-        await falarInstrucao();
+        await falarInstrucao(!ctx.primeiraDaVez);
         if (ctx.demo && !interagiu && vivo()) {
           const g = proximoGesto();
           if (g) ctx.dica(g.em, null);

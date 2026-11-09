@@ -366,11 +366,12 @@
     }
 
     // ------------------------------------------------------------ instrução e demonstração
-    function instrucao() {
+    function instrucao(curta) {
       if (destruido || resolvida || contando || ctx.sinal.aborted) return Promise.resolve();
       if (ajudaAC) ajudaAC.abort();
       pulsar(cartao, 1.06);
-      return ctx.falar(`Bata no tambor: um toque para cada pedaço. ${Nome}!`).catch(() => {});
+      // nas rodadas seguintes a criança já sabe o que fazer: só o nome da figura
+      return ctx.falar(curta ? Nome + '!' : `Bata no tambor: um toque para cada pedaço. ${Nome}!`).catch(() => {});
     }
 
     /**
@@ -459,7 +460,7 @@
       try {
         await ctx.esperar(300);
         if (ctx.demo) await demonstrar();
-        else instrucao();
+        else instrucao(!ctx.primeiraDaVez);
       } catch (e) {
         if (!U.ehAbortado(e)) console.error(e);
       } finally {
