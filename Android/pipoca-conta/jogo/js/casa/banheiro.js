@@ -642,6 +642,7 @@
       return s;
     },
     luz: {
+      fecha: 'cima',   // persiana: desce de cima (as cortinas dos outros cômodos fecham dos lados)
       // o vidro de cada janelinha basculante: janela() em (P.janela, topo + 220), vidro de -78..78 x -64..64
       janelas: [5802, 6382].map(x => ({ x: x - 78, y: CASA.L.banheiro.topo + 156, w: 156, h: 128 })),
       fechada: j => persianaFechada(j),

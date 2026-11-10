@@ -1034,6 +1034,11 @@
     luz: {
       janelas: [1010, 2050, 3060].map(x => ({ x: x - 115, y: 360, w: 230, h: 300 })),
       fechada: j => cortinaFechada(j),
+      // por cima do vidro escuro da noite: o contorno do vidro, o caixilho em cruz e as cortinas amarradas
+      sobreVidro: j => {
+        const cx = j.x + j.w / 2, ix = j.x, iy = j.y, iw = j.w, ih = j.h;
+        return r(ix, iy, iw, ih, 'none', 4, 5) + r(cx - 7, iy, 14, ih, '#FFFFFF', 4, 4) + r(ix, iy + ih / 2 - 7, iw, 14, '#FFFFFF', 4, 4) + cortinas(cx, 324, 270, 740);
+      },
       interruptor: { x: 4440, y: 680 },
       lustre: { x: 2050, y: 210, lampada: [0, 64], desenho: aceso => lustreNuvem(aceso) },
     },

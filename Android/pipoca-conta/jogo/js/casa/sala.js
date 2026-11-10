@@ -530,10 +530,16 @@
     s += fe(wx + ww * .74, wy + 44, 22, 9, '#fff') + fe(wx + ww * .66, wy + 37, 13, 9, '#fff') + fe(wx + ww * .22, wy + 60, 14, 6, '#fff');
     s += fe(wx + ww * .28, wy + wh - 96, 16, 14, '#5CC84A') + l(`M${n(wx + ww * .28)} ${wy + wh - 84} V${wy + wh - 64}`, COR.mad3, 4);
     s += fe(wx + ww * .84, wy + 92, 12, 12, COR.amarelo2, .9);
-    s += l(`M${cx} ${wy} V${wy + wh} M${wx} ${wy + wh / 2} H${wx + ww}`, COR.creme, 9);
-    s += l(`M${cx - 4.5} ${wy} V${wy + wh} M${cx + 4.5} ${wy} V${wy + wh} M${wx} ${wy + wh / 2 - 4.5} H${wx + ww} M${wx} ${wy + wh / 2 + 4.5} H${wx + ww}`, T, 2.5);
     s += brilho(wx + 30, wy + 40, 7, 32, 25, .55) + brilho(cx + 36, wy + wh / 2 + 44, 6, 22, 25, .45);
     s += r(wx - 22, wy + wh + 6, ww + 44, 16, COR.creme, 6, 4.5) + fr(wx - 16, wy + wh + 22, ww + 32, 6, T, 0, .08);
+    return s + janelaPorCima(cx, wy, ww, wh);
+  }
+  /** o que fica por cima do vidro (caixilho, cortinas, varão e babado): o motor redesenha por cima do vidro escuro
+   *  da noite (luz.sobreVidro) */
+  function janelaPorCima(cx, wy, ww, wh) {
+    const wx = cx - ww / 2, k = ww / 140, kv = wh / 196;
+    let s = l(`M${cx} ${wy} V${wy + wh} M${wx} ${wy + wh / 2} H${wx + ww}`, COR.creme, 9);
+    s += l(`M${cx - 4.5} ${wy} V${wy + wh} M${cx + 4.5} ${wy} V${wy + wh} M${wx} ${wy + wh / 2 - 4.5} H${wx + ww} M${wx} ${wy + wh / 2 + 4.5} H${wx + ww}`, T, 2.5);
     const rod = wy - 30;
     const cortina = lado => {
       const X = v => n(cx + lado * v * k), Y = v => n(rod + v * kv);
@@ -813,6 +819,7 @@
       // vidro de cada janela: janela(jx, topo + 150, 200, 270)
       janelas: JANELAS.map(x => ({ x: x - 100, y: CASA.L.sala.topo + 150, w: 200, h: 270 })),
       fechada: j => cortinaFechada(j),
+      sobreVidro: (j, k) => janelaPorCima(JANELAS[k], CASA.L.sala.topo + 150, 200, 270),
       interruptor: { x: 826, y: 1668 },   // ao lado da porta da rua (desenhado em porta())
       lustre: { x: 2100, y: CASA.L.sala.topo, lampada: [0, 130], desenho: aceso => lustre(aceso) },
     },

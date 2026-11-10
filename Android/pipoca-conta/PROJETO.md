@@ -466,3 +466,22 @@ Nenhum número flutuando; nenhuma cor ligada a quantidade; cubinhos sem rosto e 
 - Política para Famílias: sem anúncios, sem SDKs de terceiros, compras só na área dos pais (portão), sem táticas de pressão. ECA Digital: supervisão (tempo de uso, limite diário, esconder ofertas), configuração protetora por padrão, sem caixas de recompensa. Play Age Signals: avaliar quando sair da fase beta (registrar no README).
 - Checklist do Play Console, texto em inglês do "Acesso ao app" e o plano de teste fechado (12 testadores × 14 dias para contas pessoais) ficam no README.
 - Antes do primeiro envio: busca de marca "PIPOCA CONTA" no INPI (classes 9, 41, 28).
+
+## 15. Ideias aprovadas, aguardando ajustes antes de fazer
+
+### Esconde-esconde (aprovado em 2026-11-10; a dona quer ajustar detalhes antes de executar)
+- Entrada: botão "Esconde-esconde" no mapa e um apito na Casa da Pipoca. Usa a casa que a criança arrumou.
+- A Pipoca conta até 10 e um bicho da coleção se esconde num esconderijo sorteado (atrás do sofá, dentro do
+  guarda-roupa/baú/geladeira, embaixo da cama, atrás da cortina fechada, balanço, casinha de passarinho), sempre com
+  um pedacinho aparecendo (rabinho, orelha, pé). A criança passeia e toca onde acha; achou = o bicho pula, festa e a
+  Pipoca diz onde estava ("Estava atrás do sofá!"). 3 bichos por partida (3–5 min).
+- Pistas faladas em degraus: lugar (andar, cômodo) → cor e objeto ("perto de uma coisa azul", "onde a gente guarda
+  comida") → posição (embaixo, atrás, dentro). Termômetro quente/frio a cada toque errado ("tá frio… tá pelando!").
+  Ajuda depois de um tempo: a Pipoca aponta o cômodo; mais tarde o esconderijo balança.
+- De noite: tudo escuro e o dedo vira lanterna (círculo de luz, usando o motor de luz da casa); olhinhos brilhando
+  como pista extra.
+- Replay: esconderijo sorteado, a casa muda com a arrumação, cada bicho tem lugares preferidos, dificuldade que cresce
+  (mesmo cômodo → outros andares, pedacinho menor), estrelas e selos por bicho na Coleção.
+- Segunda etapa (opcional): inversão — a criança esconde e a Pipoca procura (erra de propósito, faz graça).
+- Técnica: lista de esconderijos por móvel (ponto + pedacinho aparecendo), sorteio, pista/termômetro, lanterna, falas
+  novas na lista de gravação; medir com --fraco.

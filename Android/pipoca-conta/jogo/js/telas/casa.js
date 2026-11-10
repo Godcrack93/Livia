@@ -46,7 +46,15 @@
       .pc-casa-fixos > *, .pc-casa-ceu > * { position: absolute; }
       .pc-casa-vidro-noite { background: #1A2154; border-radius: 6px; opacity: 0; transition: opacity 1.4s; }
       .pc-casa-mundo.noite .pc-casa-vidro-noite { opacity: .86; }
-      .pc-casa-cortina.cai { transform-origin: 50% 0; animation: pcCasaCortina .4s cubic-bezier(.3, 1.3, .5, 1); }
+      .pc-casa-cortina.cima.cai { transform-origin: 50% 0; animation: pcCasaCortina .4s cubic-bezier(.3, 1.3, .5, 1); }
+      .pc-casa-cortina.cima.abre { transform-origin: 50% 0; animation: pcCasaAbreCima .4s ease-in forwards; }
+      @keyframes pcCasaAbreCima { to { transform: scaleY(.2); opacity: 0; } }
+      .pc-casa-cortina.esq { clip-path: inset(-30px 50% -30px -30px); transform-origin: 0 50%; }
+      .pc-casa-cortina.dir { clip-path: inset(-30px -30px -30px 50%); transform-origin: 100% 50%; }
+      .pc-casa-cortina.lado.cai { animation: pcCasaFechaLado .5s cubic-bezier(.3, 1.15, .5, 1); }
+      @keyframes pcCasaFechaLado { from { transform: scaleX(.22); } }
+      .pc-casa-cortina.lado.abre { animation: pcCasaAbreLado .42s ease-in forwards; }
+      @keyframes pcCasaAbreLado { to { transform: scaleX(.22); opacity: 0; } }
       @keyframes pcCasaCortina { from { transform: scaleY(.25); opacity: .3; } }
       .pc-casa-luz { position: absolute; left: 0; transform-origin: 0 0; pointer-events: none; will-change: transform; z-index: 6; }
       .pc-casa-ceu { z-index: 7; }
@@ -478,11 +486,12 @@
       };
       /** n partículas do tipo saindo do ponto (x, y) do mundo. opcoes: { dx, dy (direção média), espalha, ms, sobe } */
       function particulas(tipo, x, y, n = 6, op = {}) {
+        if (tipo === 'vento') { ventinhos(x, y, n, op); return; }
         const desenho = PARTICULAS[tipo] || PARTICULAS.estrela;
         const dx = op.dx || 0, dy = op.dy != null ? op.dy : -110, espalha = op.espalha != null ? op.espalha : 80, ms = op.ms || 900;
         for (let k = 0; k < n; k++) {
           const el = U.el('div', { html: desenho() });
-          el.style.left = x + 'px'; el.style.top = y + 'px';
+          el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.opacity = '0';   // (some antes de começar e depois de acabar)
           el.style.margin = '-20px 0 0 -20px';
           fxEl.appendChild(el);
           const vx = dx + (Math.random() - .5) * espalha * 2, vy = dy + (Math.random() - .5) * espalha;
@@ -491,7 +500,44 @@
             { transform: 'translate(0, 0) scale(.4) rotate(0deg)', opacity: 0 },
             { transform: `translate(${vx * .35}px, ${vy * .45}px) scale(1) rotate(${giro * .4}deg)`, opacity: 1, offset: .25 },
             { transform: `translate(${vx}px, ${vy + (op.cai ? 160 : 0)}px) scale(.9) rotate(${giro}deg)`, opacity: 0 },
-          ], { duration: ms, delay: atraso, easing: op.cai ? 'cubic-bezier(.2,.6,.6,1)' : 'ease-out', fill: 'backwards' });
+          ], { duration: ms, delay: atraso, easing: op.cai ? 'cubic-bezier(.2,.6,.6,1)' : 'ease-out', fill: 'both' });
+          const fim = () => el.remove();
+          if (anim && anim.finished) anim.finished.then(fim, fim); else setTimeout(fim, ms + atraso + 50);
+        }
+      }
+
+      /**
+       * Vento: rajadas que se desenham no ar. Cada uma é um risco ondulado que termina num caracol; ele aparece da
+       * ponta de trás para a da frente enquanto anda na direção do vento, e some apagando a partir de trás (como um
+       * sopro passando). Vão na direção (dx, dy), com tamanhos, alturas e caracóis (para cima ou para baixo) variados.
+       * Desempenho: um SVG pequeno por rajada; só transform e o traço do caminho mudam.
+       */
+      function ventinhos(x, y, n, op) {
+        const dx = op.dx != null ? op.dx : 240, dy = op.dy || 0, espalha = op.espalha != null ? op.espalha : 40;
+        const ms = op.ms || 1100, passo = op.seguidas || 140, ang = Math.atan2(dy, dx) * 180 / Math.PI, dist = Math.hypot(dx, dy) || 200;
+        for (let k = 0; k < n; k++) {
+          const tam = .75 + Math.random() * .45, cima = (k % 2 === 0) !== (Math.random() < .3) ? -1 : 1;
+          // risco ondulado (0 a 150) e o caracol na ponta; L = comprimento aproximado do traço
+          const d = `M0 0 C 26 ${-10 * cima} 52 ${10 * cima} 80 0 S 120 ${-8 * cima} 138 ${2 * cima} q 16 ${10 * cima} 6 ${22 * cima} q -12 ${8 * cima} -18 ${-4 * cima} q -4 ${-10 * cima} 8 ${-12 * cima}`;
+          const L = 230;
+          const el = U.el('div', { html: `<svg viewBox="-10 -40 180 80" width="180" height="80" style="overflow:visible"><path d="${d}" fill="none" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" opacity=".95"/><path d="${d}" fill="none" stroke="#7CC4F0" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/></svg>` });
+          const desvio = (Math.random() - .5) * espalha * 2;
+          el.style.cssText = `left:${x}px;top:${y}px;margin:-40px 0 0 -10px;opacity:0;transform-origin:10px 40px`;
+          fxEl.appendChild(el);
+          const atraso = k * passo + Math.random() * 60;
+          const base = `rotate(${ang.toFixed(1)}deg) translateY(${desvio.toFixed(1)}px)`;
+          const anim = U.animar(el, [
+            { transform: `${base} translateX(0) scale(${(tam * .9).toFixed(2)})`, opacity: 0 },
+            { transform: `${base} translateX(${(dist * .3).toFixed(0)}px) scale(${tam.toFixed(2)})`, opacity: 1, offset: .2 },
+            { transform: `${base} translateX(${(dist * .8).toFixed(0)}px) scale(${tam.toFixed(2)})`, opacity: 1, offset: .75 },
+            { transform: `${base} translateX(${dist.toFixed(0)}px) scale(${(tam * 1.05).toFixed(2)})`, opacity: 0 },
+          ], { duration: ms, delay: atraso, easing: 'linear', fill: 'both' });
+          // o traço: desenha de trás para a frente e depois apaga a partir de trás
+          el.querySelectorAll('path').forEach(pth => {
+            pth.style.strokeDasharray = `${L} ${L}`;
+            U.animar(pth, [{ strokeDashoffset: L }, { strokeDashoffset: 0, offset: .55 }, { strokeDashoffset: -L * .98 }],
+              { duration: ms, delay: atraso, easing: 'ease-in-out', fill: 'both' });
+          });
           const fim = () => el.remove();
           if (anim && anim.finished) anim.finished.then(fim, fim); else setTimeout(fim, ms + atraso + 50);
         }
@@ -565,7 +611,10 @@
       const PK = 1.2;
       const pipEl = U.el('div', { class: 'pc-casa-pipoca', teste: 'pipoca', role: 'img', 'aria-label': 'Pipoca' });
       const rig = PC.pipoca.criar(pipEl, { pose: 'acena' });
-      function posPipoca() { pipEl.style.left = (pip.x - 135 * PK) + 'px'; pipEl.style.top = (pip.y - 263 * PK) + 'px'; }
+      function posPipoca() { pipEl.style.left = (pip.x - 135 * PK) + 'px'; pipEl.style.top = (pip.y - 263 * PK) + 'px'; marcarPipocaNoMapa(); }
+      // a Pipoca no mapinha (o mapa é esticado: 1 px de largura = 32 do mundo, de altura = 44; a bolinha compensa)
+      var marcaPip = null;
+      function marcarPipocaNoMapa() { if (marcaPip) marcaPip.setAttribute('transform', `translate(${Math.round(pip.x)} ${Math.round(pip.y - 150)})`); }
       posPipoca();
       redesenharItens();
 
@@ -664,12 +713,36 @@
         const lz = luzDe(nm), f = fixos[nm];
         if (!lz || !f) return;
         f.janelas.forEach((jj, k) => {
+          // de noite, o que fica por cima do vidro (caixilho, cortinas abertas, babado) vem de novo por cima do escuro
+          const querPorCima = noite && lz.sobreVidro;
+          if (querPorCima && !jj.porCima) {
+            try { jj.porCima = svgNoMundo(lz.sobreVidro(lz.janelas[k], k)); } catch (e) { console.error(nm, e); }
+            if (jj.porCima) fixosEl.insertBefore(jj.porCima, jj.vidro.nextSibling);
+          } else if (!querPorCima && jj.porCima) {
+            // amanhecendo: o escuro do vidro some devagar (1,4 s); o que fica por cima dele só sai depois
+            const sai = jj.porCima; jj.porCima = null;
+            setTimeout(() => sai.remove(), U.duracao(1600));
+          }
           const fech = !!(fechadas[nm] && fechadas[nm][k]);
           if (fech && !jj.fechada) {
-            try { jj.fechada = svgNoMundo(lz.fechada(lz.janelas[k], k), 'pc-casa-cortina' + (anima ? ' cai' : '')); } catch (e) { console.error(nm, e); return; }
-            // logo depois do vidro da noite (fica atrás do lustre e de tudo o que vem depois)
-            fixosEl.insertBefore(jj.fechada, jj.vidro.nextSibling);
-          } else if (!fech && jj.fechada) { jj.fechada.remove(); jj.fechada = null; }
+            // cortina: as duas metades vêm dos lados para o meio; persiana (lz.fecha 'cima'): desce de cima
+            let el;
+            try { el = svgNoMundo(lz.fechada(lz.janelas[k], k)); } catch (e) { console.error(nm, e); return; }
+            const cima = lz.fecha === 'cima';
+            jj.fechada = cima ? [el] : [el, el.cloneNode(true)];
+            jj.fechada.forEach((p, n) => {
+              p.__caixa = el.__caixa;
+              p.setAttribute('class', 'pc-casa-cortina ' + (cima ? 'cima' : 'lado ' + (n ? 'dir' : 'esq')) + (anima ? ' cai' : ''));
+            });
+            const antes = (jj.porCima || jj.vidro).nextSibling;
+            jj.fechada.forEach(p => fixosEl.insertBefore(p, antes));
+          } else if (!fech && jj.fechada) {
+            const sai = jj.fechada; jj.fechada = null;
+            if (anima) {
+              sai.forEach(p => { p.classList.remove('cai'); p.classList.add('abre'); });
+              setTimeout(() => sai.forEach(p => p.remove()), U.duracao(450));
+            } else sai.forEach(p => p.remove());
+          }
         });
         if (lz.lustre) {
           const aceso = nm === 'quintal' ? noite : !!acesas[nm];
@@ -815,7 +888,7 @@
         noite = v;
         mostrarCeu();
         mapinha.classList.toggle('noite', noite); mostrarAstroBtn();
-        desenharFixos('quintal');
+        COMODOS.concat('quintal').forEach(nm => desenharFixos(nm));
         cancelAnimationFrame(animNoite);
         const k0 = noiteK, k1 = v ? 1 : 0, t0 = performance.now(), dur = U.duracao(1800);
         const passo = t => {
@@ -844,8 +917,18 @@
         `<rect x="${C.CASA0}" y="${C.BAIXO.topo}" width="${C.CASA1 - C.CASA0}" height="${C.BAIXO.piso + 40 - C.BAIXO.topo}" fill="#FFF1D9"/>` +
         `<rect x="${C.CASA0}" y="${C.CIMA.piso + 40}" width="${C.CASA1 - C.CASA0}" height="${C.BAIXO.topo - C.CIMA.piso - 40}" fill="#C9A77E"/>` +
         `<circle cx="8100" cy="1300" r="420" fill="#4FB83D"/><rect x="8070" y="1300" width="60" height="660" fill="#8A5A34"/>` +
-        `<rect class="vista" width="${TELA.l}" height="${TELA.a}" fill="rgba(155,123,255,.18)" stroke="#9B7BFF" stroke-width="90"/></svg>`;
+        // as paredes entre os cômodos e a escada
+        `<path d="M4500 ${C.CIMA.topo} V ${C.CIMA.piso + 40} M4250 ${C.BAIXO.topo} V ${C.BAIXO.piso + 40}" stroke="#9B86C4" stroke-width="80"/>` +
+        `<path d="M${C.ESCADA.x0} ${C.BAIXO.piso + 40} L ${C.ESCADA.x1} ${C.CIMA.piso + 40} L ${C.ESCADA.x1} ${C.CIMA.piso + 200} L ${C.ESCADA.x0 + 140} ${C.BAIXO.piso + 40} Z" fill="#C98A55"/>` +
+        `<rect x="${C.ESCADA.x0 - 20}" y="${C.CIMA.piso + 40}" width="${C.ESCADA.x1 - C.ESCADA.x0 + 40}" height="${C.BAIXO.topo - C.CIMA.piso - 40}" fill="#FFF1D9"/>` +
+        `<path d="M${C.ESCADA.x0} ${C.BAIXO.piso + 40} L ${C.ESCADA.x1} ${C.CIMA.piso + 40}" stroke="#8A5A34" stroke-width="110"/>` +
+        `<rect class="vista" width="${TELA.l}" height="${TELA.a}" fill="rgba(155,123,255,.18)" stroke="#9B7BFF" stroke-width="90"/>` +
+        // a Pipoca: uma bolinha marrom de borda branca num anel coral (parado: o mapinha não fica se redesenhando)
+        `<g class="pip"><ellipse class="pip-onda" rx="230" ry="312" fill="none" stroke="#FF7A6B" stroke-width="70"/>` +
+        `<ellipse rx="170" ry="231" fill="#C98A55" stroke="#FFFFFF" stroke-width="70"/></g></svg>`;
       const vistaMapa = mapinha.querySelector('.vista');
+      marcaPip = mapinha.querySelector('.pip');
+      marcarPipocaNoMapa();
       // o sol (de dia) ou a lua (de noite) no canto do mapinha: tocar troca o dia pela noite
       const astroBtn = U.el('div', { class: 'pc-casa-astro-btn', teste: 'sol', role: 'button' });
       function mostrarAstroBtn() {

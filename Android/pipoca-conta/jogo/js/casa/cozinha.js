@@ -382,7 +382,16 @@
     else s += c(gx + 140, gy + 40, 20, AMA2, 4) + fe(gx + 134, gy + 34, 6, 4, '#fff', .6) + [[30, 170, CORAL], [62, 176, AMA], [104, 172, ROSA]].map(([a, b, cor]) => l(`M${gx + a} ${gy + b + 14} V ${gy + b}`, '#3E8F35', 3) + c(gx + a, gy + b, 6, cor, 3)).join('');
     s += em(gx + 50, gy + 50, .38, p(NUVEM, '#fff', 10));
     s += f(`M${gx + 20} ${gy} L ${gx + 50} ${gy} L ${gx} ${gy + 60} L ${gx} ${gy + 24} Z`, '#FFFFFF', .45);
-    s += ro(gx, gy, gw, gh, 4, 4);
+    s += janelaPorCima(x, y, corBando);
+    // peitoril
+    s += vol(x - 16, y + h - 6, w + 32, 18, '#FFFDF8', 6, 5, 0, 5);
+    return s;
+  }
+  /** o que fica por cima do vidro (contorno, caixilho, bandô e varão): o motor redesenha por cima do vidro escuro da
+   *  noite (luz.sobreVidro) */
+  function janelaPorCima(x, y, corBando = ROSA) {
+    const w = 208, h = 230, gx = x + 16, gy = y + 16, gw = w - 32, gh = h - 32;
+    let s = ro(gx, gy, gw, gh, 4, 4);
     s += r(x + w / 2 - 6, gy, 12, gh, '#FFFDF8', 0, 4) + r(gx, y + h / 2 - 6, gw, 12, '#FFFDF8', 0, 4);
     // bandô de chita
     let d = `M${x - 14} ${y - 22} H ${x + w + 14} V ${y + 26}`;
@@ -391,8 +400,6 @@
     s += p(d, corBando, 5);
     for (let k = 0; k < 9; k++) s += fe(x - 2 + k * 26, y - 6 + (k % 2) * 14, 4, 4, '#FFFFFF');
     s += r(x - 20, y - 30, w + 40, 12, MAD2, 6, 4) + c(x - 20, y - 24, 8, MAD2, 4) + c(x + w + 20, y - 24, 8, MAD2, 4);
-    // peitoril
-    s += vol(x - 16, y + h - 6, w + 32, 18, '#FFFDF8', 6, 5, 0, 5);
     return s;
   }
 
@@ -689,6 +696,7 @@
       // o vidro de cada janela: janela(x, 1344) com moldura 208 x 230 e vidro 16 px para dentro
       janelas: MONTA.janelas.map(x => ({ x: x + 16, y: 1360, w: 176, h: 198 })),
       fechada: (j, nj) => cortinaFechada(j, nj),
+      sobreVidro: (j, k) => janelaPorCima(MONTA.janelas[k], 1344, k ? AMA : ROSA),
       interruptor: INTERRUPTOR,
       lustre: { x: MONTA.luminaria, y: CASA.L.cozinha.topo, lampada: [0, 262], desenho: aceso => lustre(aceso) },
     },
