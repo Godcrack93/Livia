@@ -106,11 +106,9 @@
       @keyframes pcMapaHalo { 0% { transform: scale(.86); opacity: .85; } 100% { transform: scale(1.34); opacity: 0; } }
 
       /* a Pipoca apresentadora (PC.ui.pipoca) mora dentro da trilha, de pé em cima da estação atual.
-         No mapa só a estação atual anima: sem respirar nem piscar (falar e pular continuam). */
+         Ela é a Pipoca viva (js/pipoca.js): respira, pisca, fala e pula por conta própria. */
       .tela-mapa .pipoca-host.pc-mapa-pip { width: ${PIP.l}px; height: ${PIP.a}px; z-index: 30; }
       .tela-mapa .pc-mapa-pip .pipoca-corpo { width: ${PIP.l}px; height: ${PIP.a}px; }
-      .tela-mapa .pc-mapa-pip .pipoca-corpo.respira:not(.pula):not(.danca) { animation: none; }
-      .tela-mapa .pc-mapa-pip .pip-piscar, .tela-mapa .pc-mapa-pip .pip-braco-aceno { animation: none; }
       .tela-mapa .pc-mapa-pip .balao { left: 150px; bottom: 150px; transform-origin: 8% 100%; }
       .tela-mapa .pc-mapa-pip .balao::after { left: 30px; }
       .tela-mapa .pc-mapa-pip.pc-mapa-balao-esq .balao { left: auto; right: 150px; transform-origin: 92% 100%; }
@@ -714,7 +712,7 @@
       function tocarPipoca() {
         if (saindo || destruida) return;
         const c = host.querySelector('.pipoca-corpo');
-        if (c) { c.classList.remove('pula'); void c.offsetWidth; c.classList.add('pula'); }
+        if (c) PC.ui.pipoca.pular();
         apontarAtual(FALA_CONVITE);
       }
       function entrar(n) {

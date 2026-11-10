@@ -177,8 +177,8 @@
   D.macaca = () => {
     const miolo = pipocaMiolo('feliz');
     if (!miolo) throw new Error('arte da Pipoca ainda não carregou');   // sem cache: tenta de novo na próxima vez
-    // a Pipoca feliz ocupa x 24..226 e y 52..262 no quadro dela
-    const k = 0.82, x = r2(100 - 125 * k), y = r2(188 - 262 * k);
+    // a Pipoca feliz (sagui de pé) ocupa x 0..236 e y 19..263 no quadro dela
+    const k = 0.7, x = r2(100 - 118 * k), y = r2(188 - 263 * k);
     return `<g transform="translate(${x} ${y}) scale(${k})">${miolo}</g>`;
   };
 

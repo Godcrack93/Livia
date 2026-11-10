@@ -18,9 +18,10 @@
 <div class="grade" id="grade"></div>
 <script src="../js/nucleo.js"></script>
 <script src="../js/arte.js"></script>
+<script src="../js/pipoca.js"></script>
 <script>
   if (location.search.includes('parado')) document.body.classList.add('parado');
-  for (const pose of ['normal', 'fala', 'feliz', 'aponta', 'pensa', 'danca', 'acena']) {
+  for (const pose of PC.arte.poses()) {
     const d = document.createElement('div');
     d.className = 'item' + (pose === 'fala' && location.search.includes('falando') ? ' falando' : '');
     d.innerHTML = `<div>${PC.arte.pipoca(pose)}</div>${pose}`;

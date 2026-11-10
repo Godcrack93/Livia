@@ -1,7 +1,6 @@
 /* Pipoca Aprende — arte desenhada em código (SVG). Dono: agente de arte (histórico em HISTORICO-ARTE.md).
-   PC.arte.pipoca(pose)   -> texto SVG da macaquinha Pipoca (viewBox 0 0 250 270). Poses: normal, fala, feliz, aponta,
-                             pensa, danca, acena. Classes que o CSS do núcleo usa: pip-boca-aberta, pip-boca-fechada,
-                             pip-olhos, pip-piscar, pip-braco-aceno (o braço que acena gira em volta do ombro, 152,182).
+   PC.arte.pipoca(pose)   -> texto SVG da Pipoca parada (viewBox 0 0 250 270). Quem desenha é js/pipoca.js (lá também
+                             está a Pipoca viva, PC.pipoca.criar). Poses: PC.arte.poses().
    PC.arte.icone(nome)    -> texto SVG de um ícone (viewBox 0 0 64 64, contorno #3A2A5A). Lista: PC.arte.nomesIcones().
                              Nome desconhecido: círculo com "?" (e aviso no console só com PC.config.debug).
    PC.arte.cenario(nome, opcoes) -> elemento .cenario que cobre a tela inteira: prado, lagoa, floresta ou ceu.
@@ -58,120 +57,8 @@
   }
 
   // ======================================================================== Pipoca
-  // Uma macaquinha sentada, de frente, como um bichinho de pelúcia (viewBox 0 0 250 270):
-  //   cabeça   círculo (125, 118) r 50, orelhas redondas em (72, 122) e (178, 122); rosto clarinho em coração
-  //   olhos    (108, 118) e (142, 118); narinas em (120, 136) e (130, 136); boca em y ≈ 144..160
-  //   corpo    elipse (125, 204) 40 × 46 com a barriga clara; coxas e pés na frente; rabo enrolado do lado esquerdo
-  //   ombros   (98, 182) e (152, 182) — o braço que acena gira em volta do ombro direito (CSS do núcleo: 152px 182px)
-  //   chão     y ≈ 263 (sombra em elipse)
-  const CAB = { x: 125, y: 118, r: 50 };
-  const OMBRO = { e: [98, 182], d: [152, 182] };
+  // A Pipoca (desenho e animação) mora em js/pipoca.js, que registra PC.arte.pipoca(pose) e PC.arte.poses().
   const f1 = n => (Math.round(n * 10) / 10).toString();
-  const traco = (d, cor, w) => `<path d="${d}" fill="none" stroke="${cor}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
-  // traço grosso com contorno (braço, rabo): o contorno por baixo e a cor por cima
-  const membro = (d, cor, w) => traco(d, T, w + 10) + traco(d, cor, w);
-
-  // braço comprido de macaco: sai do ombro, faz uma curvinha (o cotovelo vai para fora) e termina na mãozinha.
-  // tipo: 'mao' (mãozinha aberta), 'dedo' (apontando para onde o braço vai)
-  function braco(lado, x1, y1, tipo, classe, curva = 16) {
-    const [x0, y0] = OMBRO[lado];
-    const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy) || 1;
-    let vx = -dy / L, vy = dx / L;
-    if ((vx < 0) !== (lado === 'e')) { vx = -vx; vy = -vy; }   // o cotovelo sempre para fora do corpo
-    const cx = (x0 + x1) / 2 + vx * curva, cy = (y0 + y1) / 2 + vy * curva;
-    let s = membro(`M${x0} ${y0} Q ${f1(cx)} ${f1(cy)} ${x1} ${y1}`, C.corpo, 14);
-    if (tipo === 'dedo') {
-      const ux = dx / L, uy = dy / L;
-      s += membro(`M${x1} ${y1} L ${f1(x1 + ux * 16)} ${f1(y1 + uy * 16)}`, C.rosto, 6);
-    }
-    s += `<circle cx="${x1}" cy="${y1}" r="11" fill="${C.rosto}" stroke="${T}" stroke-width="4.5"/>`;
-    if (tipo !== 'dedo') {
-      // três risquinhos de dedinhos, na ponta da mão (na direção do braço)
-      const ux = dx / L, uy = dy / L, px = -uy, py = ux;
-      s += [-4.5, 0, 4.5].map(k => `<path d="M${f1(x1 + ux * 5 + px * k)} ${f1(y1 + uy * 5 + py * k)} l ${f1(ux * 4.5)} ${f1(uy * 4.5)}" stroke="${T}" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>`).join('');
-    }
-    return `<g${classe ? ` class="${classe}"` : ''}>${s}</g>`;
-  }
-
-  // camadas dos braços: fundo = atrás do corpo (a raiz some nele); corpo = por cima do corpo, atrás da cabeça;
-  // frente = por cima de tudo (a mão no queixo)
-  const DESCANSA_E = ['e', 110, 222, 'mao', '', 18], DESCANSA_D = ['d', 140, 222, 'mao', '', 18];
-  const POSES = {
-    normal: { corpo: [DESCANSA_E, DESCANSA_D] },
-    fala: { corpo: [DESCANSA_E], fundo: [['d', 206, 152, 'mao', '', 14]] },
-    feliz: { fundo: [['e', 40, 112, 'mao', '', 14], ['d', 210, 112, 'mao', '', 14]], olhos: 'felizes', boca: 'sorriso' },
-    aponta: { corpo: [DESCANSA_E], fundo: [['d', 226, 168, 'dedo', '', 8]], olhar: [3.5, 0] },
-    pensa: { corpo: [DESCANSA_E], frente: [['d', 146, 168, 'mao', '', 30]], olhar: [-2, -4], sobrancelhas: true, bolhas: true },
-    danca: { fundo: [['e', 36, 128, 'mao', '', 14], ['d', 214, 226, 'mao', '', 12]], olhos: 'felizes', boca: 'sorriso', pe: true },
-    acena: { corpo: [DESCANSA_E], fundo: [['d', 210, 112, 'mao', 'pip-braco-aceno', 14]] },
-  };
-
-  // olhinho redondo e brilhante, com dois pontinhos de luz
-  const olho = (x, y) => `<ellipse cx="${x}" cy="${y}" rx="8.5" ry="9.5" fill="${T}"/>` +
-    `<circle cx="${f1(x + 3)}" cy="${f1(y - 3.2)}" r="3.4" fill="#fff"/><circle cx="${f1(x - 3)}" cy="${f1(y + 4.4)}" r="1.5" fill="#fff" opacity=".85"/>`;
-  function olhos(cfg) {
-    if (cfg.olhos === 'felizes') {
-      return `<g class="pip-olhos"><path d="M99 121 Q 108 109 117 121 M133 121 Q 142 109 151 121" fill="none" stroke="${T}" stroke-width="6" stroke-linecap="round"/></g>`;
-    }
-    const [ox, oy] = cfg.olhar || [0, 0];
-    return `<g class="pip-olhos pip-piscar">${olho(108 + ox, 118 + oy)}${olho(142 + ox, 118 + oy)}</g>`;
-  }
-
-  function boca(cfg) {
-    const fechada = cfg.boca === 'sorriso'
-      ? `<g class="pip-boca-fechada"><path d="M106 143 Q 125 170 144 143 Z" fill="${C.boca}" stroke="${T}" stroke-width="4.5" stroke-linejoin="round"/>` +
-        `<ellipse cx="125" cy="155" rx="8" ry="4" fill="${C.lingua}"/></g>`
-      : `<g class="pip-boca-fechada"><path d="M108 144 Q 125 160 142 144" fill="none" stroke="${T}" stroke-width="5" stroke-linecap="round"/></g>`;
-    const aberta = `<g class="pip-boca-aberta"><ellipse cx="125" cy="151" rx="11.5" ry="9.5" fill="${C.boca}" stroke="${T}" stroke-width="4.5"/>` +
-      `<ellipse cx="125" cy="155.5" rx="6.5" ry="3.4" fill="${C.lingua}"/></g>`;
-    return fechada + aberta;
-  }
-
-  // coxa e pezinho (a macaquinha está sentada; os pés aparecem na frente)
-  const perna = (x, pe) => `<ellipse cx="${x}" cy="238" rx="20" ry="16" fill="${C.corpo}" stroke="${T}" stroke-width="5"/>` +
-    `<ellipse cx="${pe}" cy="252" rx="17" ry="8" fill="${C.rosto}" stroke="${T}" stroke-width="5"/>` +
-    `<path d="M${pe - 6} 251 v 5 M${pe + 6} 251 v 5" stroke="${T}" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>`;
-
-  /** A Pipoca numa pose: normal, fala, feliz, aponta, pensa, danca, acena. Texto SVG, viewBox 0 0 250 270. */
-  function pipoca(pose) {
-    const cfg = POSES[pose] || POSES.normal;
-    const camada = lista => (lista || []).map(b => braco(...b)).join('');
-    const sobrancelhas = cfg.sobrancelhas
-      ? `<path d="M98 101 Q 108 95 118 100 M133 97 Q 144 90 154 98" fill="none" stroke="${T}" stroke-width="4.5" stroke-linecap="round"/>` : '';
-    const bolhas = cfg.bolhas
-      ? `<g fill="#fff" stroke="${T}" stroke-width="3.5"><circle cx="40" cy="58" r="5.5"/><circle cx="24" cy="36" r="8.5"/></g>` : '';
-    // na dança, a perna direita chuta para o lado
-    const pernaD = cfg.pe ? `<g transform="rotate(-38 150 236)">${perna(150, 160)}</g>` : perna(150, 158);
-    return `<svg viewBox="0 0 250 270" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">` +
-      `<ellipse cx="125" cy="263" rx="90" ry="8" fill="rgba(58,42,90,.18)"/>` +
-      // rabo comprido enrolado, do lado esquerdo
-      membro('M100 236 C 54 244 26 208 42 180 C 54 160 80 170 76 188 C 73 200 58 199 58 190', C.corpo, 10) +
-      camada(cfg.fundo) +
-      `<ellipse cx="125" cy="204" rx="40" ry="46" fill="${C.corpo}" stroke="${T}" stroke-width="5"/>` +
-      `<ellipse cx="125" cy="214" rx="25" ry="30" fill="${C.barriga}"/>` +
-      `<ellipse cx="108" cy="184" rx="10" ry="6" fill="#fff" opacity=".22" transform="rotate(-30 108 184)"/>` +
-      perna(100, 92) + pernaD +
-      camada(cfg.corpo) +
-      `<g class="pip-cabeca">` +
-        // orelhas redondas dos lados
-        `<circle cx="72" cy="122" r="17" fill="${C.corpo}" stroke="${T}" stroke-width="5"/><circle cx="72" cy="122" r="9" fill="${C.orelha}"/>` +
-        `<circle cx="178" cy="122" r="17" fill="${C.corpo}" stroke="${T}" stroke-width="5"/><circle cx="178" cy="122" r="9" fill="${C.orelha}"/>` +
-        `<circle cx="${CAB.x}" cy="${CAB.y}" r="${CAB.r}" fill="${C.corpo}" stroke="${T}" stroke-width="5"/>` +
-        // topetinho
-        membro('M118 72 Q 116 58 128 56', C.corpo, 5) +
-        // rosto clarinho em forma de coração
-        `<path d="M125 110 C 112 88 80 92 82 118 C 84 146 104 164 125 164 C 146 164 166 146 168 118 C 170 92 138 88 125 110 Z" fill="${C.rosto}"/>` +
-        `<ellipse cx="104" cy="84" rx="16" ry="6" fill="#fff" opacity=".3" transform="rotate(-20 104 84)"/>` +
-        `<ellipse cx="95" cy="138" rx="8" ry="5" fill="${C.bochecha}" opacity=".5"/><ellipse cx="155" cy="138" rx="8" ry="5" fill="${C.bochecha}" opacity=".5"/>` +
-        olhos(cfg) + sobrancelhas +
-        `<circle cx="120" cy="136" r="2.8" fill="${C.narina}"/><circle cx="130" cy="136" r="2.8" fill="${C.narina}"/>` +
-        boca(cfg) +
-        // flor de ipê: SEMPRE do lado direito da cabeça (de quem olha), no alto
-        `<g class="pip-flor" transform="translate(162 80) rotate(14) scale(.84)">${florInterna(3.4)}</g>` +
-      `</g>` +
-      camada(cfg.frente) + bolhas +
-      `</svg>`;
-  }
 
   // ======================================================================== ícones (viewBox 0 0 64 64)
   const cuboMini = (x, y, cor, l = 18) =>
@@ -552,8 +439,8 @@
   }
 
   PC.arte = {
-    pipoca, icone, cenario, mao, logo, flor, cores: C, novoId,
-    poses: () => Object.keys(POSES),
+    icone, cenario, mao, logo, flor, cores: C, novoId,
+    pipoca: () => '', poses: () => [],                  // substituídos por js/pipoca.js
     nomesIcones: () => Object.keys(ICONES),
     nomesCenarios: () => Object.keys(CENARIOS),
   };

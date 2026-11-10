@@ -32,7 +32,7 @@ O jogo usa mecânicas comuns de materiais educativos (cubos de encaixe, quadro d
 
 ## 3. Personagens e visual
 
-**Ficha da Pipoca** (traços fixos): macaquinha de pelo marrom (`#9A6338`), sentada de frente como um bichinho de pelúcia: cabeça grande e redonda com orelhas redondas dos lados, **rosto clarinho em forma de coração** (`#F3D3A8`), olhos redondos e brilhantes, narizinho de dois pontinhos, topetinho, barriga, mãos e pés clarinhos, braços compridos e rabo comprido enrolado (do lado esquerdo). **Flor amarela de ipê sempre do lado direito da cabeça (de quem olha)**: é a marca dela. Calma e animada. Poses: `normal`, `fala`, `feliz`, `aponta`, `pensa`, `danca`, `acena`. (Até novembro de 2026 a Pipoca era uma capivara; a versão antiga está guardada em `guardado/pipoca-capivara/`.)
+**Ficha da Pipoca** (traços fixos, versão 2, novembro de 2026): uma **sagui**, o macaquinho brasileiro de tufos brancos nas orelhas. Os dois tufos parecem **pipoca estourada** (brancos, de gominhos, com pintinhas cor de manteiga): é daí que vem o nome e é a marca dela. De pé, cabeça grande, pelo caramelo (`#B8763E`), **gorrinho de pelo escuro** (`#6B4329`) com a barra ondulada e um topetinho de duas pontas, **mancha branca na testa**, máscara clara em volta dos olhos e do focinho (`#FFE6C4`), olhos grandes cor de mel com cílios, narizinho escuro com um risquinho até a boca, barriga clara, mãos e pés rosados e **rabo comprido de anéis** (do lado esquerdo), que ondula. Calma e animada. **Sem a flor de ipê na cabeça por enquanto** (decisão da família; a flor continua no logo). Tudo o que é dela mora em `jogo/js/pipoca.js`: `PC.pipoca.svg(pose)` (parada, igual a `PC.arte.pipoca`) e `PC.pipoca.criar(el)` (viva: molas, respiração, piscar, rabo, tufos que balançam atrasados, boca com vários formatos na fala, pulo, olhar que acompanha o toque). Poses: `normal`, `fala`, `feliz`, `aponta`, `pensa`, `danca`, `acena`, `comemora`, `palmas`, `surpresa`, `ops`, `ouve`, `torce`, `joia`, `carinho`, `sono`, `boceja`. A moldura usa `ops` no 1º erro, `pensa` nos seguintes e sorteia a comemoração do acerto (`feliz`, `comemora`, `palmas`, `joia`). (Versões guardadas: a capivara em `guardado/pipoca-capivara/` e a macaquinha marrom sentada, de novembro de 2026, em `guardado/pipoca-macaca-v1/`.)
 
 Outros: **Pulo** (sapinho verde-limão de bochechas rosadas), **pintinhos** (aves creme com topetinho), fregueses da feirinha (**tucano, arara e quati**). Estilo: formas arredondadas, cores vivas e suaves, contorno `#3A2A5A`, sombra como elipse achatada desenhada no próprio SVG (sem filtros). Tudo em código (SVG/CSS). Fonte **Fredoka** (500/600/700) em `jogo/fontes/`. Cenários: **Prado**, **Lagoa**, **Floresta** (e `ceu` para telas de menu).
 
@@ -366,7 +366,7 @@ t.mover(x, y, {animar}) -> Promise / t.destacar(i) / t.tremer() / t.contarAlto({
 
 ### 9.5 Interface (`PC.ui`)
 ```js
-PC.ui.pipoca.montar(raiz) / desmontar() / mostrar() / esconder() / pose(nome) / calar() / falando()
+PC.ui.pipoca.montar(raiz) / desmontar() / mostrar() / esconder() / pose(nome) / poseAtual() / pular() / momento(nome, ms) / calar() / falando()
 PC.ui.pipoca.dizer(texto, {voz, mostrar}) -> Promise    // mostrar: número (grande, com pontinhos) ou elemento no balão
 PC.ui.botaoIcone(icone, rotulo, aoTocar, {cor, mostrarRotulo}) -> button     // ícone obrigatório
 PC.ui.botaoGrande(texto, aoTocar, {cor, icone}) -> button                    // botões para a criança: SEMPRE com ícone

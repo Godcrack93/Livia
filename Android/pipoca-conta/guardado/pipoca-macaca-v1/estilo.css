@@ -1,0 +1,239 @@
+/* Pipoca Aprende — estilo base.
+   O jogo desenha num palco virtual de 1600×900 (ver js/nucleo.js). Todas as medidas abaixo que ficam dentro do
+   palco estão em pixels virtuais; a escala é aplicada no #palco inteiro. */
+
+@font-face { font-family: 'Fredoka'; font-weight: 500; font-style: normal; font-display: block; src: url('fontes/fredoka-500.woff2') format('woff2'); }
+@font-face { font-family: 'Fredoka'; font-weight: 600; font-style: normal; font-display: block; src: url('fontes/fredoka-600.woff2') format('woff2'); }
+@font-face { font-family: 'Fredoka'; font-weight: 700; font-style: normal; font-display: block; src: url('fontes/fredoka-700.woff2') format('woff2'); }
+
+:root {
+  color-scheme: light;
+  --tinta: #3A2A5A;
+  --tinta-suave: #6E5E92;
+  --papel: #FFFFFF;
+  --creme: #FFF8EC;
+  --ceu: #BFE8FF;
+  --ceu-alto: #8FD3FF;
+  --coral: #FF7A6B;
+  --turquesa: #2EC4B6;
+  --ouro: #FFC93C;
+  --verde: #5CC84A;
+  --verde-escuro: #3E9A30;
+  --azul: #4DA3FF;
+  --roxo: #9B7BFF;
+  --rosa: #FF8FC2;
+  --laranja: #FF9F43;
+  --fonte: 'Fredoka', 'Baloo 2', 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
+  /* recorte da câmera (o app Android preenche; no navegador fica 0) */
+  --seguro-topo: 0px; --seguro-base: 0px; --seguro-esq: 0px; --seguro-dir: 0px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ceu); }
+body {
+  font-family: var(--fonte); color: var(--tinta);
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none; touch-action: none;
+}
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+#jogo { position: fixed; inset: 0; overflow: hidden; background: var(--ceu); touch-action: none; }
+#palco { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; transform-origin: 0 0; }
+
+/* ---------- telas ---------- */
+.tela { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; }
+.tela.entrando { animation: telaEntra .32s ease-out both; }
+.tela.saindo { animation: telaSai .22s ease-in both; pointer-events: none; }
+@keyframes telaEntra { from { opacity: 0; transform: scale(1.02); } }
+@keyframes telaSai { to { opacity: 0; transform: scale(.985); } }
+
+/* cenário: cobre a tela inteira, inclusive as faixas fora do palco */
+.cenario { position: absolute; left: -1200px; top: -700px; width: 4000px; height: 2300px; pointer-events: none; overflow: hidden; }
+.cenario > svg.cenario-svg { position: absolute; left: 0; top: 0; width: 4000px; height: 2300px; }
+
+/* camada da rodada (atividade) */
+.rodada { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; z-index: 10; }
+
+/* ---------- botões ---------- */
+.botao-icone {
+  position: relative; width: 96px; height: 96px; padding: 0; border-radius: 50%; cursor: pointer;
+  background: var(--papel); border: 5px solid var(--tinta); box-shadow: 0 7px 0 var(--tinta);
+  display: inline-grid; place-items: center; transition: transform .08s, box-shadow .08s; touch-action: manipulation;
+}
+.botao-icone svg { width: 56px; height: 56px; display: block; }
+.botao-icone.apertado, .botao-icone:active { transform: translateY(5px); box-shadow: 0 2px 0 var(--tinta); }
+.botao-icone.amarelo { background: var(--ouro); }
+.botao-icone.verde { background: var(--verde); color: #fff; }
+.botao-icone .rotulo-botao { position: absolute; top: 100%; left: 50%; transform: translate(-50%, 12px); white-space: nowrap; font-weight: 700; font-size: 24px; color: var(--tinta); text-shadow: 0 2px 0 #fff; }
+
+.botao-grande {
+  position: relative; height: 120px; padding: 0 52px 0 40px; border-radius: 60px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 18px;
+  font: 700 52px/1 var(--fonte); color: #fff; letter-spacing: .01em;
+  background: var(--cor, var(--verde)); border: 6px solid var(--tinta); box-shadow: 0 10px 0 var(--tinta);
+  text-shadow: 0 3px 0 rgba(0, 0, 0, .18); transition: transform .08s, box-shadow .08s; touch-action: manipulation;
+}
+.botao-grande svg { width: 64px; height: 64px; flex: none; }
+.botao-grande.apertado, .botao-grande:active { transform: translateY(8px); box-shadow: 0 2px 0 var(--tinta); }
+.botao-grande.sem-icone { padding: 0 52px; }
+
+/* ---------- HUD da atividade ---------- */
+.hud { position: absolute; left: 0; top: 0; width: 1600px; height: 140px; z-index: 60; pointer-events: none; }
+.hud > * { pointer-events: auto; }
+.hud .hud-esq { position: absolute; left: 24px; top: 12px; }
+.hud .hud-dir { position: absolute; right: 24px; top: 12px; }
+.hud .progresso { position: absolute; left: 50%; top: 30px; transform: translateX(-50%); display: flex; gap: 18px; padding: 12px 22px;
+  border-radius: 40px; background: rgba(255, 255, 255, .85); border: 4px solid var(--tinta); pointer-events: none; }
+.progresso .bolinha { width: 34px; height: 34px; border-radius: 50%; border: 4px solid var(--tinta); background: #E9E3F5; transition: background .3s, transform .3s; }
+.progresso .bolinha.feita { background: var(--ouro); }
+.progresso .bolinha.atual { transform: scale(1.18); background: #fff; }
+.progresso .bolinha.acendeu { animation: bolinhaAcende .6s cubic-bezier(.3, 1.8, .5, 1); }
+@keyframes bolinhaAcende { 40% { transform: scale(1.6); } }
+
+/* ---------- Pipoca apresentadora ---------- */
+.pipoca-host { position: absolute; left: 6px; top: 612px; width: 270px; height: 288px; z-index: 30; pointer-events: none; }
+.pipoca-host .pipoca-corpo { position: absolute; left: 0; bottom: 0; width: 250px; height: 270px; pointer-events: auto; cursor: pointer; transform-origin: 50% 100%; }
+.pipoca-host .pipoca-corpo svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.pipoca-host.escondida { display: none; }
+.pipoca-host.entra .pipoca-corpo { animation: pipocaEntra .5s cubic-bezier(.3, 1.5, .5, 1) both; }
+@keyframes pipocaEntra { from { transform: translateY(120%); } }
+.pipoca-corpo.respira { animation: respira 2.6s ease-in-out infinite; }
+@keyframes respira { 50% { transform: scale(1.015, .985); } }
+.pipoca-corpo.pula { animation: pulinho .55s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes pulinho { 35% { transform: translateY(-34px) scale(.97, 1.04); } 70% { transform: translateY(0) scale(1.05, .95); } }
+.pipoca-corpo.danca { animation: danca .7s ease-in-out infinite alternate; }
+@keyframes danca { from { transform: rotate(-7deg) translateY(0); } to { transform: rotate(7deg) translateY(-14px); } }
+
+/* boca e olhos da Pipoca (o SVG vem de PC.arte.pipoca) */
+.pip-boca-aberta { opacity: 0; }
+.falando .pip-boca-aberta { animation: bocaAbre .34s steps(1, end) infinite; }
+.falando .pip-boca-fechada { animation: bocaFecha .34s steps(1, end) infinite; }
+@keyframes bocaAbre { 0% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes bocaFecha { 0% { opacity: 0; } 50% { opacity: 1; } }
+.pip-piscar { animation: piscar 4.2s infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes piscar { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.12); } }
+.pip-braco-aceno { transform-box: view-box; transform-origin: 152px 182px; animation: aceno .55s ease-in-out infinite alternate; }
+@keyframes aceno { from { transform: rotate(-16deg); } to { transform: rotate(14deg); } }
+
+/* logo */
+.logo { margin: 0; font: 700 150px/1 var(--fonte); letter-spacing: .01em; white-space: nowrap; text-align: center; }
+.logo .logo-palavra { display: inline-block; }
+.logo .logo-letra { display: inline-block; color: var(--c); -webkit-text-stroke: 8px var(--tinta); paint-order: stroke fill;
+  text-shadow: 0 10px 0 var(--tinta); animation: letraPula 2.4s ease-in-out infinite; animation-delay: calc(var(--i) * 90ms); }
+@keyframes letraPula { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-16px); } }
+
+.balao {
+  position: absolute; left: 4px; bottom: 300px; width: max-content; max-width: 560px; min-width: 120px; padding: 16px 26px 14px;
+  background: var(--papel); border: 4px solid var(--tinta); border-radius: 30px; box-shadow: 0 6px 0 rgba(58, 42, 90, .18);
+  font: 600 32px/1.2 var(--fonte); color: var(--tinta); white-space: normal; pointer-events: none; transform-origin: 20% 100%;
+}
+.balao::after { content: ''; position: absolute; left: 96px; bottom: -19px; width: 30px; height: 30px; background: var(--papel);
+  border-right: 4px solid var(--tinta); border-bottom: 4px solid var(--tinta); transform: rotate(45deg); border-radius: 0 0 6px 0; }
+.balao .balao-conteudo { display: flex; align-items: center; gap: 18px; }
+.balao .balao-numero { flex: none; display: grid; justify-items: center; gap: 4px; padding: 6px 14px 8px; border-radius: 20px; background: var(--creme); border: 4px solid var(--tinta); }
+.balao .balao-numero b { font: 700 72px/1 var(--fonte); color: var(--tinta); }
+.balao .balao-numero .pontos { display: grid; grid-template-columns: repeat(5, 14px); gap: 4px; }
+.balao .balao-numero .pontos i { width: 14px; height: 14px; border-radius: 50%; background: var(--roxo); border: 2px solid var(--tinta); }
+.balao .balao-numero .pontos i.b { background: var(--ouro); }
+.balao .balao-texto { font: 600 32px/1.2 var(--fonte); }
+.balao.mostra { animation: balaoMostra .3s cubic-bezier(.3, 1.6, .5, 1) both; }
+.balao.some { animation: balaoSome .25s ease-in both; }
+@keyframes balaoMostra { from { transform: scale(.4); opacity: 0; } }
+@keyframes balaoSome { to { transform: scale(.7); opacity: 0; } }
+
+/* ---------- cubinhos e torres ---------- */
+.torre { position: absolute; width: 0; height: 0; z-index: 5; }
+.torre.arrastando { z-index: 30; }
+.torre.animando { transition: left .35s cubic-bezier(.3, 1.3, .5, 1), top .35s cubic-bezier(.3, 1.3, .5, 1); }
+.cubo {
+  position: absolute; width: 64px; height: 64px; border-radius: 12px; border: 4px solid var(--tinta);
+  background: linear-gradient(180deg, var(--c-claro, #fff) 0%, var(--c, #f80) 42%, var(--c-escuro, #c60) 100%);
+  box-shadow: inset 0 -5px 0 rgba(0, 0, 0, .10), inset 0 4px 0 rgba(255, 255, 255, .35);
+}
+.cubo::before { content: ''; position: absolute; left: 50%; top: -14px; width: 28px; height: 12px; margin-left: -14px;
+  border: 4px solid var(--tinta); border-bottom: 0; border-radius: 9px 9px 0 0; background: var(--c-claro, #fff); }
+.cubo::after { content: ''; position: absolute; left: 8px; top: 7px; width: 15px; height: 8px; border-radius: 6px; background: rgba(255, 255, 255, .6); }
+/* estampas (para distinguir partes sem depender só da cor) */
+.cubo.estampa-listras { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.55) 0 7px, transparent 7px 16px), linear-gradient(180deg, var(--c-claro) 0%, var(--c) 42%, var(--c-escuro) 100%); }
+.cubo.estampa-bolinhas { background-image: radial-gradient(circle, rgba(255,255,255,.7) 4px, transparent 5px), linear-gradient(180deg, var(--c-claro) 0%, var(--c) 42%, var(--c-escuro) 100%); background-size: 18px 18px, 100% 100%; }
+.cubo.estampa-xadrez { background-image: conic-gradient(rgba(255,255,255,.5) 25%, transparent 0 50%, rgba(255,255,255,.5) 0 75%, transparent 0), linear-gradient(180deg, var(--c-claro) 0%, var(--c) 42%, var(--c-escuro) 100%); background-size: 20px 20px, 100% 100%; }
+.cubo.estampa-escura.estampa-listras { background-image: repeating-linear-gradient(135deg, rgba(58,42,90,.32) 0 7px, transparent 7px 16px), linear-gradient(180deg, var(--c-claro) 0%, var(--c) 42%, var(--c-escuro) 100%); }
+.cubo.estampa-escura.estampa-bolinhas { background-image: radial-gradient(circle, rgba(58,42,90,.38) 4px, transparent 5px), linear-gradient(180deg, var(--c-claro) 0%, var(--c) 42%, var(--c-escuro) 100%); }
+.cubo.estampa-escura.estampa-xadrez { background-image: conic-gradient(rgba(58,42,90,.28) 25%, transparent 0 50%, rgba(58,42,90,.28) 0 75%, transparent 0), linear-gradient(180deg, var(--c-claro) 0%, var(--c) 42%, var(--c-escuro) 100%); }
+.cubo.chega { animation: cuboChega .32s cubic-bezier(.3, 1.6, .5, 1) both; }
+@keyframes cuboChega { from { transform: translateY(-46px) scale(.85); opacity: .2; } }
+.cubo.brilha { animation: cuboBrilha .45s ease-out; z-index: 2; }
+@keyframes cuboBrilha { 0% { filter: brightness(1); transform: scale(1); } 35% { filter: brightness(1.35); transform: scale(1.14); } 100% { filter: brightness(1); transform: scale(1); } }
+.torre .fitinha { position: absolute; width: 76px; height: 18px; border-radius: 9px; background: var(--ouro); border: 4px solid var(--tinta); z-index: 3; }
+/* lacinho da fitinha (sem algarismo: o número da torre fica só na plaquinha da base) */
+.torre .fitinha::after { content: ''; position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--ouro); border: 3px solid var(--tinta); border-radius: 5px; }
+.torre-placa { position: absolute; top: 8px; height: 76px; min-width: 84px; padding: 0 16px; transform: translateX(-50%); border-radius: 22px;
+  background: var(--papel); border: 5px solid var(--tinta); font: 700 60px/66px var(--fonte); text-align: center; color: var(--tinta);
+  box-shadow: 0 4px 0 rgba(58, 42, 90, .2); white-space: nowrap; }
+.torre-placa.pulsa { animation: placaPulsa .4s cubic-bezier(.3, 1.8, .5, 1); }
+@keyframes placaPulsa { 40% { transform: translateX(-50%) scale(1.25); } }
+.torre-interno.treme { animation: treme .45s ease; }
+@keyframes treme { 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+
+/* ---------- plaquinha de número ---------- */
+.placa-numero { position: absolute; display: grid; justify-items: center; align-content: center; gap: 6px; min-width: 150px; padding: 14px 22px 16px;
+  background: var(--papel); border: 5px solid var(--tinta); border-radius: 30px; box-shadow: 0 8px 0 rgba(58, 42, 90, .25); }
+.placa-numero .algarismo { font: 700 96px/1 var(--fonte); color: var(--tinta); }
+.placa-numero .pontos { display: grid; grid-template-columns: repeat(5, 18px); gap: 6px; }
+.placa-numero .pontos i { width: 18px; height: 18px; border-radius: 50%; background: var(--roxo); border: 3px solid var(--tinta); }
+.placa-numero .pontos i.b { background: var(--ouro); }
+
+/* ---------- dica (mãozinha) ---------- */
+.dica-mao { position: absolute; left: 0; top: 0; width: 120px; height: 120px; z-index: 40; pointer-events: none; }
+.dica-mao svg { width: 100%; height: 100%; display: block; }
+.dica-alvo { position: absolute; width: 130px; height: 130px; margin: -65px 0 0 -65px; border-radius: 50%; border: 6px solid #fff; z-index: 69; pointer-events: none;
+  box-shadow: 0 0 0 5px rgba(58, 42, 90, .35); animation: alvoPulsa 1s ease-out infinite; z-index: 40; }
+@keyframes alvoPulsa { from { transform: scale(.5); opacity: 1; } to { transform: scale(1.2); opacity: 0; } }
+
+/* ---------- confete e aviso ---------- */
+.confete { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; z-index: 50; pointer-events: none; overflow: visible; }
+.confete i { position: absolute; width: 18px; height: 26px; border-radius: 4px; }
+.aviso { position: absolute; left: 50%; top: 150px; transform: translateX(-50%); z-index: 75; max-width: 1100px; padding: 18px 30px;
+  border-radius: 26px; background: var(--tinta); color: #fff; font: 600 32px/1.25 var(--fonte); text-align: center; pointer-events: none;
+  animation: aviso 3s ease both; }
+@keyframes aviso { 0% { opacity: 0; transform: translate(-50%, 16px); } 10%, 85% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; } }
+
+/* ---------- parabéns ---------- */
+.parabens { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; z-index: 70; display: grid; place-items: center; }
+.parabens .veu { position: absolute; left: -1200px; top: -700px; width: 4000px; height: 2300px; background: rgba(58, 42, 90, .55); animation: veu .4s ease both; }
+@keyframes veu { from { opacity: 0; } }
+.parabens .painel { position: relative; width: 980px; padding: 40px 50px 56px 330px; border-radius: 48px; background: var(--creme); border: 6px solid var(--tinta);
+  box-shadow: 0 14px 0 var(--tinta); animation: painel .55s cubic-bezier(.3, 1.4, .5, 1) both; }
+@keyframes painel { from { transform: translateY(80px) scale(.85); opacity: 0; } }
+.parabens h2 { margin: 0 0 8px; font: 700 76px/1 var(--fonte); color: var(--coral); text-shadow: 0 4px 0 var(--tinta); -webkit-text-stroke: 3px var(--tinta); paint-order: stroke fill; }
+.parabens p { margin: 0 0 24px; font: 600 34px/1.25 var(--fonte); color: var(--tinta); }
+.parabens .pipoca-festa { position: absolute; left: 20px; bottom: 20px; width: 290px; height: 310px; }
+.parabens .pipoca-festa svg { width: 100%; height: 100%; overflow: visible; }
+.parabens .pipoca-festa.danca { transform-origin: 50% 100%; animation: danca .7s ease-in-out infinite alternate; }
+.parabens .figurinha-nova { width: 220px; height: 220px; margin: 0 0 30px; animation: figurinhaGira 1s cubic-bezier(.3, 1.4, .5, 1) .3s both; }
+.parabens .figurinha-nova svg { width: 100%; height: 100%; display: block; }
+@keyframes figurinhaGira { from { transform: rotateY(180deg) scale(.3); opacity: 0; } }
+.parabens .botoes { display: flex; gap: 26px; align-items: center; }
+
+/* ---------- utilidades ---------- */
+.centro { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.titulo-tela { position: absolute; left: 50%; top: 30px; transform: translateX(-50%); margin: 0; font: 700 64px/1 var(--fonte); color: #fff;
+  -webkit-text-stroke: 4px var(--tinta); paint-order: stroke fill; text-shadow: 0 6px 0 var(--tinta); white-space: nowrap; }
+.toque-pulsa { animation: toquePulsa 1.4s ease-in-out infinite; }
+@keyframes toquePulsa { 50% { transform: scale(1.07); } }
+.emergir { animation: emergir .45s cubic-bezier(.3, 1.6, .5, 1) both; }
+@keyframes emergir { from { transform: scale(.3); opacity: 0; } }
+
+/* janela em pé: pede para girar (o jogo é sempre deitado) */
+.pc-gire { display: none; position: fixed; inset: 0; z-index: 1000; background: var(--ceu); place-items: center; align-content: center; gap: 4vh; }
+.pc-retrato .pc-gire { display: grid; }
+.pc-gire-pipoca { width: 42vw; max-width: 300px; aspect-ratio: 250 / 270; }
+.pc-gire-pipoca svg, .pc-gire-icone svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.pc-gire-icone { width: 22vw; max-width: 160px; aspect-ratio: 1; animation: gira 1.6s ease-in-out infinite; }
+@keyframes gira { 0%, 30% { transform: rotate(0deg); } 60%, 100% { transform: rotate(-90deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

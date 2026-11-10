@@ -195,7 +195,7 @@
               PC.som.quase();
               const fala = o.fala || (o.quase ? PC.voz.quase() : 'Vamos tentar de novo.');
               const nivel = errosSeguidos;
-              PC.ui.pipoca.pose('pensa');
+              PC.ui.pipoca.pose(nivel === 1 ? 'ops' : 'pensa');     // 1º erro: "opa!"; nos seguintes, ela pensa junto
               PC.ui.pipoca.dizer(fala, { mostrar: o.mostrar != null ? o.mostrar : null })
                 .then(() => aguardarRetomada(ac.signal))           // se o "Quer parar?" abriu, a ajuda espera
                 .then(() => {
@@ -234,7 +234,8 @@
         if (b) { b.classList.remove('atual'); b.classList.add('feita', 'acendeu'); }
         PC.voz.parar();
         PC.som.acerto();
-        PC.ui.pipoca.pose('feliz');
+        // comemoração variada (Math.random de propósito: não mexe no sorteio da atividade)
+        PC.ui.pipoca.pose(['feliz', 'feliz', 'comemora', 'palmas', 'joia'][Math.floor(Math.random() * 5)]);
         PC.ui.confete({ x: 800, y: 380, quantidade: 30, raiz });
         await Promise.all([PC.ui.pipoca.dizer(PC.voz.elogio()), U.esperar(1100, sair.signal)]);
         PC.ui.pipoca.pose('normal');
@@ -258,7 +259,8 @@
         PC.arrastar.cancelarTodos();
         PC.voz.segurar(true);                      // falas e contagens da atividade esperam
         PC.voz.parar();
-        const pip = U.el('div', { class: 'pipoca-pergunta', html: PC.arte.pipoca('pensa') });
+        const pip = U.el('div', { class: 'pipoca-pergunta' });
+        PC.pipoca.criar(pip, { pose: 'pensa' });
         const bSair = PC.ui.botaoIcone('casa', 'Sair', () => sairDeVez());
         bSair.classList.add('medio'); bSair.dataset.teste = 'sair';
         const bContinuar = PC.ui.botaoIcone('play', 'Continuar', () => fecharPausa(), { cor: 'verde' });
@@ -297,7 +299,8 @@
         const caixa = U.el('div', { class: 'parabens', role: 'dialog', 'aria-label': 'Parabéns' });
         const veu = U.el('div', { class: 'veu' });
         const painel = U.el('div', { class: 'painel' });
-        const festa = U.el('div', { class: 'pipoca-festa danca', html: PC.arte.pipoca('danca') });
+        const festa = U.el('div', { class: 'pipoca-festa' });
+        const bonecoFesta = PC.pipoca.criar(festa, { pose: 'danca' });
         const titulo = U.el('h2', { text: final && r.primeiraVez ? 'Você completou a trilha!' : 'Parabéns!' });
         const msg = U.el('p', { text: r.nova ? 'Você ganhou uma figurinha nova!' : (fase ? 'Você terminou esta brincadeira!' : 'Muito bem!') });
         painel.append(festa, titulo, msg);
@@ -333,7 +336,14 @@
         setTimeout(() => { botoes.classList.add('mostrar'); botoesExtra.classList.add('mostrar'); }, U.duracao(1300));
         const fala = final && r.primeiraVez ? 'Uau! Você completou a trilha toda! Que orgulho!'
           : (r.nova ? 'Parabéns! Você ganhou uma figurinha nova!' : 'Parabéns! Muito bem!');
-        PC.voz.falar(fala).then(() => { if (!destruida) PC.voz.falar('Toque no botão verde para continuar.', { interromper: false }); });
+        bonecoFesta.falar(true);
+        PC.voz.falar(fala).then(() => {
+          bonecoFesta.falar(false);
+          if (destruida) return;
+          if (final && r.primeiraVez) bonecoFesta.pose('carinho');
+          bonecoFesta.falar(true);
+          PC.voz.falar('Toque no botão verde para continuar.', { interromper: false }).then(() => bonecoFesta.falar(false));
+        });
         PC.emitir('atividade:concluida', { estacao: fase ? fase.n : null, nova: r.nova, primeiraVez: r.primeiraVez });
       }
 

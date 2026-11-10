@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Pipoca nova: poses e animações</title>
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; padding: 24px; background: #DFF3D2; font-family: Fredoka, sans-serif; color: #3A2A5A; }
+  h1 { margin: 0 0 4px; font-size: 34px; }
+  p { margin: 0 0 16px; font-size: 18px; }
+  .palco { display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+  .viva { width: 500px; height: 540px; background: linear-gradient(#BFE8FF, #E9F8D8 78%, #BFE39A 78%); border-radius: 32px; border: 5px solid #3A2A5A; padding: 70px 30px 20px; box-sizing: border-box; cursor: pointer; }
+  .viva > div { width: 100%; height: 100%; }
+  .viva svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .botoes { display: flex; flex-wrap: wrap; gap: 10px; max-width: 560px; }
+  .botoes h2 { flex: 0 0 100%; margin: 10px 0 0; font-size: 22px; }
+  button { font: 600 20px Fredoka, sans-serif; color: #3A2A5A; background: #fff; border: 4px solid #3A2A5A; border-radius: 18px; padding: 8px 16px; cursor: pointer; box-shadow: 0 4px 0 #3A2A5A; }
+  button:active { transform: translateY(3px); box-shadow: 0 1px 0 #3A2A5A; }
+  button.atual { background: #FFC93C; }
+  button.acao { background: #9BE38A; }
+  .grade { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+  .item { background: #ffffffaa; border-radius: 20px; padding: 8px; text-align: center; font-size: 17px; }
+  .item div { width: 200px; height: 216px; }
+  .item svg { width: 100%; height: 100%; overflow: visible; }
+  body.so-grande h1, body.so-grande p, body.so-grande .botoes, body.so-grande .grade, body.so-grande h2 { display: none; }
+  body.so-grande .viva { width: 700px; height: 756px; }
+</style>
+</head>
+<body>
+<h1>A Pipoca nova: uma sagui</h1>
+<p>Toque num botão para trocar a pose. Toque na Pipoca: ela pula. Passe o mouse (ou o dedo) pelo quadro: ela acompanha com os olhos.</p>
+<div class="palco">
+  <div class="viva" id="viva"><div id="corpo"></div></div>
+  <div class="botoes" id="botoes"></div>
+</div>
+<h2 style="margin:26px 0 0">Todas as poses, paradas</h2>
+<div class="grade" id="grade"></div>
+<script src="../js/nucleo.js"></script>
+<script src="../js/arte.js"></script>
+<script src="../js/pipoca.js"></script>
+<script>
+  const par = new URLSearchParams(location.search);
+  if (par.has('grande')) document.body.classList.add('so-grande');
+  const rig = PC.pipoca.criar(document.getElementById('corpo'), { pose: par.get('pose') || 'normal', vida: !par.has('semvida') });
+  window.rig = rig;
+  const botoes = document.getElementById('botoes');
+  const titulo = t => { const h = document.createElement('h2'); h.textContent = t; botoes.appendChild(h); };
+  const lista = {};
+  function marcar() { for (const n in lista) lista[n].classList.toggle('atual', n === rig.poseAtual); }
+  titulo('Poses');
+  for (const nome of PC.pipoca.poses()) {
+    const b = document.createElement('button');
+    b.textContent = nome;
+    b.onclick = () => { rig.pose(nome); marcar(); };
+    botoes.appendChild(b);
+    lista[nome] = b;
+  }
+  titulo('Ações');
+  const acao = (texto, fn) => { const b = document.createElement('button'); b.className = 'acao'; b.textContent = texto; b.onclick = fn; botoes.appendChild(b); return b; };
+  let falando = false;
+  const bFala = acao('falar: desligado', () => { falando = !falando; rig.falar(falando); bFala.textContent = 'falar: ' + (falando ? 'ligado' : 'desligado'); });
+  acao('pular', () => rig.pular());
+  acao('bocejar (2 s)', () => { rig.momento('boceja', 2000); setTimeout(marcar, 2100); marcar(); });
+  acao('passeio por todas', () => {
+    const nomes = PC.pipoca.poses(); let i = 0;
+    const prox = () => { if (i >= nomes.length) { rig.pose('normal'); marcar(); return; } rig.pose(nomes[i++]); marcar(); setTimeout(prox, 1700); };
+    prox();
+  });
+  marcar();
+  const viva = document.getElementById('viva');
+  viva.addEventListener('pointerup', () => rig.pular());
+  viva.addEventListener('pointermove', ev => {
+    const r = viva.getBoundingClientRect();
+    rig.olhar((ev.clientX - (r.left + r.width / 2)) / (r.width / 2), (ev.clientY - (r.top + r.height * .4)) / (r.height / 2), 900);
+  });
+  if (par.has('falando')) { falando = true; rig.falar(true); }
+  for (const pose of PC.pipoca.poses()) {
+    const d = document.createElement('div');
+    d.className = 'item';
+    d.innerHTML = `<div>${PC.pipoca.svg(pose)}</div>${pose}`;
+    document.getElementById('grade').appendChild(d);
+  }
+</script>
+</body>
+</html>

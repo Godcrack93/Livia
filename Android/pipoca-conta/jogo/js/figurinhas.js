@@ -638,14 +638,15 @@
   };
 
   // ---------------------------------------------------------------- a Pipoca com uma medalha (final da trilha)
-  // Usa a Pipoca oficial (PC.arte.pipoca, pose "feliz", viewBox 0 0 250 270) e põe uma medalha de estrela no peito.
-  const PIP = { k: 168 / 270 };
+  // Usa a Pipoca oficial (PC.arte.pipoca, pose "feliz", viewBox 0 0 250 270) e põe uma medalha de estrela no peito
+  // (o peito da sagui fica em (135, 190): a medalha, desenhada em volta de (125, 207), anda 10 para o lado e 11 para cima).
+  const PIP = { k: 168 / 270, dentro: 0.82 };          // dentro: a escala que a Pipoca já tem no quadro dela (js/pipoca.js)
   PIP.x = r2((200 - 250 * PIP.k) / 2); PIP.y = 12;
   function medalha() {
-    return p('M103 163 L 117 199 L 127 195 L 113 160 Z', '#FF7A6B', 3.5) +
+    return '<g transform="translate(10 -11)">' + p('M103 163 L 117 199 L 127 195 L 113 160 Z', '#FF7A6B', 3.5) +
       p('M147 163 L 133 199 L 123 195 L 137 160 Z', '#2EC4B6', 3.5) +
       c(125, 207, 21, '#FFC93C', 4.5) + c(125, 207, 15, '#FFD95A', 2.5) +
-      p(estrela(125, 207.5, 10.5, 4.6), '#FFF4B8', 2.5) + brilho(117, 199, 5, 3, -40, 0.6);
+      p(estrela(125, 207.5, 10.5, 4.6), '#FFF4B8', 2.5) + brilho(117, 199, 5, 3, -40, 0.6) + '</g>';
   }
   function pipocaMiolo(pose = 'feliz') {
     let s = '';
@@ -662,24 +663,25 @@
   function pipocaComMedalha() {
     const miolo = pipocaMiolo();
     if (!miolo) return null;
-    return adesivo(miolo + medalha(), { k: PIP.k, transform: `translate(${PIP.x} ${PIP.y}) scale(${PIP.k})` });
+    return adesivo(miolo + medalha(), { k: PIP.k * PIP.dentro, transform: `translate(${PIP.x} ${PIP.y}) scale(${PIP.k})` });
   }
-  // a Pipoca lendo: pose normal (mãos no colo em 110,222 e 140,222) com um livro aberto no colo e as mãos por cima
+  // a Pipoca lendo: pose normal (de pé, mãos soltas em 96,215 e 174,215) com um livro aberto na frente da barriga,
+  // que cobre as mãos de verdade, e duas mãozinhas por cima segurando as beiradas
   function livro() {
     // k = -1: página da esquerda; k = 1: página da direita
     const pg = k => p(`M125 214 Q ${125 + k * 18} 205 ${125 + k * 38} 208 L ${125 + k * 38} 242 Q ${125 + k * 18} 239 125 248 Z`, '#FFFDF4', 3.5) +
       l(`M${125 + k * 9} 220 Q ${125 + k * 20} 215 ${125 + k * 31} 217 M${125 + k * 9} 228 Q ${125 + k * 20} 223 ${125 + k * 31} 225`, '#B9B3CC', 2.6);
     const letra = (x, t, cor) => `<text x="${x}" y="242" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="15" fill="${cor}">${t}</text>`;
     // livro grande (escala 1,4 em volta do meio) com capa coral, para aparecer bem no mapa; as mãos seguram as beiradas
-    return '<g transform="translate(125 226) scale(1.4) translate(-125 -226)">' +
+    return '<g transform="translate(10 -22)"><g transform="translate(125 226) scale(1.4) translate(-125 -226)">' +
       p('M84 210 Q 104 202 125 212 Q 146 202 166 210 L 166 248 Q 146 242 125 252 Q 104 242 84 248 Z', '#FF7A6B', 4) +
       pg(-1) + pg(1) + l('M125 214 V 248', T, 2.6) + letra(108, 'A', '#4DA3FF') + letra(142, 'b', '#2EC4B6') + '</g>' +
-      c(80, 232, 11, '#F3D3A8', 4.5) + c(170, 232, 11, '#F3D3A8', 4.5);
+      c(78, 230, 11, '#F6C6A2', 4.5) + c(172, 230, 11, '#F6C6A2', 4.5) + '</g>';
   }
   function pipocaLendo() {
     const miolo = pipocaMiolo('normal');
     if (!miolo) return null;
-    return adesivo(miolo + livro(), { k: PIP.k, transform: `translate(${PIP.x} ${PIP.y}) scale(${PIP.k})` });
+    return adesivo(miolo + livro(), { k: PIP.k * PIP.dentro, transform: `translate(${PIP.x} ${PIP.y}) scale(${PIP.k})` });
   }
   const soMedalha = () => adesivo(medalha(), { k: 2.2, transform: 'translate(-175 -326.8) scale(2.2)' });
 

@@ -1,6 +1,6 @@
 # Pipoca Aprende
 
-Jogo de letras e números para crianças de 4 a 6 anos, com a macaquinha **Pipoca**. (Até novembro de 2026 se chamava Pipoca Conta e só tinha números; a pasta ainda tem o nome antigo.) Funciona em celular e tablet Android (sempre deitado) e também abre no navegador do computador para testes.
+Jogo de letras e números para crianças de 4 a 6 anos, com a **Pipoca**, uma sagui de tufos brancos que parecem pipoca. (Até novembro de 2026 se chamava Pipoca Conta e só tinha números; a pasta ainda tem o nome antigo.) Funciona em celular e tablet Android (sempre deitado) e também abre no navegador do computador para testes.
 
 - **Zero anúncios.** As estações 1 a 4 são grátis; o resto vem com a **assinatura mensal**, que tem **7 dias de teste grátis** (Google Play).
 - 60 estações em três regiões (Prado, Lagoa e Floresta), intercalando números e letras. Números: Torre de cubinhos, Pintinhos, Traçar números, Juntar, Separar, Feirinha da Pipoca (moedinhas) e Sapinho (sequências). Letras: Tambor das sílabas, Com que letra começa?, Rimas, Traçar letras, Montar a palavra, Pares de letras (maiúscula e minúscula) e Ler palavrinhas. Mais o álbum de figurinhas da fauna e flora do Brasil e o Brincar livre.

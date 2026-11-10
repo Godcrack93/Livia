@@ -180,18 +180,8 @@
     @keyframes pcPaisOk { from { transform: scale(.3); opacity: 0; } }
 
     /* ---------- descanso ---------- */
-    .pc-pais-desc-pipoca { position: absolute; left: 616px; top: 420px; width: 368px; height: 397px; transform-origin: 50% 100%; cursor: pointer;
-      animation: pcDescRespira 3.8s ease-in-out infinite; }
+    .pc-pais-desc-pipoca { position: absolute; left: 616px; top: 420px; width: 368px; height: 397px; cursor: pointer; }
     .pc-pais-desc-pipoca svg { width: 100%; height: 100%; display: block; overflow: visible; }
-    @keyframes pcDescRespira { 50% { transform: scale(1.018, .986); } }
-    .pc-pais-desc-pipoca .pip-olhos { display: none; }
-    .pc-pais-desc-bocejo { opacity: 0; }
-    .pc-pais-desc-pipoca .pip-cabeca { transform-box: view-box; transform-origin: 125px 168px; transition: transform .5s ease-in-out; }
-    .pc-pais-desc-pipoca.bocejando { animation: pcDescEspreguica 2s ease-in-out; }
-    @keyframes pcDescEspreguica { 0%, 100% { transform: none; } 30%, 70% { transform: scale(.975, 1.05); } }
-    .pc-pais-desc-pipoca.bocejando .pip-cabeca { transform: rotate(-5deg); }
-    .pc-pais-desc-pipoca.bocejando .pc-pais-desc-bocejo { opacity: 1; }
-    .pc-pais-desc-pipoca.bocejando .pip-boca-fechada, .pc-pais-desc-pipoca.bocejando .pip-boca-aberta { opacity: 0; animation: none; }
     .pc-pais-desc-zs span { position: absolute; font: 700 70px/1 var(--fonte); color: #fff; -webkit-text-stroke: 4px var(--tinta); paint-order: stroke fill;
       opacity: 0; animation: pcDescZ 4.2s ease-out infinite; pointer-events: none; }
     .pc-pais-desc-zs span:nth-child(1) { left: 610px; top: 470px; }
@@ -1129,23 +1119,6 @@
     return el;
   }
 
-  /** A Pipoca (pose normal) com os olhos fechados e uma boca de bocejo (aparece com a classe "bocejando"). */
-  function pipocaSonolenta() {
-    const svg = U.svg(PC.arte.pipoca('normal'));
-    const cabeca = svg.querySelector('.pip-cabeca') || svg;
-    const traco = { fill: 'none', stroke: T, 'stroke-width': 6, 'stroke-linecap': 'round' };
-    // olhos fechados no lugar dos olhinhos da arte (centros em (108, 118) e (142, 118), como em PC.arte.pipoca)
-    cabeca.append(
-      U.svgEl('g', { class: 'pc-pais-desc-olhos' },
-        U.svgEl('path', Object.assign({ d: 'M99 117 Q 108 128 117 117' }, traco)),
-        U.svgEl('path', Object.assign({ d: 'M133 117 Q 142 128 151 117' }, traco))),
-      // bocejo: boca oval abaixo das narinas (y 136), dentro do rosto (que vai até y 164)
-      U.svgEl('g', { class: 'pc-pais-desc-bocejo' },
-        U.svgEl('ellipse', { cx: 125, cy: 151, rx: 10, ry: 11, fill: '#4A1F2A', stroke: T, 'stroke-width': 4.5 }),
-        U.svgEl('ellipse', { cx: 125, cy: 157, rx: 5.5, ry: 3, fill: '#FF8C8C' })));
-    return svg;
-  }
-
   const FALA_DESCANSO = 'Hora de descansar! Até amanhã!';
 
   PC.telas.registrar('descanso', {
@@ -1153,7 +1126,9 @@
     criar(raiz) {
       const ac = new AbortController();
       raiz.appendChild(ceuDescanso());
-      const pip = U.el('div', { class: 'pc-pais-desc-pipoca', teste: 'pipoca', role: 'img', 'aria-label': 'A Pipoca bocejando' }, pipocaSonolenta());
+      const pip = U.el('div', { class: 'pc-pais-desc-pipoca', teste: 'pipoca', role: 'img', 'aria-label': 'A Pipoca bocejando' });
+      // a Pipoca viva (js/pipoca.js), de olhos fechados; tocar nela: ela boceja e se espreguiça
+      const boneco = PC.pipoca.criar(pip, { pose: 'sono' });
       const zs = U.el('div', { class: 'pc-pais-desc-zs', 'aria-hidden': 'true' }, U.el('span', { text: 'z' }), U.el('span', { text: 'z' }), U.el('span', { text: 'z' }));
       const balao = U.el('div', { class: 'pc-pais-desc-balao', hidden: true, 'aria-label': FALA_DESCANSO },
         U.el('span', { text: 'Hora de descansar!' }), U.el('span', { text: 'Até amanhã!' }));
@@ -1164,7 +1139,8 @@
       let timerBocejo = 0;
       function bocejar() {
         clearTimeout(timerBocejo);
-        pip.classList.remove('bocejando'); void pip.offsetWidth; pip.classList.add('bocejando');
+        pip.classList.add('bocejando');
+        boneco.pose('sono'); boneco.momento('boceja', 1900);
         timerBocejo = setTimeout(() => pip.classList.remove('bocejando'), 2000);
       }
       PC.aoTocar(pip, bocejar, { som: false });   // tocar na Pipoca: ela boceja de novo (sem falar)
@@ -1190,9 +1166,9 @@
           // o portão dos adultos é silencioso: se ele abriu antes da despedida, a fala espera ele fechar
           while (PC.portao.aberto && PC.portao.aberto()) await U.esperar(300, ac.signal);
           balao.hidden = false; balao.classList.add('mostra');
-          pip.classList.add('falando');
+          pip.classList.add('falando'); boneco.falar(true);
           await PC.voz.falar(FALA_DESCANSO);
-          pip.classList.remove('falando');
+          pip.classList.remove('falando'); boneco.falar(false);
         } catch (e) { /* saiu da tela */ }
       })();
 

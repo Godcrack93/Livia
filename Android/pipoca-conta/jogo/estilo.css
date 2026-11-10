@@ -98,23 +98,7 @@ button { font: inherit; color: inherit; }
 .pipoca-host.escondida { display: none; }
 .pipoca-host.entra .pipoca-corpo { animation: pipocaEntra .5s cubic-bezier(.3, 1.5, .5, 1) both; }
 @keyframes pipocaEntra { from { transform: translateY(120%); } }
-.pipoca-corpo.respira { animation: respira 2.6s ease-in-out infinite; }
-@keyframes respira { 50% { transform: scale(1.015, .985); } }
-.pipoca-corpo.pula { animation: pulinho .55s cubic-bezier(.3, 1.6, .5, 1); }
-@keyframes pulinho { 35% { transform: translateY(-34px) scale(.97, 1.04); } 70% { transform: translateY(0) scale(1.05, .95); } }
-.pipoca-corpo.danca { animation: danca .7s ease-in-out infinite alternate; }
-@keyframes danca { from { transform: rotate(-7deg) translateY(0); } to { transform: rotate(7deg) translateY(-14px); } }
-
-/* boca e olhos da Pipoca (o SVG vem de PC.arte.pipoca) */
-.pip-boca-aberta { opacity: 0; }
-.falando .pip-boca-aberta { animation: bocaAbre .34s steps(1, end) infinite; }
-.falando .pip-boca-fechada { animation: bocaFecha .34s steps(1, end) infinite; }
-@keyframes bocaAbre { 0% { opacity: 1; } 50% { opacity: 0; } }
-@keyframes bocaFecha { 0% { opacity: 0; } 50% { opacity: 1; } }
-.pip-piscar { animation: piscar 4.2s infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes piscar { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.12); } }
-.pip-braco-aceno { transform-box: view-box; transform-origin: 152px 182px; animation: aceno .55s ease-in-out infinite alternate; }
-@keyframes aceno { from { transform: rotate(-16deg); } to { transform: rotate(14deg); } }
+/* (a Pipoca respira, pisca, fala, pula e dança por conta própria: js/pipoca.js) */
 
 /* logo */
 .logo { margin: 0; font: 700 150px/1 var(--fonte); letter-spacing: .01em; white-space: nowrap; text-align: center; }
@@ -211,7 +195,6 @@ button { font: inherit; color: inherit; }
 .parabens p { margin: 0 0 24px; font: 600 34px/1.25 var(--fonte); color: var(--tinta); }
 .parabens .pipoca-festa { position: absolute; left: 20px; bottom: 20px; width: 290px; height: 310px; }
 .parabens .pipoca-festa svg { width: 100%; height: 100%; overflow: visible; }
-.parabens .pipoca-festa.danca { transform-origin: 50% 100%; animation: danca .7s ease-in-out infinite alternate; }
 .parabens .figurinha-nova { width: 220px; height: 220px; margin: 0 0 30px; animation: figurinhaGira 1s cubic-bezier(.3, 1.4, .5, 1) .3s both; }
 .parabens .figurinha-nova svg { width: 100%; height: 100%; display: block; }
 @keyframes figurinhaGira { from { transform: rotateY(180deg) scale(.3); opacity: 0; } }

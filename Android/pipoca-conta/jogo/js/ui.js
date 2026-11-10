@@ -7,14 +7,19 @@
 
   // ---------------------------------------------------------------- Pipoca apresentadora
   ui.pipoca = (function () {
-    let host = null, corpo = null, balao = null, pose = 'normal', timerBalao = null, falaSeq = 0, falandoAgora = false;
+    // a Pipoca viva (PC.pipoca.criar): as poses, a fala, o pulo e o olhar são do boneco; aqui ficam o lugar e o balão
+    let host = null, corpo = null, balao = null, boneco = null, timerBalao = null, falaSeq = 0, falandoAgora = false;
 
-    function desenhar() {
-      if (!corpo) return;
-      corpo.innerHTML = PC.arte.pipoca(pose);
-      corpo.classList.toggle('danca', pose === 'danca');
-      corpo.classList.toggle('respira', pose !== 'danca');
-    }
+    // ela acompanha com os olhos o último lugar em que a criança tocou
+    PC.on('toque', pt => {
+      if (!boneco || !corpo || !pt || !corpo.isConnected) return;
+      const r = corpo.getBoundingClientRect();
+      if (!r.width) return;
+      const t = PC.palco.paraTela(pt.x, pt.y);
+      const dx = t.x - (r.left + r.width / 2), dy = t.y - (r.top + r.height * .34), d = Math.hypot(dx, dy);
+      if (d < r.width * .45) return;                               // tocou nela mesma: não fica vesga
+      boneco.olhar(dx / d, dy / d, 1300);
+    });
     function esconderBalao() {
       if (!balao || balao.hidden) return;
       balao.classList.remove('mostra'); balao.classList.add('some');
@@ -27,28 +32,35 @@
       montar(raiz, { entrar = true } = {}) {
         if (host) host.remove();
         host = U.el('div', { class: 'pipoca-host' + (entrar ? ' entra' : '') });
-        corpo = U.el('div', { class: 'pipoca-corpo respira', role: 'img', 'aria-label': 'Pipoca, a macaquinha' });
+        corpo = U.el('div', { class: 'pipoca-corpo', role: 'img', 'aria-label': 'Pipoca, a sagui' });
         balao = U.el('div', { class: 'balao', hidden: true });
         host.append(balao, corpo);
         corpo.addEventListener('pointerup', () => {
-          corpo.classList.remove('pula'); void corpo.offsetWidth; corpo.classList.add('pula');
+          if (boneco) boneco.pular();
           PC.emitir('pipoca:tocada');
         });
-        pose = 'normal';
-        desenhar();
+        if (boneco) boneco.destruir();
         raiz.appendChild(host);
+        boneco = PC.pipoca.criar(corpo, { pose: 'normal' });
         return host;
       },
-      desmontar() { if (host) host.remove(); host = corpo = balao = null; clearTimeout(timerBalao); },
+      desmontar() { if (boneco) boneco.destruir(); if (host) host.remove(); host = corpo = balao = boneco = null; clearTimeout(timerBalao); },
       get elemento() { return host; },
       esconder() { if (host) host.classList.add('escondida'); },
       mostrar() { if (host) host.classList.remove('escondida'); },
-      /** Troca a pose: normal, fala, feliz, aponta, pensa, danca, acena. */
+      /** Troca a pose (lista em PC.pipoca.poses()): normal, fala, feliz, aponta, pensa, danca, acena, comemora, palmas... */
       pose(nome) {
-        pose = nome || 'normal';
-        desenhar();
-        if (corpo && (pose === 'feliz')) { corpo.classList.remove('pula'); void corpo.offsetWidth; corpo.classList.add('pula'); }
+        if (!boneco) return;
+        const antes = boneco.poseAtual;
+        boneco.pose(nome || 'normal');
+        if (boneco.poseAtual === 'feliz' && antes !== 'feliz') boneco.pular(26);
       },
+      /** A pose de agora. */
+      poseAtual: () => (boneco ? boneco.poseAtual : 'normal'),
+      /** Pulinho (o mesmo de quando a criança toca nela). */
+      pular(altura) { if (boneco) boneco.pular(altura); },
+      /** Faz uma pose por um tempo e volta para a de antes (ex.: momento('ops', 1400)). */
+      momento(nome, ms) { if (boneco) boneco.momento(nome, ms); },
       /**
        * Mostra o balão e fala o texto. Resolve quando a fala termina (com 'fim', 'interrompida', 'muda' ou 'erro';
        * nunca rejeita). mostrar: um número (aparece grande, com pontinhos até 10) ou um elemento, ao lado do texto —
@@ -75,11 +87,13 @@
           balao.classList.remove('some', 'mostra'); void balao.offsetWidth; balao.classList.add('mostra');
         }
         if (host) host.classList.add('falando');
+        if (boneco) boneco.falar(true);
         falandoAgora = true;
         const fim = r => {
           if (meu !== falaSeq) return r;
           falandoAgora = false;
           if (host) host.classList.remove('falando');
+          if (boneco) boneco.falar(false);
           clearTimeout(timerBalao);
           timerBalao = setTimeout(() => { if (meu === falaSeq) esconderBalao(); }, balaoMs);
           return r;
@@ -89,7 +103,7 @@
       },
       /** A Pipoca está falando agora? (a moldura pausa o relógio de inatividade) */
       falando: () => falandoAgora,
-      calar() { falaSeq++; falandoAgora = false; PC.voz.parar(); if (host) host.classList.remove('falando'); esconderBalao(); },
+      calar() { falaSeq++; falandoAgora = false; PC.voz.parar(); if (host) host.classList.remove('falando'); if (boneco) boneco.falar(false); esconderBalao(); },
     };
   })();
 

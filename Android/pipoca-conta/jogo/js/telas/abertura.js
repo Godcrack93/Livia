@@ -29,9 +29,8 @@
         95%, 100% { transform: translate(20px, 580px) rotate(390deg) scale(.3); opacity: 0; }
       }
       .pc-abertura-pipoca { position: absolute; left: 130px; top: 318px; width: 450px; height: 486px; z-index: 6; cursor: pointer; touch-action: manipulation; }
-      .pc-abertura-corpo { width: 100%; height: 100%; transform-origin: 50% 97%; animation: pcAberturaRespira 2.8s ease-in-out infinite; }
+      .pc-abertura-corpo { width: 100%; height: 100%; }
       .pc-abertura-corpo svg { width: 100%; height: 100%; display: block; overflow: visible; }
-      @keyframes pcAberturaRespira { 50% { transform: scale(1.018, .982); } }
       .botao-grande.pc-abertura-jogar { position: absolute; left: 812px; top: 468px; height: 184px; padding: 0 86px 0 66px; border-radius: 92px; gap: 24px;
         font-size: 86px; z-index: 7; box-shadow: 0 12px 0 var(--tinta); }
       .botao-grande.pc-abertura-jogar svg { width: 98px; height: 98px; }
@@ -79,12 +78,14 @@
       const logo = U.el('h1', { class: 'logo pc-abertura-logo', html: PC.arte.logo(), 'aria-label': 'Pipoca Aprende' });
 
       // ------------------------------------------------------------ a Pipoca (tocar: ela se apresenta)
-      const pip = U.el('div', { class: 'pc-abertura-pipoca', teste: 'pipoca', role: 'button', tabindex: '0', 'aria-label': 'Pipoca, a macaquinha' });
+      const pip = U.el('div', { class: 'pc-abertura-pipoca', teste: 'pipoca', role: 'button', tabindex: '0', 'aria-label': 'Pipoca, a sagui' });
       const corpo = U.el('div', { class: 'pc-abertura-corpo' });
       pip.appendChild(corpo);
-      let pose = '';
-      const posar = nome => { if (nome !== pose) { pose = nome; corpo.innerHTML = PC.arte.pipoca(nome); } };
-      posar('acena');
+      // a Pipoca viva (js/pipoca.js): acena, fala e pula por conta própria
+      const boneco = PC.pipoca.criar(corpo, { pose: 'acena' });
+      let pose = 'acena';
+      const posar = nome => { pose = nome; boneco.pose(nome); };
+      const falando = liga => { pip.classList.toggle('falando', liga); boneco.falar(liga); };
 
       const balao = U.el('div', { class: 'pc-abertura-balao', hidden: true });
       let falaSeq = 0, timerBalao = 0;
@@ -96,12 +97,12 @@
         balao.textContent = texto;
         balao.hidden = false;
         balao.classList.remove('mostra'); void balao.offsetWidth; balao.classList.add('mostra');
-        pip.classList.add('falando');
+        falando(true);
         // sem voz no aparelho, o balão fica um tempinho para o adulto ler
         const leitura = U.esperar(1200 + texto.length * 40);
         return Promise.all([PC.voz.falar(texto), leitura]).then(([r]) => {
           if (vivo && meu === falaSeq) {
-            pip.classList.remove('falando');
+            falando(false);
             posar('acena');
             timerBalao = depois(700, () => { if (meu === falaSeq) balao.hidden = true; });
           }
@@ -112,14 +113,11 @@
         falaSeq++;
         clearTimeout(timerBalao);
         balao.hidden = true;
-        pip.classList.remove('falando');
+        falando(false);
         posar('acena');
       }
 
-      const pular = () => U.animar(pip, [
-        { transform: 'translateY(0) scale(1, 1)' }, { transform: 'translateY(-46px) scale(.97, 1.04)', offset: 0.35 },
-        { transform: 'translateY(0) scale(1.05, .95)', offset: 0.7 }, { transform: 'translateY(0) scale(1, 1)' },
-      ], { duration: 560, easing: 'ease-out' });
+      const pular = () => boneco.pular(30);
 
       let apresentando = false, falouJogar = false, tocou = false;
       function apresentar() {
