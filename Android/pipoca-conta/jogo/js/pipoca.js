@@ -478,12 +478,16 @@
   grupo('cabX cabY cabRot troncoRot inclina corpoX corpoY', 12, .66);
   grupo('pulo agacha', 18, .7);
   grupo('olharX olharY palE palD feliz olhoEsc fecCurva sobOp sobEy sobDy sobEr sobDr corar', 24, .9);
-  grupo('bLarg bSorriso bAbre bO', 38, .82);
+  grupo('bLarg bSorriso bAbre bO', 60, .85);   // rápida: a boca acompanha as sílabas da fala
   grupo('peEX peEY peDX peDY', 16, .7);
   grupo('raboAng raboCurl raboOnda raboFase tufoE tufoD topete resp', 10, .55);
   grupo('bolhas brilhos notas coracoes', 9, 1);
   // formatos de boca da fala: [abertura, meia largura, redonda]
   const BOCAS = [[.22, 12, 0], [.5, 13.5, .15], [.85, 12.5, .4], [.45, 8, 1], [.3, 15, 0], [.65, 10, .7], [0, 12.5, 0]];
+  // as formas do Rhubarb (fala gravada com vozes/bocas.js): A fechada (m b p), B quase fechada, C aberta (e),
+  // D bem aberta (a), E redonda (o), F biquinho (u), G dentinho no lábio (f v), H língua (l), X descanso
+  const VISEMAS = { A: [0, 11.5, 0], B: [.22, 13, 0], C: [.55, 14, .1], D: [.92, 13, .2], E: [.6, 10, .75], F: [.32, 7.5, 1],
+    G: [.16, 13.5, 0], H: [.42, 12.5, 0], X: [0, 12.5, 0] };
   const sorte = (a, b) => a + Math.random() * (b - a);      // (Math.random de propósito: não mexe no sorteio do jogo)
 
   function criar(alvoEl, opcoes) {
@@ -640,7 +644,9 @@
       // a fala troca o formato da boca várias vezes por segundo
       let al = alvo;
       if (falando) {
-        if (relogio >= proxBoca) {
+        const v = PC.voz && PC.voz.bocaAgora ? PC.voz.bocaAgora() : null;
+        if (v) bocaAtual = VISEMAS[v] || bocaAtual;
+        else if (relogio >= proxBoca) {
           let b; do { b = BOCAS[Math.floor(Math.random() * BOCAS.length)]; } while (b === bocaAtual);
           bocaAtual = b; proxBoca = relogio + sorte(.085, .17);
         }

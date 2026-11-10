@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<base href="../">
+<title>Boca da Pipoca: teste</title>
+<link rel="stylesheet" href="estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; background: #FFF6E9; font-family: Fredoka, sans-serif; color: #3A2A5A; padding: 24px; }
+  h1 { font-size: 30px; margin: 0 0 8px; }
+  p { font-size: 18px; margin: 0 0 16px; max-width: 900px; }
+  .palco { display: flex; gap: 32px; align-items: flex-start; }
+  #pip { width: 500px; height: 540px; background: #fff; border: 4px solid #3A2A5A; border-radius: 24px; }
+  .botoes { display: flex; flex-direction: column; gap: 10px; }
+  button { font: 600 20px Fredoka, sans-serif; padding: 12px 18px; border: 4px solid #3A2A5A; border-radius: 16px; background: #FFD23F;
+    color: #3A2A5A; cursor: pointer; text-align: left; }
+  button:active { transform: scale(.97); }
+  label { font-size: 20px; display: flex; gap: 10px; align-items: center; margin: 8px 0 16px; }
+  input { width: 24px; height: 24px; }
+  #forma { font-size: 22px; margin-top: 12px; }
+</style>
+</head>
+<body>
+<h1>Boca da Pipoca: sincronizada com a fala</h1>
+<p>Toque numa frase para ouvir. Com a caixinha marcada, a boca segue o áudio (formas calculadas pelo Rhubarb); desmarcada,
+  a boca mexe ao acaso, como é hoje no jogo.</p>
+<label><input type="checkbox" id="sinc" checked> Boca sincronizada com a fala</label>
+<div class="palco">
+  <div id="pip"></div>
+  <div class="botoes" id="botoes"></div>
+</div>
+<div id="forma"></div>
+<script src="js/nucleo.js"></script>
+<script src="js/som.js"></script>
+<script src="vozes/indice.js"></script>
+<script src="vozes/bocas.js"></script>
+<script src="js/voz.js"></script>
+<script src="js/dados.js"></script>
+<script src="js/arte.js"></script>
+<script src="js/pipoca.js"></script>
+<script>
+  const FRASES = ['Esta é a minha casa!', 'Tire coisas do baú e arrume do seu jeito.', 'Que bom que você voltou!', 'Bom dia!', 'O sol voltou!'];
+  const BOCAS = window.PC_BOCAS;
+  const rig = PC.pipoca.criar(document.getElementById('pip'), { pose: 'normal' });
+  const nomes = { A: 'fechada (m, b, p)', B: 'quase fechada', C: 'aberta (e)', D: 'bem aberta (a)', E: 'redonda (o)', F: 'biquinho (u)', G: 'dentinho (f, v)', H: 'língua (l)', X: 'descanso' };
+  const forma = document.getElementById('forma');
+  (function mostrar() { const v = PC.voz.bocaAgora && PC.voz.bocaAgora(); forma.textContent = v ? 'Boca agora: ' + v + ' — ' + nomes[v] : ''; requestAnimationFrame(mostrar); })();
+  document.getElementById('sinc').onchange = e => { window.PC_BOCAS = e.target.checked ? BOCAS : null; };
+  const caixa = document.getElementById('botoes');
+  FRASES.forEach(t => {
+    const b = document.createElement('button');
+    b.textContent = t;
+    b.onclick = () => { rig.falar(true); PC.voz.falar(t).then(() => rig.falar(false)); };
+    caixa.appendChild(b);
+  });
+</script>
+</body>
+</html>

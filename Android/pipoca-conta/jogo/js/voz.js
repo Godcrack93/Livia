@@ -129,12 +129,37 @@
   function arquivosGravados(texto) {
     const mapa = gravadasLigadas && window.PC_VOZES && window.PC_VOZES.mapa;
     if (!mapa) return null;
+    // fala longa gravada inteira num áudio só (vozes/longas.js)
+    const longas = window.PC_VOZES.longas;
+    if (longas) { const k = chaveFrase(texto); for (const t in longas) if (chaveFrase(t) === k) return [longas[t]]; }
     const lista = dividirFrases(texto).map(f => mapa[chaveFrase(f)]);
     if (!lista.length || lista.some(a => !a)) {
       if (PC.debug && !PC.modoApp) (PC.debug.semGravacao = PC.debug.semGravacao || []).push(texto);
       return null;
     }
     return lista;
+  }
+
+  /**
+   * A forma de boca do momento da fala gravada que está tocando (vozes/bocas.js, calculado pelo Rhubarb:
+   * 'A'..'G' ou 'X'), ou null (sem áudio gravado tocando ou sem formas para ele: a boca mexe ao acaso).
+   */
+  const linhas = {};
+  function bocaAgora() {
+    const a = audioAtual, mapa = window.PC_BOCAS;
+    if (!a || !mapa || !a.__arquivo || !mapa[a.__arquivo]) return null;
+    // antes de o som começar e depois que ele acaba (até a fala se encerrar), a boca fica fechada, descansando
+    if (a.ended || a.paused || a.currentTime <= 0) return 'X';
+    let l = linhas[a.__arquivo];
+    if (l === undefined) {
+      const s = mapa[a.__arquivo];
+      l = linhas[a.__arquivo] = s ? [...s.matchAll(/([A-HX])(\d+)/g)].map(m => [m[1], +m[2] / 100]) : null;
+    }
+    if (!l) return null;
+    const t = a.currentTime + .08;   // adiantado: a boca leva uns centésimos para chegar na forma (molas) e o som sai com atraso
+    let f = l[0][0];
+    for (let k = 0; k < l.length && l[k][1] <= t; k++) f = l[k][0];
+    return f;
   }
 
   function pararAudio() {
@@ -150,7 +175,8 @@
       if (!pendente || pendente.id !== id) return;
       if (i >= arquivos.length) { audioAtual = null; encerrarPendente('fim'); return; }
       const primeiro = i === 0;
-      const a = new Audio('vozes/' + arquivos[i++]);
+      const a = new Audio('vozes/' + arquivos[i]);
+      a.__arquivo = arquivos[i++];
       audioAtual = a;
       a.volume = volume();
       try { a.preservesPitch = true; } catch (e) { /* antigo */ }
@@ -303,6 +329,7 @@
     motivo: () => (ponte() ? vozNativa.motivo : (vozWeb ? '' : 'sem-voz-pt-br-no-navegador')),
     aoMudar: fn => PC.on('voz:mudou', fn),
     parar: pararTudo,
+    bocaAgora,
     /** Elogio variado (a moldura usa no acerto). */
     elogio() { ultimoElogio = sortearSem(ELOGIOS, ultimoElogio); return ultimoElogio; },
     /** "Quase!" — use SÓ quando a criança errou por pouco (por um, ou por um passo da sequência). */
