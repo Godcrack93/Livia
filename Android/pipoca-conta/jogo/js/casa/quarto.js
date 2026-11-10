@@ -160,8 +160,9 @@
   }
 
   // =====================================================================================  OBJETOS
-  function cama() {
+  function cama(dormindo = false) {
     // cama de solteiro vista de lado: cabeceira alta à esquerda, pezeira baixa à direita (340 de largura)
+    // dormindo: um ursinho dorme no travesseiro, com o cobertor puxado até o queixo
     let s = sombra(0, 0, 182, 11);
     // cabeceira
     const cab = 'M-172 0 V -292 Q -172 -340 -146 -340 Q -120 -340 -120 -292 V 0 Z';
@@ -206,6 +207,18 @@
     // dobra do lençol (barrado branco com listrinha azul) na ponta de cima da colcha
     s += p('M-78 -160 Q -62 -164 -48 -162 Q -42 -140 -48 -118 Q -40 -94 -46 -70 Q -62 -62 -76 -70 Z', '#FFFFFF', 5) + [[-64, -148], [-58, -128], [-66, -108], [-58, -88]].map(([x, y]) => fe(x, y, 3.5, 3.5, '#8FD3FF')).join('') + f('M-56 -160 Q -50 -140 -54 -118 Q -48 -94 -52 -70 L -46 -70 Q -40 -94 -48 -118 Q -42 -140 -48 -162 Z', '#E2DCEF');
     s += brilho(10, -158, 50, 5, -2, .45);
+    if (dormindo) {
+      // cabecinha de ursinho dormindo (olhos fechados) no travesseiro
+      const PEL = '#D9A066', CLARO = '#F3D2A6';
+      s += c(-96, -196, 10, PEL, 4) + c(-58, -196, 10, PEL, 4) + fe(-96, -196, 5, 5, '#F2A7B0') + fe(-58, -196, 5, 5, '#F2A7B0');
+      s += c(-77, -176, 23, PEL, 5) + e(-77, -168, 11, 8, CLARO, 3) + e(-77, -172, 4.5, 3, T, 0);
+      s += l('M-89 -182 q 4.5 4 9 0 M-74 -182 q 4.5 4 9 0', T, 3) + fe(-93, -170, 4.5, 2.6, ROSA, .6) + fe(-61, -170, 4.5, 2.6, ROSA, .6);
+      // o cobertor puxado até o queixo: a colcha e a dobra do lençol vêm para a esquerda
+      const ext = 'M-108 -158 Q -76 -168 -40 -162 L -40 -70 Q -58 -60 -74 -70 Q -92 -60 -108 -70 Z';
+      s += p(ext, CORAL, 5) + [[-92, -142], [-66, -130], [-88, -104], [-60, -96], [-78, -80]].map(([x, y]) => fe(x, y, 5, 5, '#fff', .8)).join('');
+      s += l('M-52 -158 V -74', '#fff', 2) + f('M-106 -100 H -42 V -72 Q -58 -62 -74 -72 Q -92 -62 -106 -72 Z', T, .12);
+      s += em(-32, 0, 1, p('M-78 -160 Q -62 -164 -48 -162 Q -42 -140 -48 -118 Q -40 -94 -46 -70 Q -62 -62 -76 -70 Z', '#FFFFFF', 5) + [[-64, -148], [-58, -128], [-66, -108], [-58, -88]].map(([x, y]) => fe(x, y, 3.5, 3.5, '#8FD3FF')).join(''));
+    }
     return s;
   }
 
@@ -230,18 +243,29 @@
     return s;
   }
 
-  function criadoMudo() {
-    // criadinho de madeira com duas gavetas verde-água (100 x 150)
+  function criadoMudo(aberta = false) {
+    // criadinho de madeira com duas gavetas verde-água (100 x 150). aberta: a gaveta de cima puxada, com coisinhas dentro
     let s = sombra(0, 0, 58, 8);
     s += l('M-36 -30 L -40 0 M36 -30 L 40 0', MAD2, 10) + l('M-36 -30 L -40 0 M36 -30 L 40 0', T, 0);
     s += p('M-42 -30 L -34 -2 Q -33 2 -29 2 L -27 2 L -28 -30 Z', MAD2, 4) + p('M42 -30 L 34 -2 Q 33 2 29 2 L 27 2 L 28 -30 Z', MAD2, 4);
     s += r(-48, -142, 96, 116, MAD, 10, 6) + f('M30 -136 H 42 V -32 H 30 Z', tom(MAD, -.15));
     s += veio(-42, -136, 70, 100, MAD2, 34);
     // gavetas
+    const frente = y => r(-38, y, 76, 42, AGUA, 9, 4) + fr(-32, y + 32, 64, 6, tom(AGUA, -.15), 3) + fr(-31, y + 5, 50, 4, '#fff', 2, .4) +
+      c(0, y + 20, 7, AMARELO2, 3.5) + brilho(-2, y + 18, 2.5, 1.6, -30, .7);
     for (const y of [-130, -80]) {
-      s += r(-38, y, 76, 42, AGUA, 9, 4) + fr(-32, y + 32, 64, 6, tom(AGUA, -.15), 3) + fr(-31, y + 5, 50, 4, '#fff', 2, .4);
-      s += c(0, y + 20, 7, AMARELO2, 3.5) + brilho(-2, y + 18, 2.5, 1.6, -30, .7);
+      if (aberta && y === -130) {
+        // o vão da gaveta e o que tem dentro: meia, lápis e uma estrelinha
+        s += r(-38, y, 76, 42, tom(MAD, -.4), 9, 4) + fr(-32, y + 4, 64, 6, T, 0, .2);
+        s += em(-20, y + 22, 1, p('M-6 6 V -14 Q -6 -20 0 -20 Q 6 -20 6 -14 V 0 Q 14 0 14 6 Q 14 12 6 12 H -2 Q -6 12 -6 6 Z', ROSA, 3.5) + fr(-5, -12, 10, 4, '#fff', 1, .8), -14);
+        s += em(4, y + 18, 1, r(-4, -18, 8, 30, AZUL, 2, 3) + p('M-4 -18 L 0 -28 L 4 -18 Z', '#F3D2A6', 3), 18);
+        s += p(estrelaD(24, y + 8, 11), AMARELO2, 3.5) + brilho(21, y + 4, 3, 2, -30, .6);
+        continue;
+      }
+      s += frente(y);
     }
+    // a frente da gaveta aberta vem para perto da gente (maior e mais para baixo, por cima da outra)
+    if (aberta) s += `<g class="quarto-gaveta">${r(-44, -106, 88, 46, AGUA, 10, 4.5) + fr(-38, -70, 76, 7, tom(AGUA, -.15), 3) + fr(-36, -101, 58, 4, '#fff', 2, .4) + c(0, -83, 8, AMARELO2, 3.5) + brilho(-2, -85, 2.8, 1.8, -30, .7)}</g>` + fe(0, -58, 40, 4, T, .18);
     // tampo
     s += r(-56, -156, 112, 18, MAD2, 7, 5) + fr(-50, -152, 96, 4, '#fff', 2, .3);
     // paninho de crochê
@@ -269,8 +293,8 @@
     return s;
   }
 
-  function despertador() {
-    // despertador de campainhas (~70 de altura)
+  function despertador(hora = 0) {
+    // despertador de campainhas (~70 de altura). hora (1–12): os ponteiros marcam essa hora em ponto
     let s = fe(0, -1, 24, 3.5, T, .15);
     s += l('M-14 -12 L -22 -2 M14 -12 L 22 -2', T, 5);
     s += p('M-26 -52 Q -26 -70 -10 -70 Z', AMARELO2, 4) + p('M26 -52 Q 26 -70 10 -70 Z', AMARELO2, 4);
@@ -278,7 +302,8 @@
     s += c(0, -34, 26, CORAL, 5) + f('M14 -54 Q 30 -40 22 -20 Q 12 -8 -4 -8 Q 18 -18 14 -54 Z', tom(CORAL, -.15));
     s += c(0, -34, 18, '#FFFFFF', 3.5);
     for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6, rr = i % 3 ? 14 : 12.5; s += l(`M${n(Math.cos(a) * rr)} ${n(-34 + Math.sin(a) * rr)} L ${n(Math.cos(a) * 15.5)} ${n(-34 + Math.sin(a) * 15.5)}`, T, i % 3 ? 1.6 : 2.6); }
-    s += l('M0 -34 V -45 M0 -34 L 8 -30', T, 3) + c(0, -34, 2.2, CORAL, 0);
+    const a = hora * Math.PI / 6;
+    s += l(hora ? `M0 -34 V -45 M0 -34 L ${n(Math.sin(a) * 8.5)} ${n(-34 - Math.cos(a) * 8.5)}` : 'M0 -34 V -45 M0 -34 L 8 -30', T, 3) + c(0, -34, 2.2, CORAL, 0);
     s += brilho(-9, -46, 6, 3, -30, .6);
     return s;
   }
@@ -364,8 +389,8 @@
     return s;
   }
 
-  function piao() {
-    // pião de madeira listrado com a fieira enrolada (~62 de altura)
+  function piao(fieira = true) {
+    // pião de madeira listrado com a fieira enrolada (~62 de altura). fieira = false: sem a cordinha (girando)
     let s = fe(0, -1, 14, 3, T, .15);
     const corpo = 'M-30 -40 Q -30 -54 0 -54 Q 30 -54 30 -40 Q 28 -20 4 -8 L 0 -6 L -4 -8 Q -28 -20 -30 -40 Z';
     let est = `<path d="${corpo}" fill="${MAD}"/>` + fr(-32, -46, 64, 8, CORAL) + fr(-32, -32, 64, 7, AGUA) + fr(-32, -20, 64, 6, AMARELO2);
@@ -375,7 +400,7 @@
     s += r(-6, -66, 12, 14, MAD2, 4, 3.5);
     s += brilho(-14, -46, 7, 3, -20, .55);
     // fieira caída do lado
-    s += l('M6 -60 Q 30 -70 36 -50 Q 40 -30 26 -18 Q 16 -8 30 -2', '#fff', 6) + l('M6 -60 Q 30 -70 36 -50 Q 40 -30 26 -18 Q 16 -8 30 -2', '#E9D7B8', 3);
+    if (fieira) s += l('M6 -60 Q 30 -70 36 -50 Q 40 -30 26 -18 Q 16 -8 30 -2', '#fff', 6) + l('M6 -60 Q 30 -70 36 -50 Q 40 -30 26 -18 Q 16 -8 30 -2', '#E9D7B8', 3);
     return s;
   }
 
@@ -475,8 +500,8 @@
     return s;
   }
 
-  function bandeirinhas(w, cores = [CORAL, AMARELO2, AGUA, ROXO, VERDE, ROSA, AZUL]) {
-    // varal de bandeirinhas de festa junina, de 0 até w (duas barrigas)
+  function bandeirinhas(w, cores = [CORAL, AMARELO2, AGUA, ROXO, VERDE, ROSA, AZUL], classe = '') {
+    // varal de bandeirinhas de festa junina, de 0 até w (duas barrigas). classe: animação de cada bandeirinha (balançar)
     let s = '';
     const meio = w / 2, barriga = 40;
     const yFio = x => { const t = (x % meio) / meio; return 4 * barriga * t * (1 - t); };
@@ -485,15 +510,16 @@
     for (let x = 26; x < w - 16; x += 46) {
       if (Math.abs(x - meio) < 14) continue;
       const y = yFio(x), t = (x % meio) / meio, inc = (1 - 2 * t) * -14, cor = cores[k++ % cores.length];
-      s += em(x, y, 1, p('M-17 0 L 17 0 L 17 42 L 0 32 L -17 42 Z', cor, 3.5) + f('M8 2 L 15 2 L 15 38 L 8 34 Z', tom(cor, -.15)) + fr(-14, 3, 22, 3, '#fff', 1, .5), inc);
+      const b = p('M-17 0 L 17 0 L 17 42 L 0 32 L -17 42 Z', cor, 3.5) + f('M8 2 L 15 2 L 15 38 L 8 34 Z', tom(cor, -.15)) + fr(-14, 3, 22, 3, '#fff', 1, .5);
+      s += em(x, y, 1, classe ? `<g class="${classe}" style="animation-delay:${(k % 4) * .09}s">${b}</g>` : b, inc);
     }
     s += c(0, 0, 5, '#C9BEDD', 3) + c(w, 0, 5, '#C9BEDD', 3) + c(meio, 0, 5, '#C9BEDD', 3);
     return s;
   }
 
-  function pantufas() {
-    // par de pantufas de coelhinho (~90 de largura)
-    let s = sombra(0, 0, 50, 6);
+  function pantufas(so = 0) {
+    // par de pantufas de coelhinho (~90 de largura). so: -1 só a da esquerda, 1 só a da direita (as duas sem sombra)
+    let s = so ? '' : sombra(0, 0, 50, 6);
     const uma = (x, k) => {
       let o = e(x, -14, 26, 14, ROSA, 4) + f(`M${x - 24} -10 Q ${x} 4 ${x + 24} -10 Q ${x + 20} 0 ${x} 0 Q ${x - 20} 0 ${x - 24} -10 Z`, tom(ROSA, -.15));
       o += e(x + k * 8, -18, 13, 7, '#FFFFFF', 3);
@@ -502,12 +528,12 @@
       o += brilho(x - k * 8, -22, 8, 3, -10, .5);
       return o;
     };
-    s += uma(-22, 1) + uma(26, 1);
+    s += (so !== 1 ? uma(-22, 1) : '') + (so !== -1 ? uma(26, 1) : '');
     return s;
   }
 
-  function guardaRoupa() {
-    // guarda-roupa de duas portas com coroa arredondada (230 x 420)
+  function guardaRoupa(aberto = false) {
+    // guarda-roupa de duas portas com coroa arredondada (230 x 420). aberto: portas abertas e as roupinhas penduradas
     let s = sombra(0, 0, 126, 12);
     s += p('M-104 -40 L -98 0 L -84 0 L -86 -40 Z M104 -40 L 98 0 L 84 0 L 86 -40 Z', MAD3, 5);
     // coroa
@@ -524,7 +550,34 @@
       o += r(x0 + (k ? 8 : 74), -250, 10, 34, AMARELO2, 5, 3.5);
       return o;
     };
-    s += porta(-98, 0) + porta(6, 1);
+    if (!aberto) s += porta(-98, 0) + porta(6, 1);
+    else {
+      // o lado de dentro: cabideiro com camiseta, vestido e casaco; prateleira com roupas dobradas e sapatinhos
+      s += r(-98, -362, 196, 250, tom(MAD, -.32), 10, 5) + fr(-92, -356, 184, 10, T, 4, .18);
+      s += r(-94, -342, 188, 9, '#E9E2F2', 4.5, 3.5);
+      const cabide = x => l(`M${x} -338 V -344 q 0 -7 6 -7`, T, 3) + l(`M${x - 22} -318 L ${x} -334 L ${x + 22} -318`, '#E9E2F2', 4) + l(`M${x - 22} -318 L ${x} -334 L ${x + 22} -318`, T, 1.5);
+      const X1 = -58, X2 = -2, X3 = 54;
+      s += cabide(X1) + p(`M${X1 - 14} -324 L ${X1 - 32} -312 L ${X1 - 25} -296 L ${X1 - 16} -301 V -258 H ${X1 + 16} V -301 L ${X1 + 25} -296 L ${X1 + 32} -312 L ${X1 + 14} -324 Q ${X1} -314 ${X1 - 14} -324 Z`, CORAL, 4);
+      s += p(estrelaD(X1, -282, 9), '#fff', 0) + fr(X1 - 15, -268, 30, 4, tom(CORAL, -.15));
+      s += cabide(X2) + p(`M${X2 - 11} -324 Q ${X2} -316 ${X2 + 11} -324 L ${X2 + 14} -292 L ${X2 + 30} -232 Q ${X2} -222 ${X2 - 30} -232 L ${X2 - 14} -292 Z`, ROSA, 4);
+      s += [[-8, -306], [6, -298], [-12, -268], [10, -258], [-2, -244], [18, -240], [-20, -240]].map(([x, y]) => fe(X2 + x, y, 3.2, 3.2, '#fff', .9)).join('') + l(`M${X2 - 14} -292 Q ${X2} -286 ${X2 + 14} -292`, tom(ROSA, -.2), 3);
+      s += cabide(X3) + p(`M${X3 - 15} -324 L ${X3 - 28} -312 V -226 H ${X3 + 28} V -312 L ${X3 + 15} -324 Q ${X3} -314 ${X3 - 15} -324 Z`, AZUL, 4);
+      s += l(`M${X3} -318 V -226`, T, 2.5) + [-300, -278, -256].map(y => fe(X3 + 7, y, 3, 3, AMARELO2)).join('') + r(X3 - 22, -262, 14, 12, tom(AZUL, -.15), 3, 2.5);
+      s += r(-98, -212, 196, 12, MAD2, 4, 4);
+      // pilhas de roupa dobrada e um par de sapatinhos
+      [[-70, ROXO], [-70, VERDE], [-70, AMARELO2]].forEach(([x, cor], k) => { s += r(x - 20, -130 - k * 18, 52, 18, cor, 6, 3.5) + l(`M${x - 12} ${-121 - k * 18} H ${x + 22}`, tom(cor, -.2), 2); });
+      [[6, AGUA], [6, CORAL]].forEach(([x, cor], k) => { s += r(x - 22, -130 - k * 18, 56, 18, cor, 6, 3.5) + l(`M${x - 14} ${-121 - k * 18} H ${x + 24}`, tom(cor, -.2), 2); });
+      s += e(64, -122, 18, 9, CORAL, 3.5) + e(82, -118, 14, 8, CORAL, 3.5) + fe(60, -126, 6, 2.5, '#fff', .5);
+      // as portas abertas, de lado (dobradiças nas beiradas)
+      const aberta = (k) => {
+        const xi = k * 98, xo = k * 164, cor = '#FFE7C7';
+        let o = p(`M${xi} -362 L ${xo} -378 Q ${xo + k * 2} -378 ${xo + k * 2} -372 L ${xo + k * 2} -100 Q ${xo + k * 2} -94 ${xo} -94 L ${xi} -112 Z`, cor, 5);
+        o += p(`M${xi + k * 12} -346 L ${xo - k * 12} -358 L ${xo - k * 12} -250 L ${xi + k * 12} -244 Z`, '#FFF4E6', 3.5) + p(`M${xi + k * 12} -230 L ${xo - k * 12} -234 L ${xo - k * 12} -122 L ${xi + k * 12} -128 Z`, '#FFF4E6', 3.5);
+        o += r(xo - k * 22 - 5, -258, 10, 30, AMARELO2, 5, 3.5);
+        return `<g class="quarto-porta-${k < 0 ? 'e' : 'd'}">${o}</g>`;
+      };
+      s += aberta(-1) + aberta(1);
+    }
     // gaveta de baixo
     s += r(-98, -102, 196, 54, AMARELO2, 10, 5) + fr(-92, -60, 184, 8, tom(AMARELO2, -.15), 4) + fr(-90, -96, 150, 4, '#fff', 2, .5);
     s += r(-24, -82, 48, 12, MAD2, 6, 3.5);
@@ -532,19 +585,39 @@
     return s;
   }
 
-  function comoda() {
-    // cômoda de três gavetas coloridas (200 x 170)
+  function comoda(aberta = 0) {
+    // cômoda de três gavetas coloridas (200 x 170). aberta (1–3): essa gaveta puxada, mostrando o que tem dentro
     let s = sombra(0, 0, 110, 10);
     s += p('M-86 -24 L -82 0 L -70 0 L -70 -24 Z M86 -24 L 82 0 L 70 0 L 70 -24 Z', MAD3, 5);
     s += r(-96, -160, 192, 140, MAD, 12, 6) + f('M74 -154 H 90 V -26 H 74 Z', tom(MAD, -.15));
     const cores = [CORAL, AMARELO2, AGUA];
+    let frente = '';
     for (let i = 0; i < 3; i++) {
       const y = -150 + i * 42, cor = cores[i];
+      if (aberta === i + 1) {
+        s += r(-84, y, 168, 36, tom(MAD, -.4), 8, 4.5) + fr(-78, y + 4, 156, 6, T, 0, .2) + dentroDaGaveta(i, y);
+        frente = `<g class="quarto-gaveta">${r(-92, y + 18, 184, 40, cor, 9, 4.5) + fr(-85, y + 49, 170, 6, tom(cor, -.15), 3) + fr(-83, y + 23, 122, 4, '#fff', 2, .45) +
+          c(-44, y + 38, 7.2, '#FFF4E6', 3.5) + c(44, y + 38, 7.2, '#FFF4E6', 3.5)}</g>` + fe(0, y + 62, 84, 4, T, .16);
+        continue;
+      }
       s += r(-84, y, 168, 36, cor, 8, 4.5) + fr(-78, y + 28, 156, 5, tom(cor, -.15), 3) + fr(-76, y + 5, 110, 4, '#fff', 2, .45);
       s += c(-40, y + 18, 6.5, '#FFF4E6', 3.5) + c(40, y + 18, 6.5, '#FFF4E6', 3.5);
     }
+    s += frente;
     s += r(-104, -174, 208, 18, MAD2, 8, 5) + fr(-98, -170, 180, 4, '#fff', 2, .3);
     return s;
+  }
+  /** o que aparece na gaveta aberta da cômoda: 0 camisetas dobradas, 1 meias, 2 brinquedinhos */
+  function dentroDaGaveta(i, y) {
+    if (i === 0) {
+      const cam = (x, cor, rot) => em(x, y + 14, 1, p('M-26 -12 L -10 -16 Q 0 -10 10 -16 L 26 -12 L 26 12 L -26 12 Z', cor, 3.5) + l('M-10 -16 Q 0 -4 10 -16', tom(cor, -.25), 2.5) + fr(-22, 4, 44, 4, tom(cor, -.15), 2), rot);
+      return cam(-46, AMARELO2, -4) + cam(4, AZUL, 3) + cam(52, VERDE, -2);
+    }
+    if (i === 1) {
+      const meia = (x, cor, rot) => em(x, y + 20, 1, p('M-7 8 V -18 Q -7 -24 0 -24 Q 7 -24 7 -18 V 2 Q 18 2 18 10 Q 18 18 8 18 H -1 Q -7 18 -7 8 Z', cor, 3.5) + fr(-6, -16, 12, 5, '#fff', 1, .85) + fe(0, 0, 2.6, 2.6, '#fff', .8), rot);
+      return meia(-52, ROSA, -10) + meia(-28, ROSA, 6) + meia(20, AGUA, -6) + meia(44, AGUA, 12) + em(70, y + 14, 1, c(0, 0, 12, ROXO, 3.5) + l('M-8 -6 Q 0 0 8 -6 M-9 3 Q 0 9 9 3', tom(ROXO, -.25), 2));
+    }
+    return em(-46, y + 30, .5, bola()) + em(0, y + 26, .6, carrinho(), -8) + p(estrelaD(48, y + 10, 13), AMARELO2, 3.5) + brilho(44, y + 6, 3, 2, -30, .6);
   }
 
   function quadro(tipo = 0) {
@@ -599,13 +672,376 @@
   // ?catalogo na URL do ver.html: espalha no chão os objetos do catálogo que não ficam montados (só para conferir os desenhos)
   const verCatalogo = typeof location !== 'undefined' && /[?&]catalogo\b/.test(location.search);
 
+  // =====================================================================================  AÇÕES (modo brincar)
+  // O formato e o ctx estão no topo de js/casa/acoes.js. As animações de uma vez só (bola quicando, carrinho andando...)
+  // usam o truque do "voo": por um instante o desenho parado fica invisível (mesma caixa, então nada sai do lugar) e
+  // o "sobre" mostra a mesma coisa se mexendo; no fim tudo volta ao normal. As animações próprias do quarto ficam nesta
+  // folha de estilo (classes quarto-*), posta uma vez só na página.
+  const CSS = `
+.quarto-quica{transform-box:fill-box;transform-origin:50% 100%;animation:quartoQuica 1.4s both}
+@keyframes quartoQuica{0%{transform:scale(1.18,.82);animation-timing-function:ease-out}18%{transform:translateY(-150px) scale(.94,1.06);animation-timing-function:ease-in}
+36%{transform:scale(1.2,.8);animation-timing-function:ease-out}52%{transform:translateY(-70px);animation-timing-function:ease-in}
+68%{transform:scale(1.12,.88);animation-timing-function:ease-out}80%{transform:translateY(-24px);animation-timing-function:ease-in}92%{transform:scale(1.05,.95)}100%{transform:none}}
+.quarto-anda{animation:quartoAnda 2.2s ease-in-out both}
+@keyframes quartoAnda{0%{transform:none}42%{transform:translateX(150px)}56%{transform:translateX(150px)}100%{transform:none}}
+.quarto-bamboleia{transform-box:fill-box;transform-origin:50% 100%;animation:quartoBamboleia .36s ease-in-out infinite alternate}
+@keyframes quartoBamboleia{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+.quarto-listra{animation:quartoListra .22s linear infinite}
+@keyframes quartoListra{from{transform:translateX(-22px)}to{transform:translateX(22px)}}
+.quarto-pula{transform-box:fill-box;transform-origin:50% 100%;animation:quartoPula .8s ease-in-out 2 both}
+.quarto-depois{animation-delay:.3s}
+@keyframes quartoPula{0%{transform:none}30%{transform:translateY(-54px) rotate(-12deg)}55%{transform:scale(1.12,.88)}72%,100%{transform:none}}
+.quarto-ginga{transform-box:fill-box;transform-origin:50% 100%;animation:quartoGinga 1.4s ease-in-out both}
+@keyframes quartoGinga{0%,100%{transform:none}18%{transform:rotate(10deg)}38%{transform:rotate(-8deg)}58%{transform:rotate(5deg)}78%{transform:rotate(-2deg)}}
+.quarto-roda{transform-box:fill-box;transform-origin:50% 50%;animation:quartoRoda 7s ease-in-out infinite}
+@keyframes quartoRoda{50%{transform:scaleX(-1)}}
+.quarto-tremula{transform-box:fill-box;transform-origin:50% 0;animation:quartoTremula 1.7s ease-in-out both}
+@keyframes quartoTremula{0%,100%{transform:none}15%{transform:rotate(16deg)}35%{transform:rotate(-12deg)}55%{transform:rotate(7deg)}75%{transform:rotate(-3deg)}}
+.quarto-sai1,.quarto-sai2,.quarto-sai3{transform-box:fill-box;transform-origin:50% 100%;animation:quartoSai1 1.4s both}
+.quarto-sai2{animation-name:quartoSai2;animation-delay:.14s}.quarto-sai3{animation-name:quartoSai3;animation-delay:.28s}
+@keyframes quartoSai1{0%{transform:translateY(16px) scale(.4);opacity:0;animation-timing-function:ease-out}14%{opacity:1}
+45%{transform:translate(-80px,-150px) rotate(-30deg);animation-timing-function:ease-in}82%{transform:translate(-14px,0) scale(.8);opacity:1}100%{transform:translateY(16px) scale(.4);opacity:0}}
+@keyframes quartoSai2{0%{transform:translateY(16px) scale(.4);opacity:0;animation-timing-function:ease-out}14%{opacity:1}
+45%{transform:translate(6px,-190px) rotate(200deg);animation-timing-function:ease-in}82%{transform:translate(0,0) scale(.8) rotate(360deg);opacity:1}100%{transform:translateY(16px) scale(.4) rotate(360deg);opacity:0}}
+@keyframes quartoSai3{0%{transform:translateY(16px) scale(.4);opacity:0;animation-timing-function:ease-out}14%{opacity:1}
+45%{transform:translate(84px,-140px) rotate(30deg);animation-timing-function:ease-in}82%{transform:translate(14px,0) scale(.8);opacity:1}100%{transform:translateY(16px) scale(.4);opacity:0}}
+.quarto-surge{transform-box:fill-box;transform-origin:50% 100%;animation:quartoSurge 1.7s both}
+@keyframes quartoSurge{0%{transform:scale(.3);opacity:0}14%{transform:scale(1.08);opacity:1}22%,86%{transform:none;opacity:1}100%{transform:scale(.6);opacity:0}}
+.quarto-folha{transform-box:fill-box;transform-origin:0 50%;animation:quartoFolha .6s ease-in-out .35s both}
+@keyframes quartoFolha{from{transform:none}to{transform:scaleX(-1)}}
+.quarto-onda{transform-box:fill-box;transform-origin:50% 50%;animation:quartoOnda .9s ease-out both}
+@keyframes quartoOnda{from{transform:scale(.5);opacity:1}to{transform:scale(1.25);opacity:0}}
+.quarto-gaveta{animation:quartoGaveta .22s ease-out}
+@keyframes quartoGaveta{from{transform:translateY(-18px)}}
+.quarto-porta-e,.quarto-porta-d{transform-box:fill-box;transform-origin:100% 50%;animation:quartoPorta .28s ease-out}
+.quarto-porta-d{transform-origin:0 50%}
+@keyframes quartoPorta{from{transform:scaleX(.2)}}
+`;
+  if (typeof document !== 'undefined' && document.head && !document.querySelector('style[data-quarto]')) {
+    const st = document.createElement('style');
+    st.setAttribute('data-quarto', '');
+    st.textContent = CSS;
+    document.head.appendChild(st);
+  }
+
+  const D = id => CASA.desenho(id);
+  const memo = {};
+  /** desenho guardado (cada estado é desenhado uma vez só; o motor também guarda a caixa pelo texto) */
+  const uma = (chave, fn) => (memo[chave] != null ? memo[chave] : (memo[chave] = fn()));
+  const invisivel = id => uma('oculto-' + id, () => `<g opacity="0">${D(id)}</g>`);
+  const voando = e => !!(e && e.voo > Date.now());
+  /** o "voo": esconde o desenho parado por ms e mostra o sobre (que se mexe); depois volta ao normal */
+  function voo(ctx, ms) {
+    const e = ctx.estado, fim = Date.now() + ms;
+    e.voo = fim;
+    ctx.mudou();
+    ctx.depois(ms, () => { if (e.voo === fim) { delete e.voo; ctx.mudou(); } });
+  }
+  /** ação de "voo" para um item: o desenho some e o sobre(e) aparece enquanto dura */
+  const comVoo = (id, sobre, ms, tocar) => ({
+    desenho: e => (voando(e) ? invisivel(id) : D(id)),
+    sobre: e => (voando(e) ? sobre(e) : ''),
+    tocar(ctx) { voo(ctx, ms); tocar(ctx); },
+  });
+  const HORAS = ['', 'uma', 'duas', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze', 'doze'];
+  const zzz = [[-60, -212, 0, 40], [-36, -236, .7, 32], [-64, -250, 1.4, 26]].map(([x, y, d, fs]) =>
+    `<text class="casa-sobe" style="animation-delay:${d}s" x="${x}" y="${y}" font-family="Fredoka, sans-serif" font-weight="700" font-size="${fs}" fill="#fff" stroke="${T}" stroke-width="4" paint-order="stroke">z</text>`).join('');
+
+  const acoes = {
+    // ---------------------------------------------------------------- cama: um ursinho deita e dorme (z z z); de novo: bom dia
+    cama: {
+      desenho: e => (e && e.dorme ? uma('cama-dorme', () => cama(true)) : D('cama')),
+      sobre: e => (e && e.dorme ? zzz : ''),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.dorme = !e.dorme;
+        ctx.mudou();
+        if (e.dorme) { ctx.som('soltar'); ctx.particulas('z', -60, -210, 2, { dy: -80, espalha: 30, seguidas: 220 }); }
+        else { ctx.som('pulo'); ctx.pular(); ctx.particulas('estrela', -76, -200, 4, { dy: -100 }); }
+      },
+    },
+    // ---------------------------------------------------------------- criado-mudo: a gaveta abre (meia, lápis, estrela) e fecha
+    criadoMudo: {
+      desenho: e => (e && e.aberta ? uma('criadoMudo-aberta', () => criadoMudo(true)) : D('criadoMudo')),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.aberta = !e.aberta;
+        ctx.som(e.aberta ? 'pegar' : 'encaixar');
+        ctx.mudou();
+        if (e.aberta) ctx.particulas('estrela', 20, -130, 2, { dy: -70, espalha: 40 });
+      },
+    },
+    // ---------------------------------------------------------------- cômoda: cada toque abre a próxima gaveta; depois fecha tudo
+    comoda: {
+      desenho: e => (e && e.gaveta ? uma('comoda-' + e.gaveta, () => comoda(e.gaveta)) : D('comoda')),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.gaveta = ((e.gaveta || 0) + 1) % 4;
+        ctx.som(e.gaveta ? 'pegar' : 'encaixar');
+        ctx.mudou();
+        if (e.gaveta) ctx.particulas('estrela', 0, -150 + (e.gaveta - 1) * 42, 2, { dy: -70, espalha: 60 });
+      },
+    },
+    // ---------------------------------------------------------------- guarda-roupa: as portas abrem (roupinhas penduradas) e fecham
+    guardaRoupa: {
+      desenho: e => (e && e.aberta ? uma('guardaRoupa-aberto', () => guardaRoupa(true)) : D('guardaRoupa')),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.aberta = !e.aberta;
+        ctx.som(e.aberta ? 'pegar' : 'encaixar');
+        ctx.mudou();
+        if (e.aberta) ctx.particulas('estrela', 0, -300, 3, { dy: -90, espalha: 70 });
+      },
+    },
+    // ---------------------------------------------------------------- tapete: sacode, fofinho
+    tapeteQuarto: {
+      tocar(ctx) {
+        ctx.som('bolha'); ctx.pular();
+        const onda = d => `<g class="quarto-onda" style="animation-delay:${d}s"><ellipse cx="0" cy="-4" rx="150" ry="24" fill="none" stroke="#FFE27A" stroke-width="9"/></g>`;
+        ctx.mostrar(onda(0) + onda(.25), 1300);
+        ctx.particulas('estrela', 0, -20, 3, { dy: -90, espalha: 90 });
+      },
+    },
+    // ---------------------------------------------------------------- despertador: toca (treme, trim-trim) e os ponteiros andam uma hora
+    despertador: {
+      desenho: e => (e && e.hora ? uma('despertador-' + e.hora, () => despertador(e.hora)) : D('despertador')),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.hora = ((e.hora || 4) % 12) + 1;
+        ctx.mudou();
+        const trim = () => { ctx.som('moeda'); ctx.tremer(); };
+        trim(); ctx.depois(500, trim); ctx.depois(1000, trim);
+        ctx.mostrar(`<g class="casa-treme">${p('M-26 -52 Q -26 -70 -10 -70 Z', AMARELO2, 4) + p('M26 -52 Q 26 -70 10 -70 Z', AMARELO2, 4)}</g>` +
+          `<g class="casa-pisca">${l('M-34 -66 q -8 -8 -2 -18 M-40 -58 q -12 -10 -4 -26 M34 -66 q 8 -8 2 -18 M40 -58 q 12 -10 4 -26', T, 3)}</g>`, 1500);
+        ctx.particulas('nota', 0, -80, 3, { dy: -90, espalha: 60, seguidas: 380 });
+        ctx.depois(300, () => ctx.diz(e.hora === 1 ? 'É uma hora!' : `São ${HORAS[e.hora]} horas!`));
+      },
+    },
+    // ---------------------------------------------------------------- baú: os brinquedos pulam para fora e voltam
+    bau: {
+      tocar(ctx) {
+        ctx.som('pulo');
+        const sai = (k, x, arte) => `<g transform="translate(${x} -100)"><g class="quarto-sai${k}">${arte}</g></g>`;
+        ctx.mostrar(sai(1, -34, uma('bau-bola', () => em(0, 0, .62, bola()))) + sai(2, 4, uma('bau-piao', () => em(0, 0, .8, piao(false)))) +
+          sai(3, 40, uma('bau-carro', () => em(0, 0, .75, carrinho()))), 2000);
+        ctx.depois(140, () => ctx.som('pulo')); ctx.depois(1150, () => ctx.som('soltar'));
+        ctx.particulas('estrela', 0, -130, 4, { dy: -120, espalha: 90 });
+      },
+    },
+    // ---------------------------------------------------------------- ursinho: dá um abraço (olhinhos fechados e corações)
+    ursinho: {
+      tocar(ctx) {
+        const PEL = '#D9A066';
+        ctx.som('piu'); ctx.pular();
+        ctx.mostrar(uma('ursinho-abraco', () =>
+          fe(-11, -88, 5.5, 6.5, PEL) + fe(11, -88, 5.5, 6.5, PEL) + l('M-16 -87 q 5 -5 10 0 M6 -87 q 5 -5 10 0', T, 3) +
+          fe(-18, -76, 6, 3.6, ROSA, .9) + fe(18, -76, 6, 3.6, ROSA, .9) +
+          em(-14, -36, 1, e(0, 0, 10, 22, PEL, 5), -62) + em(14, -36, 1, e(0, 0, 10, 22, PEL, 5), 62) +
+          p('M0 -30 C -12 -42 -20 -28 0 -18 C 20 -28 12 -42 0 -30 Z', CORAL, 3)), 1400);
+        ctx.particulas('coracao', 0, -100, 4, { dy: -110, espalha: 60 });
+      },
+    },
+    // ---------------------------------------------------------------- bola: quica
+    bola: comVoo('bola', () => `<g class="quarto-quica">${D('bola')}</g>`, 1400, ctx => {
+      ctx.som('pulo'); ctx.depois(500, () => ctx.som('pulo')); ctx.depois(950, () => ctx.som('pulo'));
+    }),
+    // ---------------------------------------------------------------- carrinho: anda para frente e volta (rodas girando)
+    carrinho: comVoo('carrinho', () => uma('carrinho-anda', () => `<g class="quarto-anda">${D('carrinho')}` +
+      [-20, 22].map(x => `<g class="casa-gira">${l(`M${x - 6} -12 H ${x + 6} M${x} -18 V -6`, '#E9E2F2', 3)}</g>`).join('') + '</g>'), 2200, ctx => {
+      ctx.som('piu'); ctx.depois(1150, () => ctx.som('piu'));
+      ctx.particulas('vento', -40, -16, 2, { dx: -120, dy: -10, espalha: 20, seguidas: 200 });
+    }),
+    // ---------------------------------------------------------------- pião: gira, bamboleando
+    piao: comVoo('piao', () => uma('piao-gira', () => `<g class="quarto-bamboleia">${piao(false)}` +
+      `<g class="quarto-listra">${l('M-2 -50 Q 2 -32 -1 -14', '#fff', 5)}</g></g>` +
+      `<g class="casa-pisca">${l('M-42 -46 q -10 12 0 24 M42 -46 q 10 12 0 24', T, 3)}</g>`), 2200, ctx => {
+      ctx.som('pegar'); ctx.depois(2100, () => ctx.som('soltar'));
+      ctx.particulas('vento', 0, -30, 2, { dx: 0, dy: -60, espalha: 60 });
+    }),
+    // ---------------------------------------------------------------- pipa: balança no prego, com ventinho
+    pipa: {
+      tocar(ctx) {
+        ctx.som('pegar'); ctx.balancar();
+        ctx.particulas('vento', -100, 120, 3, { dx: 220, dy: 0, espalha: 50, seguidas: 160 });
+      },
+    },
+    // ---------------------------------------------------------------- pantufas: pulam, uma de cada vez
+    pantufas: comVoo('pantufas', () => uma('pantufas-pulam', () => sombra(0, 0, 50, 6) + `<g class="quarto-pula">${pantufas(-1)}</g><g class="quarto-pula quarto-depois">${pantufas(1)}</g>`), 2000, ctx => {
+      ctx.som('pulo'); ctx.depois(300, () => ctx.som('pulo')); ctx.depois(800, () => ctx.som('pulo')); ctx.depois(1100, () => ctx.som('pulo'));
+    }),
+    // ---------------------------------------------------------------- prateleira: treme e o que está em cima dá um pulinho
+    prateleiraQuarto: {
+      tocar(ctx) {
+        ctx.som('clique'); ctx.tremer();
+        ctx.perto(190).forEach((o, k) => ctx.depois(120 + k * 110, () => o.contexto().pular()));
+        ctx.depois(160, () => ctx.som('pulo'));
+      },
+    },
+    // ---------------------------------------------------------------- livros: um livro abre e a página vira (cada vez um desenho)
+    livros: {
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.pagina = ((e.pagina || 0) + 1) % 4;
+        ctx.som('pagina'); ctx.depois(450, () => ctx.som('pagina'));
+        ctx.mostrar(uma('livro-' + e.pagina, () => livroAberto(e.pagina)), 1700);
+        ctx.depois(900, () => ctx.particulas('estrela', 30, -190, 2, { dy: -70, espalha: 50 }));
+      },
+    },
+    // ---------------------------------------------------------------- porta-retrato: brilha
+    portaRetrato: {
+      tocar(ctx) {
+        ctx.som('figurinha'); ctx.pular();
+        ctx.mostrar(uma('retrato-brilha', () => `<g class="casa-pulsa"><rect x="-54" y="-112" width="108" height="120" rx="16" fill="none" stroke="#FFE27A" stroke-width="9" opacity=".9"/></g>` +
+          [[-52, -110, 'casa-pisca'], [52, -6, 'casa-pisca2'], [54, -106, 'casa-pisca2'], [-50, -4, 'casa-pisca']].map(([x, y, cl]) => `<g class="${cl}">${p(estrelaD(x, y, 11), '#FFF6C8', 3)}</g>`).join('')), 1500);
+        ctx.particulas('estrela', 0, -60, 3, { dy: -110, espalha: 70 });
+        ctx.particulas('coracao', 0, -60, 2, { dy: -100, espalha: 40 });
+      },
+    },
+    // ---------------------------------------------------------------- vasinho: ginga e a florzinha abre
+    vasinho: comVoo('vasinho', () => uma('vasinho-ginga', () => `<g class="quarto-ginga">${D('vasinho')}<g class="casa-pulsa">` +
+      [0, 72, 144, 216, 288].map(a => em(0, -78, 1, e(0, -11, 6, 9, ROSA, 3), a)).join('') + c(0, -78, 6, AMARELO2, 3) + '</g></g>'), 1500, ctx => {
+      ctx.som('bolha');
+      ctx.particulas('folha', 0, -60, 2, { dy: -70, espalha: 50 });
+    }),
+    // ---------------------------------------------------------------- móbile: gira devagar (liga e desliga)
+    mobile: {
+      desenho: e => (e && e.ligado ? invisivel('mobile') : D('mobile')),
+      sobre: e => (e && e.ligado ? uma('mobile-gira', () => `<g class="quarto-roda">${D('mobile')}</g>`) : ''),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.ligado = !e.ligado;
+        ctx.som(e.ligado ? 'figurinha' : 'soltar');
+        ctx.mudou();
+        if (e.ligado) ctx.particulas('nota', 0, 120, 3, { dy: -80, espalha: 70, seguidas: 250 });
+      },
+    },
+    // ---------------------------------------------------------------- bandeirinhas: balançam no ventinho
+    bandeirinhas: comVoo('bandeirinhas', () => uma('bandeirinhas-balancam', () => bandeirinhas(470, undefined, 'quarto-tremula')), 2100, ctx => {
+      ctx.som('pegar');
+      ctx.particulas('vento', 40, 50, 3, { dx: 380, dy: 10, espalha: 30, seguidas: 160 });
+    }),
+    // ---------------------------------------------------------------- quadros: balançam no prego (cada um com uma graça)
+    quadroCasinha: {
+      tocar(ctx) {
+        ctx.som('piu'); ctx.balancar();
+        ctx.mostrar(uma('quadro-sol', () => `<g transform="translate(37 66)"><g class="casa-gira-lento">` +
+          [0, 45, 90, 135, 180, 225, 270, 315].map(a => em(0, 0, 1, `<path d="M0 -15 V -22" stroke="#FFC93C" stroke-width="4" stroke-linecap="round"/>`, a)).join('') + '</g></g>'), 1400);
+      },
+    },
+    quadroFoguete: {
+      tocar(ctx) {
+        ctx.som('figurinha'); ctx.balancar();
+        ctx.mostrar(`<g class="casa-pulsa">${p('M-9 142 Q 0 182 9 142 Z', CORAL, 2.5) + f('M-4 144 Q 0 164 4 144 Z', '#FFE27A')}</g>`, 1300);
+        ctx.particulas('estrela', 0, 110, 5, { dy: -120, espalha: 110 });
+      },
+    },
+    quadroArcoIris: {
+      tocar(ctx) {
+        ctx.som('figurinha'); ctx.balancar();
+        ctx.particulas('estrela', 0, 90, 3, { dy: -110, espalha: 90 });
+        ctx.particulas('coracao', 0, 90, 2, { dy: -100, espalha: 60 });
+      },
+    },
+  };
+
+  /** livro aberto que surge por cima da fileira; a folha vira e mostra um desenho (sol, lua, peixe ou flor) */
+  function livroAberto(k) {
+    const pag = (lado, cor = '#FFFFFF') => p(`M0 0 Q ${lado * 30} -10 ${lado * 62} -2 V -70 Q ${lado * 30} -78 0 -68 Z`, cor, 3.5);
+    const linhas = lado => [-56, -46, -36, -26, -16].map(y => l(`M${lado * 10} ${y} Q ${lado * 32} ${y - 4} ${lado * 52} ${y + 1}`, '#D8CDEB', 3)).join('');
+    const figura = [
+      c(32, -38, 12, AMARELO2, 3) + [0, 60, 120, 180, 240, 300].map(a => em(32, -38, 1, l('M0 -17 V -23', '#F2B21B', 3.5), a)).join(''),
+      p('M38 -54 Q 18 -50 18 -36 Q 20 -20 40 -20 Q 28 -28 28 -38 Q 28 -48 38 -54 Z', '#FFE27A', 3) + p(estrelaD(48, -48, 5), AMARELO2, 2),
+      p('M18 -38 q 14 -12 28 0 q -14 12 -28 0 Z', CORAL, 3) + p('M46 -38 l 10 -8 v 16 Z', CORAL, 3) + fe(24, -40, 2, 2, T) + c(52, -56, 3, 'none', 2),
+      [0, 72, 144, 216, 288].map(a => em(32, -40, 1, e(0, -9, 5, 8, ROSA, 2.5), a)).join('') + c(32, -40, 5, AMARELO2, 2.5) + l('M32 -30 V -16', VERDE, 3),
+    ][k % 4];
+    let s = p('M-70 6 Q -34 -4 0 6 Q 34 -4 70 6 V -66 H -70 Z', CORAL, 4);
+    s += pag(-1) + linhas(-1) + pag(1) + figura;
+    s += `<g class="quarto-folha">${pag(1) + linhas(1)}</g>` + l('M0 -68 V 0', tom('#D8CDEB', -.2), 3);
+    return em(18, -118, 1, `<g class="quarto-surge">${s}</g>`);
+  }
+
+  // =====================================================================================  LUZ
+  /* A janela fechada: as mesmas cortinas amarelas de listrinhas e bolinhas, soltas do laço e fechadas sobre o vidro
+     (cobrem também as cortinas abertas e o laço). j = o vidro; o varão fica 36 px acima dele. Sem clipPath: as
+     listras e bolinhas ficam dentro do pano e o barrado coral cobre a ponta de baixo delas. */
+  function cortinaFechada(j) {
+    const cx = j.x + j.w / 2, yV = j.y - 36, xa = cx - 185, xb = cx + 185, ate = j.y + 380;
+    const painel = (x0, x1, lado) => {
+      const w = x1 - x0, dobras = 4, pw = w / dobras;
+      // o pano: em cima reto (preso nas argolas), embaixo ondulado (as dobras)
+      let d = `M${n(x0)} ${yV + 2} H ${n(x1)} L ${n(x1 + lado * 2)} ${ate - 4}`;
+      for (let k = 0; k < dobras; k++) { const xa2 = x1 - k * pw; d += ` Q ${n(xa2 - pw / 2)} ${ate + 16} ${n(xa2 - pw)} ${ate - 4}`; }
+      d += ' Z';
+      let s = p(d, AMARELO2, 5);
+      // listrinhas verticais (um caminho só)
+      let li = '';
+      for (let x = x0 + 12; x < x1 - 10; x += 26) li += `M${n(x)} ${yV + 6} h 8 V ${ate - 22} h -8 Z `;
+      s += f(li, '#FFE27A');
+      // bolinhas brancas (um caminho só)
+      let bo = '';
+      for (let y = yV + 34, jj = 0; y < ate - 30; y += 34, jj++)
+        for (let x = x0 + 20 + (jj % 2) * 13; x < x1 - 12; x += 26) bo += `M${n(x - 4)} ${y} a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0 `;
+      s += f(bo, '#fff', .9);
+      // dobras: sombras e luzes ondulando de cima a baixo
+      let so = '', lu = '';
+      for (let k = 1; k < dobras; k++) {
+        const x = x0 + k * pw;
+        so += `M${n(x)} ${yV + 14} q 7 ${n((ate - yV) * .3)} -2 ${n((ate - yV) * .6)} t 3 ${n((ate - yV) * .36)} `;
+        lu += `M${n(x - pw / 2)} ${yV + 30} q 5 ${n((ate - yV) * .3)} -2 ${n((ate - yV) * .55)} `;
+      }
+      s += l(so, tom(AMARELO2, -.2), 5) + l(lu, '#fff', 5).replace('/>', ' opacity=".35"/>');
+      // sombra no lado de dentro (onde os dois panos se encontram)
+      const xi = lado > 0 ? x1 : x0;
+      s += f(`M${n(xi)} ${yV + 6} L ${n(xi - lado * 18)} ${yV + 6} Q ${n(xi - lado * 12)} ${n((yV + ate) / 2)} ${n(xi - lado * 4)} ${ate - 22} L ${n(xi)} ${ate - 22} Z`, tom(AMARELO2, -.15), .8);
+      // barrado coral ondulado, com a costurinha
+      let bar = `M${n(x0 - lado * 0)} ${ate - 26} H ${n(x1)} L ${n(x1 + lado * 2)} ${ate - 4}`;
+      for (let k = 0; k < dobras; k++) { const xa2 = x1 - k * pw; bar += ` Q ${n(xa2 - pw / 2)} ${ate + 16} ${n(xa2 - pw)} ${ate - 4}`; }
+      s += p(bar + ' Z', CORAL, 5) + costura(`M${n(x0 + 8)} ${ate - 16} H ${n(x1 - 8)}`, '#fff', 3);
+      return s;
+    };
+    let s = painel(xa - 4, cx + 4, 1) + painel(cx - 4, xb + 4, -1);
+    // o varão por cima, com as argolas segurando o pano
+    s += r(xa - 14, yV - 7, xb - xa + 28, 14, MAD2, 7, 5) + fr(xa - 8, yV - 4, xb - xa + 16, 3, '#fff', 0, .35);
+    s += c(xa - 20, yV, 13, AMARELO2, 5) + c(xb + 20, yV, 13, AMARELO2, 5) + brilho(xa - 24, yV - 5, 5, 3, -30, .6) + brilho(xb + 16, yV - 5, 5, 3, -30, .6);
+    let an = '';
+    for (let x = xa + 10; x <= xb - 6; x += 40) an += `M${n(x)} ${yV - 8} a7 10 0 1 0 0.1 0 `;
+    s += l(an, T, 3);
+    return s;
+  }
+  /** O interruptor do quarto (já desenhado no fundo) e o lustre: uma nuvenzinha de luz com carinha, presa no teto. */
+  function lustreNuvem(aceso) {
+    const CORPO = aceso ? '#FFF8D6' : '#ECE8F4', SOMBRA = aceso ? '#FFE48A' : '#D6D0E6', BARRIGA = aceso ? '#FFFDF0' : '#F6F3FA';
+    const nuvem = 'M-104 100 Q -128 100 -126 78 Q -124 56 -100 54 Q -104 26 -74 22 Q -60 0 -30 8 Q -6 -10 22 4 Q 50 -4 66 20 Q 98 16 102 46 Q 128 50 126 76 Q 124 100 104 100 Z';
+    let s = r(-34, 0, 68, 12, CREME, 6, 4) + l('M0 12 V 18', T, 6);
+    let g = p(nuvem, CORPO, 6);
+    g += f('M126 76 Q 124 100 104 100 L -104 100 Q -122 100 -125 86 Q -20 96 124 66 Z', SOMBRA, .9);
+    g += f('M66 20 Q 98 16 102 46 Q 116 48 122 58 Q 104 56 92 60 Q 96 32 66 20 Z', SOMBRA, .7);
+    g += fe(0, 70, 78, 18, BARRIGA, .8);
+    g += brilho(-62, 34, 22, 8, -20, .7) + brilho(-20, 18, 9, 4, -15, .6);
+    // carinha: dormindo quando apagada, acordada e feliz quando acesa
+    g += aceso
+      ? fe(-26, 56, 5, 6.5, T) + fe(26, 56, 5, 6.5, T) + fe(-24, 53, 1.8, 2, '#fff') + fe(28, 53, 1.8, 2, '#fff') + l('M-12 70 Q 0 82 12 70', T, 4)
+      : l('M-33 58 q 7 6 14 0 M19 58 q 7 6 14 0', T, 4) + l('M-6 74 q 6 4 12 0', T, 3.5);
+    g += fe(-44, 70, 11, 6, ROSA, .55) + fe(44, 70, 11, 6, ROSA, .55);
+    // estrelinhas grudadas na nuvem
+    g += em(-92, 66, 1, p(estrelaD(0, 0, 14), AMARELO2, 3.5), -12) + em(96, 40, 1, p(estrelaD(0, 0, 11), AMARELO2, 3.5), 14) + c(70, 82, 5, ROSA, 3);
+    return s + em(0, 6, .92, g);
+  }
+
   CASA.partes.quarto = {
+    acoes,
     catalogo,
+    luz: {
+      janelas: [1010, 2050, 3060].map(x => ({ x: x - 115, y: 360, w: 230, h: 300 })),
+      fechada: j => cortinaFechada(j),
+      interruptor: { x: 4440, y: 680 },
+      lustre: { x: 2050, y: 210, lampada: [0, 64], desenho: aceso => lustreNuvem(aceso) },
+    },
     fundo(L) {
       const yLambri = L.piso - 220, J = [[1010, -1], [2050, 1], [3060, -1]];
       let s = papelDeParede(L, yLambri) + lambri(L, yLambri, L.piso - 40) + rodape(L) + piso(L);
       for (const [x, lado] of J) s += janela(x, 340, 270, 340, lado) + cortinas(x, 324, 270, 740);
-      s += tomada(1290, L.piso - 110) + tomada(2560, L.piso - 110) + interruptor(4440, L.piso - 330);
+      s += interruptor(4440, L.piso - 330);   // (as tomadas são da casa toda: CASA.TOMADAS, js/casa/base.js)
       s += estrelinhasDaParede([[3640, 360, 12, 10], [3720, 320, 8, -12], [3800, 380, 10, 20], [3990, 330, 9, 0], [4060, 390, 12, -10], [3900, 300, 7, 15], [3580, 470, 8, 8], [4120, 480, 9, -6]]);
       return s;
     },

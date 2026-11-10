@@ -550,6 +550,15 @@ function livre(f) {
   f('Esta é a minha casa! Tire coisas do baú e arrume do seu jeito.');
   f('Que bom que você voltou!');
   ['Oi!', 'Que casa bonita!', 'Vamos brincar?'].forEach(t => f(t));
+  // tomadas, fios e o botão de modo (jogo/js/telas/casa.js)
+  ['Ih, precisa ligar na tomada!', 'Ih, precisa colocar na tomada!', 'O fio não alcança! Leve para mais perto da tomada.',
+    'Essa tomada já está ocupada!', 'Agora eu falo o nome das coisas!', 'Agora é para brincar!',
+    'Ficou de noite! Boa noite!', 'Olha a lua!', 'Bom dia! O sol voltou!', 'Amanheceu!', 'Lustre!', 'Interruptor!', 'Janela!'].forEach(t => f(t));
+  // o relógio da sala diz a hora (uma hora cheia de 1 a 12)
+  f('É uma hora!');
+  for (let h = 2; h <= 12; h++) f('São ' + extenso(h, { feminino: true }) + ' horas!');   // duas horas (feminino)
+  // regador molhando a hortinha (jogo/js/casa/quintal.js)
+  ['Plantinha gosta de água!', 'Olha, cresceu!', 'Cresceu um pouquinho!'].forEach(t => f(t));
   const fonte = fs.readFileSync(new URL('../jogo/js/casa/itens.js', import.meta.url), 'utf8');
   const nomes = new Set();
   for (const m of fonte.matchAll(/item\('[^']+', '[^']+', '([^']+)'/g)) nomes.add(m[1]);

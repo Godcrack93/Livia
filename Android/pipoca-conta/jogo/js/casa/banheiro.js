@@ -83,13 +83,39 @@
     return s;
   }
 
-  /** cortina listrada no varão, presa de lado (0,0 = meio do varão; o varão vai até a parede em +146) */
-  function cortina() {
+  /** o pano da cortina fechada, solto do varão de ponta a ponta */
+  function panoFechado() {
+    const x0 = -148, x1 = 144, y0 = 12, y1 = 328, W = x1 - x0;
+    let s = fr(x0, y0, W, y1 - y0 + 4, LOUCA);
+    const K = 11, lw = W / K;
+    for (let i = 0; i < K; i++) {
+      const a = x0 + i * lw;
+      s += i % 2 === 0 ? fr(a, y0, lw, y1 - y0 + 2, AZ) : fr(a + lw * .38, y0, lw * .24, y1 - y0 + 2, AMAR2);
+    }
+    // dobras e sombra do lado da parede
+    s += fr(x1 - 40, y0, 40, y1 - y0 + 2, T, 0, .16);
+    for (let x = x0 + lw * 2; x < x1 - 30; x += lw * 2) s += l(`M${n(x)} ${y0 + 10} V ${y1 - 4}`, tom(AZ, -.35), 2.5);
+    // barra de baixo em ondinhas
+    let baixo = '';
+    const passos = 8;
+    for (let i = 1; i <= passos; i++) baixo += ` Q ${n(x1 - W * (i - .5) / passos)} ${y1 + (i % 2 ? 26 : 14)} ${n(x1 - W * i / passos)} ${y1 + 16}`;
+    s += p(`M${x0} ${y1 - 6} H ${x1} V ${y1 + 16}${baixo} Z`, LOUCA, 5);
+    s += l(`M${x0} ${y0} V ${y1 - 4} M${x1} ${y0} V ${y1 - 4}`, T, 6);
+    // argolas no varão
+    for (let i = 0; i < 10; i++) { const x = x0 + 8 + i * 30.5; s += `<circle cx="${n(x)}" cy="2" r="9" fill="none" stroke="${T}" stroke-width="7"/><circle cx="${n(x)}" cy="2" r="9" fill="none" stroke="${AMAR}" stroke-width="3"/>`; }
+    s += brilho(x0 + 20, 90, 6, 30, 0, .5);
+    return s;
+  }
+
+  /** cortina listrada no varão, presa de lado (0,0 = meio do varão; o varão vai até a parede em +146).
+      fechada = o pano solto cobrindo a banheira inteira */
+  function cortina(fechada = false) {
     let s = '';
     // varão (preso na parede da direita, bolinha na ponta)
     s += tubo('M-152 0 H 150', METAL, 8, 4) + l('M-148 -2 H 146', '#fff', 2.5);
     s += c(-158, 0, 10, AMAR, 4) + brilho(-161, -3, 3, 2, 0, .9);
     s += r(144, -16, 12, 32, METAL, 4, 4);
+    if (fechada) return s + panoFechado();
     // o pano: cai do varão, amarrado no meio, abre de novo embaixo
     const H = 330, N = 14;
     const xl = t => 40 + 52 * Math.sin(Math.PI * t / 1.12), xr = t => 144 - 16 * Math.sin(Math.PI * t / 1.12);
@@ -203,8 +229,8 @@
     return s;
   }
 
-  /** vaso sanitário com a tampa fechada */
-  function vaso() {
+  /** vaso sanitário com a tampa fechada (aberta = a tampa levantada, encostada na caixa, e a água aparecendo) */
+  function vaso(aberta = false) {
     let s = sombra(0, 2, 74, 11);
     // caixa acoplada
     s += r(-56, -216, 112, 108, LOUCA, 20, 6) + fr(28, -206, 22, 94, LOUCA_S, 8) + brilho(-32, -186, 8, 20, 0, .9);
@@ -217,28 +243,37 @@
     const corpo = 'M-72 -112 Q -74 -58 -38 -42 L -32 -8 Q -32 0 -24 0 L 24 0 Q 32 0 32 -8 L 38 -42 Q 74 -58 72 -112 Z';
     s += p(corpo, LOUCA, 6) + f('M22 -106 Q 66 -102 62 -72 Q 56 -52 34 -42 L 28 -4 L 16 -4 L 22 -46 Q 46 -60 40 -104 Z', LOUCA_S) +
       f('M-30 -40 L 30 -40 L 32 -30 L -32 -30 Z', LOUCA_S, .7) + brilho(-42, -80, 9, 20, 12, .9) + l(corpo, T, 6);
+    if (aberta) {
+      // tampa em pé, na frente da caixa
+      s += p('M-62 -112 Q -68 -200 0 -206 Q 68 -200 62 -112 Z', LILAS, 6) + f('M-46 -116 Q -50 -186 0 -190 Q 50 -186 46 -116 Z', tom(LILAS, -.1)) +
+        brilho(-34, -168, 8, 20, 10, .6);
+      // assento com a água no meio
+      s += e(0, -112, 78, 16, LOUCA, 6) + e(0, -111, 56, 9, '#9FE3F0', 4) + fe(-18, -113, 16, 3, '#fff', .8);
+      return s;
+    }
     // assento e tampa
     s += e(0, -110, 78, 14, LOUCA, 6) + e(0, -122, 72, 14, LILAS, 6);
     s += fe(16, -118, 48, 7, tom(LILAS, -.12)) + fe(0, -124, 60, 8, LILAS) + brilho(-30, -126, 18, 3.5, 0, .8);
     return s;
   }
 
-  /** rolo de papel higiênico no suporte (0,0 = o meio do rolo) */
-  function papel() {
+  /** rolo de papel higiênico no suporte (0,0 = o meio do rolo; mais = quanto a folha desceu além do normal) */
+  function papel(mais = 0) {
     let s = '';
     s += r(-48, -14, 12, 28, METAL, 5, 4) + tubo('M-38 0 H 32', METAL, 6, 3);
     s += r(-30, -26, 58, 52, LOUCA, 16, 5) + fr(6, -20, 16, 40, LOUCA_S, 6);
     s += e(28, 0, 10, 26, LOUCA, 5) + e(28, 0, 4.5, 10, MAD1, 3);
     // folha pendurada com picotes
-    s += p('M-28 4 L 20 4 L 20 58 L 12 64 L 4 58 L -4 64 L -12 58 L -20 64 L -28 58 Z', LOUCA, 4);
-    s += fr(8, 8, 10, 48, LOUCA_S, 3);
-    for (let i = 0; i < 6; i++) s += fe(-22 + i * 8, 32, 1.6, 1.6, LOUCA_SS);
+    const b = 58 + mais, b2 = 64 + mais;
+    s += p(`M-28 4 L 20 4 L 20 ${b} L 12 ${b2} L 4 ${b} L -4 ${b2} L -12 ${b} L -20 ${b2} L -28 ${b} Z`, LOUCA, 4);
+    s += fr(8, 8, 10, 48 + mais, LOUCA_S, 3);
+    for (let y = 32; y < b - 12; y += 52) for (let i = 0; i < 6; i++) s += fe(-22 + i * 8, y, 1.6, 1.6, LOUCA_SS);
     s += brilho(-14, -14, 10, 3, 0, .9);
     return s;
   }
 
-  /** cabide de madeira com três toalhas (0,0 = o meio da tábua) */
-  function toalhas() {
+  /** cabide de madeira com três toalhas (0,0 = o meio da tábua; balancando = as toalhas balançam no gancho) */
+  function toalhas(balancando = false) {
     let s = f('M-98 -8 H 110 V 24 H -98 Z', tom(PAREDE, -.12), 1);
     s += r(-104, -16, 208, 28, MAD1, 12, 6) + fr(-96, 2, 192, 6, tom(MAD1, -.15), 3) + brilho(-70, -8, 26, 3, 0, .5);
     s += l('M-80 -6 q 20 -3 40 0 M24 -8 q 24 -3 44 0', tom(MAD1, -.15), 2.5);
@@ -253,7 +288,7 @@
       t += l(d, T, 5);
       for (let xx = a + 6; xx <= b - 4; xx += 9) t += l(`M${n(xx)} ${h + 1} v 7`, T, 3);
       t += c(x, 0, 8, AMAR, 4);
-      return t;
+      return balancando ? `<g class="casa-balanca" style="animation-duration:.55s;animation-delay:${n(-x / 200 - .3)}s">${t}</g>` : t;
     };
     s += toalha(-66, 62, 158, CORAL, '#fff') + toalha(66, 54, 104, VERDE, AMAR2) + toalha(0, 66, 136, AMAR2, AZ);
     return s;
@@ -271,26 +306,28 @@
     return s;
   }
 
-  /** plantinha num vasinho de barro (0,0 = o fundo do vaso) */
-  function planta() {
+  /** plantinha num vasinho de barro (0,0 = o fundo do vaso; balancando = as folhas balançam) */
+  function planta(balancando = false) {
     let s = '';
     const folha = (ang, comp, cor) => em(0, -46, 1, p(`M0 0 Q -14 ${-comp * .5} 0 ${-comp} Q 14 ${-comp * .5} 0 0 Z`, cor, 4) + l(`M0 -4 L 0 ${-comp + 8}`, tom(cor, -.25), 2.5), ang);
     s += folha(-62, 46, tom(VERDE, .15)) + folha(62, 44, tom(VERDE, .15)) + folha(-32, 62, VERDE) + folha(32, 60, VERDE) + folha(0, 74, tom(VERDE, -.08));
     // florzinha
     for (let k = 0; k < 5; k++) { const a = (k * 72 - 90) * Math.PI / 180; s += c(24 + Math.cos(a) * 8, -96 + Math.sin(a) * 8, 7, ROSA, 3); }
     s += c(24, -96, 5.5, AMAR2, 3);
+    if (balancando) s = `<g class="casa-balanca" style="transform-origin:50% 100%;animation-duration:.5s">${s}</g>`;
     // vaso
     s += p('M-24 -42 L 24 -42 L 19 -2 Q 18 0 15 0 L -15 0 Q -18 0 -19 -2 Z', CORAL, 5) + f('M8 -40 L 22 -40 L 17 -3 L 6 -3 Z', tom(CORAL, -.16));
     s += r(-29, -54, 58, 14, CORAL, 6, 5) + fr(10, -50, 16, 6, tom(CORAL, -.16), 3) + brilho(-12, -48, 8, 2.5, 0, .7);
     return s;
   }
 
-  /** prateleirinha de canto com xampu e condicionador (0,0 = o meio da tábua, em cima) */
-  function prateleira() {
+  /** prateleirinha de canto com xampu e condicionador (0,0 = o meio da tábua, em cima; balancando = o xampu balança) */
+  function prateleira(balancando = false) {
     let s = fr(-50, 6, 108, 14, tom(AZULEJO, -.12), 6);
     // frascos
-    s += p('M-40 0 L -40 -46 Q -40 -56 -30 -56 L -14 -56 Q -4 -56 -4 -46 L -4 0 Z', AGUA, 4) + fr(-14, -50, 7, 46, tom(AGUA, -.16), 3) +
+    const xampu = p('M-40 0 L -40 -46 Q -40 -56 -30 -56 L -14 -56 Q -4 -56 -4 -46 L -4 0 Z', AGUA, 4) + fr(-14, -50, 7, 46, tom(AGUA, -.16), 3) +
       r(-36, -38, 28, 20, '#fff', 5, 3) + fe(-22, -28, 6, 5, CORAL) + r(-30, -70, 16, 15, ROXO, 4, 3.5) + brilho(-34, -44, 2.5, 7, 0, .7);
+    s += balancando ? `<g class="casa-balanca" style="transform-origin:50% 100%;animation-duration:.3s">${xampu}</g>` : xampu;
     s += p('M4 0 L 4 -34 Q 4 -42 12 -42 L 28 -42 Q 36 -42 36 -34 L 36 0 Z', CORAL, 4) + fr(26, -38, 7, 34, tom(CORAL, -.16), 3) +
       fe(20, -20, 8, 8, '#fff', .9) + fe(20, -20, 4, 4, AMAR2) + r(12, -54, 16, 13, AMAR2, 4, 3.5) + brilho(10, -30, 2.5, 6, 0, .7);
     // tábua com mãos-francesas
@@ -299,11 +336,11 @@
     return s;
   }
 
-  /** luminária pendurada no teto (0,0 = o ponto no teto) */
-  function luminaria() {
+  /** luminária pendurada no teto (0,0 = o ponto no teto; acesa = false: a lâmpada apagada) */
+  function luminaria(acesa = true) {
     let s = r(-16, 0, 32, 10, CREME, 4, 4);
     s += l('M0 10 V 70', T, 4);
-    s += c(0, 108, 16, '#FFF6C8', 4) + brilho(-5, 104, 5, 4, 0, .9);
+    s += c(0, 108, 16, acesa ? '#FFF6C8' : '#DCD8E8', 4) + brilho(-5, 104, 5, 4, 0, .9);
     const cupula = 'M-46 104 Q -46 66 0 64 Q 46 66 46 104 Q 46 110 40 110 L -40 110 Q -46 110 -46 104 Z';
     s += p(cupula, AGUA, 5) + f('M18 70 Q 42 78 42 104 L 26 106 Q 28 84 18 70 Z', tom(AGUA, -.16)) + brilho(-22, 82, 12, 5, -25, .6);
     s += c(0, 64, 7, AMAR2, 4);
@@ -348,8 +385,200 @@
     return s;
   }
 
+  // ================================================================ LUZ (interruptor, janela fechada e lustre)
+  const INTERRUPTOR = { x: 4592, y: 640 };
+  /** interruptor de parede (igual ao do quarto); (x, y) = centro */
+  function interruptor(x, y) {
+    return fr(x - 16, y - 22, 40, 56, tom(PAREDE, -.12), 8) + r(x - 20, y - 28, 40, 56, '#FFFFFF', 8, 4) + r(x - 8, y - 14, 16, 28, '#F3ECF9', 5, 3) +
+      fr(x - 5, y - 11, 10, 11, '#fff') + l(`M${x - 5} ${y + 1} H ${x + 5}`, '#C9BEDD', 2);
+  }
+  /** A janelinha fechada: uma persiana de lâminas água baixada sobre o vidro todo (cobre as lâminas basculantes
+      abertas); bandô em cima, barra embaixo e a cordinha com a conta roxa. j = o vidro. */
+  function persianaFechada(j) {
+    const x0 = j.x - 4, x1 = j.x + j.w + 4, y0 = j.y - 4, y1 = j.y + j.h + 4, W = x1 - x0, LAM = tom(AGUA, .62), LAM_S = tom(AGUA, .3);
+    let s = r(x0, y0, W, y1 - y0, LAM, 6, 4);
+    // as lâminas: as sombrinhas entre elas num caminho só e os brilhos noutro
+    let so = '', lu = '';
+    for (let y = y0 + 30; y < y1 - 12; y += 16) { so += `M${x0 + 3} ${y} H ${x1 - 3} V ${y + 4} H ${x0 + 3} Z `; lu += `M${x0 + 8} ${y + 7} H ${x1 - 30} `; }
+    s += f(so, LAM_S) + l(lu, '#fff', 2.5).replace('/>', ' opacity=".55"/>');
+    // as fitinhas da escada da persiana
+    s += l(`M${x0 + 30} ${y0 + 22} V ${y1 - 12} M${x1 - 30} ${y0 + 22} V ${y1 - 12}`, tom(AGUA, .1), 3);
+    // bandô (a caixinha do rolo) e a barra de baixo
+    s += r(x0 - 8, y0 - 6, W + 16, 26, CREME, 8, 5) + fr(x0, y0 + 10, W, 4, tom(CREME, -.12), 2);
+    s += r(x0 + 2, y1 - 12, W - 4, 12, tom(AGUA, .2), 5, 4);
+    // cordinha com a conta
+    s += l(`M${x0 + 14} ${y0 + 18} V ${y1 + 26}`, T, 2.5) + c(x0 + 14, y1 + 32, 7, ROXO, 3.5) + brilho(x0 + 12, y1 + 30, 2, 2.5, 0, .7);
+    return s + brilho(x0 + 50, y0 + 40, 20, 3, 0, .5);
+  }
+  /** Lustre do banheiro: um globo de vidro redondo como uma bolha de sabão, com uma onda água no meio. (0,0) = o teto. */
+  function lustreBolha(aceso) {
+    const VIDRO = aceso ? '#FFF6C8' : '#E1EAF2', VIDRO_S = aceso ? '#FFE48A' : '#C9D6E4', LAMP = aceso ? '#FFFDF0' : '#D3DDEE';
+    // canopla e haste de metal
+    let s = r(-28, 0, 56, 12, CREME, 6, 4) + tubo('M0 12 V 64', METAL, 5, 3) + c(0, 38, 6, METAL, 3);
+    // o globo
+    s += c(0, 134, 58, VIDRO, 6);
+    s += f('M40 92 Q 62 114 56 150 Q 46 182 12 190 Q 46 168 50 136 Q 52 110 40 92 Z', VIDRO_S, .9);
+    s += c(0, 124, 18, LAMP, 4) + brilho(-5, 119, 5, 7, 20, .8);
+    // a onda que dá a volta no globo (um caminho com contorno)
+    s += l('M-56 150 q 14 -12 28 0 t 28 0 t 28 0 t 28 0', T, 11) + l('M-56 150 q 14 -12 28 0 t 28 0 t 28 0 t 28 0', AGUA, 5);
+    // bolinhas de sabão no vidro e o reflexo grande
+    let bo = '';
+    for (const [x, y, rr] of [[-30, 100, 7], [-40, 122, 4.5], [26, 108, 5], [-14, 174, 5], [22, 172, 3.5]]) bo += `M${n(x - rr)} ${y} a${rr} ${rr} 0 1 0 ${n(rr * 2)} 0 a${rr} ${rr} 0 1 0 ${n(-rr * 2)} 0 `;
+    s += l(bo, '#fff', 3).replace('/>', ' opacity=".85"/>');
+    s += l('M-42 112 A 46 46 0 0 1 -16 88', '#fff', 7).replace('/>', ' opacity=".7"/>');
+    // tampa de metal em cima e a gotinha embaixo
+    s += p('M-24 80 Q -22 62 0 60 Q 22 62 24 80 Q 0 86 -24 80 Z', METAL, 5) + fr(-14, 66, 10, 5, '#fff', 2, .7);
+    s += gota(0, 202, .9, AGUA);
+    return s;
+  }
+
+  // ================================================================ AÇÕES (modo brincar)
+  // "mexendo": estados que estão num movimento curto (toalhas balançando, papel desenrolado). Fica só na memória,
+  // nunca é guardado com a casa: se o jogo fechar no meio, a coisa volta parada.
+  const mexendo = new WeakMap();
+  /** mexe por ms e depois volta (tocar de novo no meio recomeça a contagem) */
+  function mexerUmPouco(ctx, ms, fim) {
+    const vez = (mexendo.get(ctx.estado) || 0) + 1;
+    mexendo.set(ctx.estado, vez);
+    ctx.mudou();
+    ctx.depois(ms, () => { if (mexendo.get(ctx.estado) === vez) { mexendo.delete(ctx.estado); ctx.mudou(); if (fim) fim(); } });
+  }
+  /** bolha de sabão que sobe sem parar (para os "sobre"), começando com atraso d (s) */
+  const bolhaSobe = (x, y, rr, d) => `<g class="casa-sobe" style="animation-delay:${d}s">${bolha(x, y, rr)}</g>`;
+  /** redemoinho da descarga, achatado (em volta de (0,0)) */
+  const espiral = (() => {
+    let d = '';
+    for (let k = 0; k <= 36; k++) { const a = k * Math.PI / 6, rr = 4 + k * 1.4; d += `${k ? ' L' : 'M'}${n(Math.cos(a) * rr)} ${n(Math.sin(a) * rr)}`; }
+    return `<g class="casa-gira" style="animation-duration:.6s"><circle r="56" fill="#9FE3F0"/>${l(d, '#fff', 7)}${l(d, AZ, 3)}</g>`;
+  })();
+
+  const acoes = {
+    // banheira: a torneira abre, a água cai, a espuma cresce e as bolhas sobem (toca de novo: fecha)
+    banheira: {
+      sobre: e => (e.ligado
+        ? fr(-95, -200, 10, 22, '#8FD0FF', 4, .9) + `<g class="casa-pisca">${gota(-90, -188, .6)}</g>` +
+          `<g class="casa-gira-lento">${c(-124, -176, 10, CORAL, 4)}${l('M-131 -176 H -117', '#fff', 3)}</g>` +
+          `<g class="casa-pulsa" style="animation-duration:1.6s">${espuma([[-60, -200, 22], [-22, -210, 26], [20, -206, 24], [60, -198, 20], [-40, -224, 16], [6, -232, 18]])}</g>` +
+          bolhaSobe(-50, -250, 12, 0) + bolhaSobe(10, -270, 9, .7) + bolhaSobe(70, -246, 13, 1.4) + bolhaSobe(-10, -300, 8, 1.1) + bolhaSobe(110, -280, 10, .35)
+        : ''),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.ligado = !e.ligado;
+        ctx.som(e.ligado ? 'bolha' : 'soltar');
+        ctx.mudou();
+        if (e.ligado) ctx.particulas('bolha', 0, -240, 5, { dy: -120, espalha: 90 });
+      },
+    },
+    // cortina: abre e fecha (e balança)
+    cortina: {
+      desenho: e => cortina(!!e.fechada),
+      tocar(ctx) {
+        ctx.estado.fechada = !ctx.estado.fechada;
+        ctx.som('pagina');
+        ctx.mudou();
+        ctx.balancar();
+      },
+    },
+    // pia: a torneira abre e a água escorre (toca de novo: fecha)
+    piaBanheiro: {
+      sobre: e => (e.ligado
+        ? `<g class="casa-gira-lento">${c(-17, -214, 9, AZ, 4)}${l('M-23 -214 H -11', '#fff', 3)}</g>` +
+          r(27, -232, 14, 30, '#8FD0FF', 7, 3) + `<g class="casa-brilha">${l('M32 -226 V -202', '#fff', 3)}</g>` + fe(30, -203, 22, 3.5, '#8FD0FF') +
+          `<g class="casa-pisca">${gota(22, -190, .5)}</g><g class="casa-pisca2">${gota(46, -192, .5)}</g>` +
+          `<g class="casa-sobe">${bolha(-20, -212, 6)}</g><g class="casa-sobe" style="animation-delay:1.1s">${bolha(10, -214, 5)}</g>`
+        : ''),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.ligado = !e.ligado;
+        ctx.som(e.ligado ? 'bolha' : 'soltar');
+        ctx.mudou();
+        if (e.ligado) ctx.particulas('gota', 34, -200, 3, { dy: -60, espalha: 40 });
+      },
+    },
+    // vaso: o 1º toque levanta a tampa; o 2º dá a descarga (a água gira) e a tampa fecha sozinha
+    vaso: {
+      desenho: e => vaso(!!e.aberta),
+      tocar(ctx) {
+        const e = ctx.estado;
+        if (!e.aberta) { e.aberta = true; ctx.som('clique'); ctx.mudou(); return; }
+        if (mexendo.has(e)) return;          // já está dando a descarga
+        mexendo.set(e, 1);
+        ctx.som('bolha');
+        ctx.mostrar(`<g transform="translate(0 -111) scale(1 .17)">${espiral}</g>`, 1500);
+        ctx.particulas('gota', 0, -120, 4, { dy: -110, espalha: 60 });
+        ctx.depois(600, () => ctx.som('bolha'));
+        ctx.depois(1500, () => { mexendo.delete(e); e.aberta = false; ctx.som('encaixar'); ctx.mudou(); });
+      },
+    },
+    // espelho: brilha
+    espelho: {
+      tocar(ctx) {
+        ctx.som('figurinha');
+        ctx.mostrar(`<g class="casa-brilha" style="animation-duration:.7s"><circle r="74" fill="#fff" opacity=".45"/></g>` +
+          [[-30, -28, 1.2], [26, -40, .8], [36, 22, 1], [-20, 34, .7]].map(([x, y, k], i) =>
+            `<path class="${i % 2 ? 'casa-pisca' : 'casa-pisca2'}" transform="translate(${x} ${y}) scale(${k})" d="M0 -16 Q 3 -3 16 0 Q 3 3 0 16 Q -3 3 -16 0 Q -3 -3 0 -16 Z" fill="#fff" stroke="${T}" stroke-width="3"/>`).join(''), 1300);
+        ctx.particulas('estrela', 0, -60, 3, { dy: -100, espalha: 70 });
+      },
+    },
+    // toalhas: balançam no gancho
+    toalhas: {
+      desenho: e => toalhas(mexendo.has(e)),
+      tocar(ctx) { ctx.som('pegar'); mexerUmPouco(ctx, 1500); ctx.particulas('vento', 0, 80, 2, { dx: 120, dy: 0, espalha: 30 }); },
+    },
+    // papel: desenrola um pouco e enrola de volta
+    papel: {
+      desenho: e => papel(mexendo.has(e) ? 80 : 0),
+      tocar(ctx) { ctx.som('pagina'); mexerUmPouco(ctx, 1200, () => ctx.som('encaixar')); },
+    },
+    // patinho: grasna e pula
+    pato: {
+      tocar(ctx) { ctx.som('piu'); ctx.pular(); ctx.particulas('bolha', 0, -50, 3, { dy: -90, espalha: 50 }); },
+    },
+    // copo com escovas: as escovas "escovam" e sai espuminha
+    copoEscovas: {
+      tocar(ctx) {
+        ctx.som('bolha'); ctx.tremer();
+        ctx.mostrar(`<g class="casa-treme">${espuma([[-22, -86, 9], [-14, -80, 8], [22, -90, 9], [30, -82, 7]])}</g>` +
+          `<g class="casa-sobe">${bolha(-18, -100, 6)}</g><g class="casa-sobe" style="animation-delay:.4s">${bolha(26, -104, 5)}</g>`, 1500);
+        ctx.particulas('bolha', 0, -90, 3, { dy: -80, espalha: 50 });
+      },
+    },
+    // sabonete: solta bolhas
+    sabonete: {
+      tocar(ctx) {
+        ctx.som('bolha'); ctx.tremer();
+        ctx.mostrar(`<g class="casa-pulsa" style="animation-duration:.5s">${bolha(-12, -40, 9)}${bolha(4, -46, 7)}${bolha(14, -38, 8)}</g>`, 1000);
+        ctx.particulas('bolha', 0, -40, 6, { dy: -130, espalha: 70, seguidas: 90 });
+      },
+    },
+    // tapetinho: fofinho
+    tapeteBanheiro: {
+      tocar(ctx) { ctx.som('pulo'); ctx.tremer(); ctx.particulas('coracao', 0, -20, 3, { dy: -90, espalha: 80 }); },
+    },
+    // plantinha: balança
+    plantaBanheiro: {
+      desenho: e => planta(mexendo.has(e)),
+      tocar(ctx) { ctx.som('pegar'); mexerUmPouco(ctx, 1300); ctx.particulas('folha', 0, -80, 2, { dy: -60, espalha: 60, cai: true }); },
+    },
+    // prateleira: o xampu balança
+    prateleiraBanheiro: {
+      desenho: e => prateleira(mexendo.has(e)),
+      tocar(ctx) { ctx.som('clique'); mexerUmPouco(ctx, 900); ctx.particulas('bolha', -22, -70, 2, { dy: -70, espalha: 30 }); },
+    },
+    // luminária do teto: acende e apaga (é de teto: não precisa de tomada)
+    luminariaTeto: {
+      desenho: e => luminaria(!!e.ligado),
+      sobre: e => (e.ligado
+        ? `<path d="M-40 110 L -150 400 Q 0 430 150 400 L 40 110 Z" fill="#FFE9A3" opacity=".3"/>` +
+          `<g class="casa-brilha"><ellipse cx="0" cy="112" rx="110" ry="80" fill="#FFF1A8" opacity=".35"/><ellipse cx="0" cy="116" rx="46" ry="34" fill="#FFF6C8" opacity=".6"/></g>`
+        : ''),
+      tocar(ctx) { ctx.estado.ligado = !ctx.estado.ligado; ctx.som('clique'); ctx.mudou(); },
+    },
+  };
+
   // ================================================================ montagem
   CASA.partes.banheiro = {
+    acoes,
     fundo(L) {
       // o fundo passa um pouco da parede da direita (que fica em x1 + 18) para não sobrar fresta
       const { x0, topo, piso } = L, x1 = L.x1 + 24, W = x1 - x0;
@@ -399,6 +628,8 @@
       s += em(P.janela1, topo + 220, 1, janela());
       s += em(P.janela2, topo + 220, 1, janela());
       s += em(P.banheira + 4, piso - 404, 1, chuveiro(L.x1 - P.banheira - 14));
+      // interruptor da luz, logo depois da passagem que vem do quarto (acima da faixa do azulejo)
+      s += interruptor(INTERRUPTOR.x, INTERRUPTOR.y);
       return s;
     },
     objetos(L) {
@@ -409,6 +640,13 @@
       s += em(P.banheira, piso, 1, banheira());
       s += em(P.banheira + 10, piso - 494, 1, cortina());
       return s;
+    },
+    luz: {
+      // o vidro de cada janelinha basculante: janela() em (P.janela, topo + 220), vidro de -78..78 x -64..64
+      janelas: [5802, 6382].map(x => ({ x: x - 78, y: CASA.L.banheiro.topo + 156, w: 156, h: 128 })),
+      fechada: j => persianaFechada(j),
+      interruptor: INTERRUPTOR,
+      lustre: { x: 6092, y: CASA.L.banheiro.topo, lampada: [0, 128], desenho: aceso => lustreBolha(aceso) },
     },
     /** todas as funções de objeto (montadas ou não) — viram figurinhas */
     catalogo: { banheira, cortina, chuveiro, pia, espelho, janela, toalhas, vaso, papel, pato, copoEscovas, sabonete, tapete, planta, prateleira, luminaria },

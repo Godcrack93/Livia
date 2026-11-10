@@ -3,7 +3,8 @@
      aba:  'moveis' | 'brinquedos' | 'enfeites'  (as abas do baú)
      tipo: 'chao'   assenta os pés no chão do andar onde foi solto
            'tapete' igual ao chão, mas fica sempre atrás de tudo
-           'solto'  fica onde foi solto (quadros, prateleiras, coisas em cima dos móveis), dentro dos limites do cômodo
+           'apoia'  cai e fica em cima do primeiro móvel embaixo dele (CASA.APOIOS), ou no chão
+           'solto'  de parede: fica onde foi solto (quadros, prateleiras, relógio, luzinhas), dentro dos limites do cômodo
    CASA.inicial() -> a casa como ela vem: [{ id, x, y, k?, rot? }]  (x, y = o ponto (0,0) do desenho no mundo)
    CASA.desenho(id) -> texto SVG do item (guardado; cada item é desenhado uma vez só)
    CASA.desenharEm(item) -> o item no lugar dele (texto SVG)
@@ -105,6 +106,28 @@
   item('banco', 'quintal', 'banco', 'moveis', 'chao', de('quintal', 'banco'));
   item('carrinhoDeFlores', 'quintal', 'carrinho de flores', 'enfeites', 'chao', de('quintal', 'carrinhoDeFlores'));
 
+  // ---------------------------------------------------------------- o que se apoia em cima de outras coisas
+  // tipo 'apoia': coisas pequenas que caem e ficam em cima do primeiro móvel embaixo delas (ou no chão).
+  // As outras 'soltas' são de parede (quadros, relógio, prateleiras, luzinhas...) e ficam onde forem soltas.
+  ['tv', 'abajur', 'despertador', 'ursinho', 'bola', 'carrinho', 'piao', 'livros', 'portaRetrato', 'vasinho', 'pato', 'copoEscovas',
+    'sabonete', 'panela', 'pipoqueira', 'baldePipoca', 'liquidificador', 'escorredor', 'fruteira', 'manjericao', 'cebolinha', 'hortela',
+    'filtro', 'plantaBanheiro', 'regador', 'baldinho', 'pantufas'].forEach(id => { if (I[id]) I[id].tipo = 'apoia'; });
+  // os ímãs grudam na geladeira: onde ela for, eles vão junto, no mesmo lugar da porta
+  Object.keys(I).forEach(id => { if (/^ima[A-Z]$/.test(id)) I[id].gruda = true; });
+  /* Onde as coisas que grudam ficam presas: [x0, y0, x1, y1] no desenho do móvel. */
+  CASA.GRUDA = { geladeira: [-110, -384, 110, -12] };
+  /* Os tampos onde as coisas se apoiam: [x de, x até, y] nas coordenadas do desenho do móvel (o (0,0) é o pé). */
+  CASA.APOIOS = {
+    criadoMudo: [[-50, 50, -156]], comoda: [[-100, 100, -174]], guardaRoupa: [[-110, 110, -405]], cama: [[-120, 140, -150]],
+    prateleiraQuarto: [[-145, 145, 0]],
+    sofa: [[-124, 124, -150]], poltrona: [[-62, 62, -150]], pufe: [[-48, 48, -76]], rack: [[-76, 76, -116]], estante: [[-88, 88, -270]],
+    aquario: [[-76, 76, -214]], prateleiraSala: [[-86, 86, -18]],
+    piaBanheiro: [[-94, -64, -164], [64, 94, -164], [-64, 64, -206]],   // no meio, fica na borda da cuba
+    prateleiraBanheiro: [[-54, 54, -4]],
+    geladeira: [[-108, 108, -384]], piaCozinha: [[-100, 100, -184]], fogao: [[-88, 88, -188]], mesa: [[-96, 96, -158]],
+    mesinha: [[-112, 116, -150]], banco: [[-116, 116, -110]],
+  };
+
   // ---------------------------------------------------------------- bichos (prêmio a cada 5 estações)
   // Por enquanto o bicho entra na casa com o desenho da figurinha dele (sem a borda de adesivo seria a etapa 3:
   // cada bicho vira personagem, com animações próprias). id 'bicho-figNN'.
@@ -136,9 +159,9 @@
     { id: 'quadroFlor', x: 2830, y: S - 470, k: 1.15 },
     { id: 'tapeteSala', x: 1660, y: S }, { id: 'luminariaPe', x: 1478, y: S - 8 }, { id: 'sofa', x: 1600, y: S - 2 },
     // cozinha: geladeira com ímãs, pia e fogão
-    { id: 'geladeira', x: 4500, y: S }, { id: 'piaCozinha', x: 4690, y: S }, { id: 'fogao', x: 4885, y: S },
-    { id: 'imaA', x: 4470, y: S - 238, rot: -8 }, { id: 'imaB', x: 4512, y: S - 228, rot: 6 }, { id: 'imaC', x: 4476, y: S - 172, rot: 4 },
-    { id: 'imaD', x: 4522, y: S - 162, rot: -6 }, { id: 'imaE', x: 4500, y: S - 104, rot: 3 },
+    { id: 'geladeira', x: 4500, y: S }, { id: 'piaCozinha', x: 4800, y: S }, { id: 'fogao', x: 4995, y: S },
+    { id: 'imaA', x: 4448, y: S - 236, rot: -8 }, { id: 'imaB', x: 4510, y: S - 244, rot: 6 }, { id: 'imaC', x: 4466, y: S - 168, rot: 4 },
+    { id: 'imaD', x: 4540, y: S - 176, rot: -6 }, { id: 'imaE', x: 4500, y: S - 104, rot: 3 },
     // quintal
     { id: 'varal', x: 9450, y: G },
   ];

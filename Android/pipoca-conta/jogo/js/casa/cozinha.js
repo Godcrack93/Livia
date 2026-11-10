@@ -36,27 +36,62 @@
 
   // ================================================================ OBJETOS
   /** geladeira retrô branca-azulada (os ímãs de letra são figurinhas à parte: imaLetra) */
-  function geladeira() {
-    const w = 144, h = 384, x = -w / 2, y = -h;
-    let s = sombra(0, 2, 86, 11);
-    s += r(-58, -14, 24, 16, FERRO, 5, 4) + r(34, -14, 24, 16, FERRO, 5, 4);            // pezinhos
+  function geladeira(aberta = false) {
+    // larga (220): a porta da geladeira é grande o bastante para os ímãs de letrinha ficarem espaçados
+    const w = 220, h = 384, x = -w / 2, y = -h;
+    let s = sombra(0, 2, 124, 12);
+    s += r(-90, -14, 26, 16, FERRO, 5, 4) + r(64, -14, 26, 16, FERRO, 5, 4);            // pezinhos
     s += r(x, y, w, h - 10, BRANCO_S, 30, 0);
-    s += fr(x, y, w - 24, h - 30, BRANCO, 28);                                        // face clara
-    s += fr(x + w - 24, y + 30, 6, h - 90, '#DDE6F3', 3);                              // meio-tom na lateral
+    s += fr(x, y, w - 26, h - 30, BRANCO, 28);                                        // face clara
+    s += fr(x + w - 26, y + 30, 7, h - 90, '#DDE6F3', 3);                              // meio-tom na lateral
     s += ro(x, y, w, h - 10, 30, 6);
     // divisão freezer | geladeira (frestinha)
     s += l(`M${x + 3} -290 H ${x + w - 3}`, T, 6) + l(`M${x + 8} -284 H ${x + w - 8}`, '#DDE6F3', 3);
-    // puxadores cromados
-    s += vol(x + 10, -352, 14, 48, METAL, 7, 4, 4, 6) + vol(x + 10, -270, 14, 84, METAL, 7, 4, 4, 8);
+    // puxadores cromados (do lado esquerdo; a dobradiça é à direita)
+    s += vol(x + 12, -352, 16, 48, METAL, 8, 4, 4, 6) + (aberta ? '' : vol(x + 12, -270, 16, 84, METAL, 8, 4, 4, 8));
     // grade de ventilação embaixo
-    s += r(-40, -42, 80, 16, '#E3EAF4', 8, 4) + [-24, -8, 8, 24].map(v => l(`M${v} -38 V -30`, BRANCO_S, 4)).join('');
+    s += r(-62, -42, 124, 16, '#E3EAF4', 8, 4) + [-40, -24, -8, 8, 24, 40].map(v => l(`M${v} -38 V -30`, BRANCO_S, 4)).join('');
     // desenho de criança preso no freezer (sol e casinha), com um ímã de coração
-    s += em(16, -334, 1, r(-26, -28, 52, 50, '#FFFFFF', 3, 3) + fr(-26, 14, 52, 8, '#EEF2F8') +
+    s += em(46, -334, 1, r(-26, -28, 52, 50, '#FFFFFF', 3, 3) + fr(-26, 14, 52, 8, '#EEF2F8') +
       c(-10, -12, 7, AMA, 3) + l('M-10 -24 v -3 M-21 -12 h -3 M1 -12 h 3 M-18 -20 l -2 -2 M-2 -20 l 2 -2', AMA, 3) +
       p('M4 10 V -2 L 13 -10 L 22 -2 V 10 Z', CORAL, 3) + l('M-22 12 Q 0 6 22 12', VERDE, 3), -4);
-    s += p('M16 -364 Q 10 -372 6 -366 Q 2 -358 16 -350 Q 30 -358 26 -366 Q 22 -372 16 -364 Z', ROSA, 3);
+    s += p('M46 -364 Q 40 -372 36 -366 Q 32 -358 46 -350 Q 60 -358 56 -366 Q 52 -372 46 -364 Z', ROSA, 3);
     // brilhos
-    s += brilho(x + 26, y + 60, 7, 34, 0, .9) + brilho(x + 26, -200, 6, 50, 0, .9) + brilho(x + 34, y + 18, 18, 5, 0, .8);
+    // brilhos (o reflexo da luz), ao lado dos puxadores, sem passar por cima deles
+    s += brilho(x + 50, y + 60, 7, 34, 0, .9) + (aberta ? '' : brilho(x + 50, -200, 6, 50, 0, .9)) + brilho(x + 66, y + 18, 20, 5, 0, .8);
+    if (aberta) s += dentroDaGeladeira();
+    return s;
+  }
+
+  /** a geladeira de porta aberta: prateleiras com comidinhas, a luzinha e a porta (dobradiça à direita) aberta para
+   *  o lado (os ímãs grudados na porta somem enquanto ela está aberta: acao.portaEsconde) */
+  function dentroDaGeladeira() {
+    // por dentro: fundo claro, luzinha
+    let s = r(-98, -282, 196, 236, '#CFE6F7', 14, 5) + fr(-92, -276, 178, 222, '#F2FAFF', 10);
+    s += r(-14, -280, 28, 10, '#FFF3A6', 4, 3);
+    // prateleira de cima: leite, geleia, queijo e um potinho
+    s += em(-30, 0, 1, p('M-52 -218 V -250 L -46 -260 H -32 L -26 -250 V -218 Z', '#FFFFFF', 4) + fr(-50, -242, 22, 10, AZUL) + l('M-46 -260 L -39 -250 L -32 -260', T, 3));
+    s += em(-24, 0, 1, r(-18, -246, 24, 28, '#E8476A', 6, 4) + r(-20, -252, 28, 8, AMA, 3, 4) + fe(-12, -236, 3, 6, '#FFFFFF', .5));
+    s += em(-10, 0, 1, p('M14 -218 H 54 V -240 Z', AMA2, 4) + fe(42, -226, 3, 3, '#F2B21B') + fe(48, -232, 2, 2, '#F2B21B') + fe(30, -222, 2.5, 2, '#F2B21B'));
+    s += r(58, -240, 26, 22, '#FFFFFF', 6, 4) + fr(60, -236, 22, 6, ROSA);
+    s += r(-94, -220, 188, 7, VIDRO, 3, 3);
+    // do meio: ovos, gelatina com cereja, suco e garrafinhas
+    s += em(-30, 0, 1, r(-56, -168, 50, 8, '#F5D7B0', 3, 3) + [-46, -31, -16].map(v => e(v, -178, 7, 10, '#FFF8EE', 3)).join(''));
+    s += em(-14, 0, 1, e(16, -160, 22, 4, '#FFFFFF', 3) + p('M-2 -162 Q -2 -192 16 -192 Q 34 -192 34 -162 Z', ROSA, 4) + fe(8, -180, 3, 6, '#FFFFFF', .55) + c(16, -197, 5, '#F2524E', 3));
+    s += r(30, -200, 14, 38, '#FF9F3C', 5, 4) + r(32, -208, 10, 9, VERDE, 2, 3);
+    s += r(54, -194, 10, 32, VERDE, 3, 3) + r(70, -198, 11, 36, CORAL, 3, 3);
+    s += r(-94, -162, 188, 7, VIDRO, 3, 3);
+    // de baixo: melancia e iogurtes
+    s += em(-24, 0, 1, p('M-54 -108 Q -32 -150 -10 -108 Z', '#FF5D6C', 4) + l('M-50 -110 H -14', VERDE, 5) + fe(-38, -122, 1.6, 3, T) + fe(-26, -124, 1.6, 3, T) + fe(-32, -134, 1.6, 3, T));
+    s += r(4, -132, 18, 24, '#FFFFFF', 4, 4) + fr(5, -131, 16, 6, ROXO) + r(28, -126, 18, 18, '#FFFFFF', 4, 4) + fr(29, -125, 16, 5, VERDE);
+    s += r(52, -130, 18, 22, '#FFFFFF', 4, 4) + fr(53, -129, 16, 6, AMA);
+    // gaveta de verduras (cenoura e alface aparecendo)
+    s += l('M-50 -100 l -6 -16 M-46 -100 l 2 -18 M-42 -100 l 8 -14', VERDE, 4) + c(14, -100, 12, '#8FE07A', 4) + c(30, -102, 10, '#5CC84A', 4) + c(48, -100, 11, '#8FE07A', 4);
+    s += vol(-92, -104, 184, 50, '#BDEBCB', 8, 4, 8, 6) + l('M-30 -84 H 30', '#7FC995', 4);
+    // a porta da geladeira, aberta para a direita (vista de fora, de lado): branca, com o puxador
+    s += p('M110 -290 L 178 -304 L 178 -30 L 110 -46 Z', BRANCO, 6) + f('M166 -298 L 178 -301 L 178 -34 L 166 -36 Z', '#DDE6F3');
+    s += vol(162, -230, 8, 76, METAL, 4, 3, 3, 4);
+    s += brilho(124, -230, 4, 40, 0, .8);
     return s;
   }
 
@@ -139,20 +174,21 @@
   }
 
   /** panela coral com tampa e vapor */
-  function panela() {
+  function panela(mexe = false) {
     let s = '';
     s += vapor(-14, -78, 64) + vapor(8, -84, 88, 8) + vapor(28, -76, 56, 6);
     s += r(-48, -42, 18, 12, FERRO, 6, 4) + r(30, -42, 18, 12, FERRO, 6, 4);
     s += vol(-36, -48, 72, 46, CORAL, 12, 6, 10, 9);
     s += fr(-30, -26, 60, 5, tom(CORAL, .35), 2) ;                                         // faixa
     s += brilho(-22, -36, 4, 8, 0, .7);
-    s += p('M-40 -48 Q -36 -68 0 -70 Q 36 -68 40 -48 Z', METAL, 5) + f('M-24 -54 Q 0 -60 24 -54', '#FFFFFF', .0);
-    s += brilho(-16, -60, 10, 3, -10, .8) + r(-8, -80, 16, 10, FERRO, 5, 4);
+    let t = p('M-40 -48 Q -36 -68 0 -70 Q 36 -68 40 -48 Z', METAL, 5) + f('M-24 -54 Q 0 -60 24 -54', '#FFFFFF', .0);
+    t += brilho(-16, -60, 10, 3, -10, .8) + r(-8, -80, 16, 10, FERRO, 5, 4);
+    s += mexe ? `<g class="coz-tampa">${t}</g>` : t;                                      // a tampa (chacoalha)
     return s;
   }
 
   /** pipoqueira de alumínio com manivela, estourando pipoca */
-  function pipoqueira() {
+  function pipoqueira(gira = false) {
     let s = '';
     // pipocas pulando (atrás da tampa)
     s += pipoca(-26, -72, 1.25) + pipoca(-4, -78, 1.35) + pipoca(18, -72, 1.25) + pipoca(-14, -104, 1.1) + pipoca(32, -112, 1) + pipoca(-38, -122, .9) + pipoca(8, -134, .85);
@@ -164,8 +200,8 @@
     s += [-20, -6, 8, 22].map(v => l(`M${v} -44 V -12`, '#E9EEF5', 3)).join('') + brilho(-24, -34, 4, 10, 0, .8);
     // tampa levantadinha e manivela
     s += em(0, -52, 1, p('M-38 0 Q -34 -16 0 -18 Q 34 -16 38 0 Z', '#E4EAF2', 5) + brilho(-16, -10, 10, 3, -10, .8), -6);
-    s += l('M0 -70 V -92 H 24 V -100', T, 10) + l('M0 -70 V -92 H 24 V -100', METAL, 4);
-    s += vol(17, -122, 14, 24, CORAL, 7, 4, 3, 4);
+    const m = l('M0 -70 V -92 H 24 V -100', T, 10) + l('M0 -70 V -92 H 24 V -100', METAL, 4) + vol(17, -122, 14, 24, CORAL, 7, 4, 3, 4);
+    s += gira ? `<g class="coz-manivela">${m}</g>` : m;
     return s;
   }
 
@@ -213,13 +249,14 @@
   }
 
   /** fruteira roxa com banana, maçã e laranja */
-  function fruteira() {
+  function fruteira(pula = 0) {
+    const fruta = (k, svg) => (pula === k ? `<g class="coz-pula">${svg}</g>` : svg);     // pula: 1 laranja, 2 maçã, 3 banana
     let s = sombra(0, 0, 34, 5);
-    s += c(-15, -42, 15, '#FF9F3C', 4) + fe(-19, -47, 5, 3, '#FFFFFF', .5) + c(-15, -55, 1.5, T, 0);
-    s += p('M14 -34 Q 0 -36 2 -48 Q 4 -60 14 -56 Q 24 -60 26 -48 Q 28 -36 14 -34 Z', '#F2524E', 4) + l('M14 -56 Q 14 -62 17 -65', MAD3, 3) +
-      p('M16 -60 Q 24 -66 28 -60 Q 22 -56 16 -60 Z', VERDE, 2) + fe(8, -50, 3, 5, '#FFFFFF', .45);
-    s += p('M-34 -52 Q -12 -30 22 -50 Q 34 -58 36 -70 Q 38 -74 34 -72 Q 26 -54 4 -50 Q -16 -46 -30 -58 Z', AMA2, 4) +
-      l('M-34 -54 l -4 -2', MAD3, 4) + l('M-24 -51 Q 0 -42 26 -56', '#F2B21B', 3);
+    s += fruta(1, c(-15, -42, 15, '#FF9F3C', 4) + fe(-19, -47, 5, 3, '#FFFFFF', .5) + c(-15, -55, 1.5, T, 0));
+    s += fruta(2, p('M14 -34 Q 0 -36 2 -48 Q 4 -60 14 -56 Q 24 -60 26 -48 Q 28 -36 14 -34 Z', '#F2524E', 4) + l('M14 -56 Q 14 -62 17 -65', MAD3, 3) +
+      p('M16 -60 Q 24 -66 28 -60 Q 22 -56 16 -60 Z', VERDE, 2) + fe(8, -50, 3, 5, '#FFFFFF', .45));
+    s += fruta(3, p('M-34 -52 Q -12 -30 22 -50 Q 34 -58 36 -70 Q 38 -74 34 -72 Q 26 -54 4 -50 Q -16 -46 -30 -58 Z', AMA2, 4) +
+      l('M-34 -54 l -4 -2', MAD3, 4) + l('M-24 -51 Q 0 -42 26 -56', '#F2B21B', 3));
     s += p('M-38 -38 Q -36 -10 0 -10 Q 36 -10 38 -38 Z', ROXO, 5) + f('M14 -14 Q 32 -18 34 -36 H 38 Q 36 -12 6 -10 Z', tom(ROXO, -.18));
     s += l('M-34 -32 Q 0 -28 34 -32', tom(ROXO, .4), 3);
     s += r(-12, -12, 24, 12, ROXO, 4, 4);
@@ -246,9 +283,9 @@
   }
 
   /** balde listrado cheio de pipoca (a Pipoca adora!) */
-  function baldeDePipoca() {
+  function baldeDePipoca(pula = false) {
     let s = sombra(0, 0, 30, 5);
-    s += pipoca(-16, -64, 1.1) + pipoca(4, -72, 1.2) + pipoca(20, -62, 1) + pipoca(-4, -58, 1) + pipoca(12, -54, .9) + pipoca(-20, -52, .9);
+    s += pipoca(-16, -64, 1.1) + (pula ? `<g class="coz-pula">${pipoca(4, -72, 1.2)}</g>` : pipoca(4, -72, 1.2)) + pipoca(20, -62, 1) + pipoca(-4, -58, 1) + pipoca(12, -54, .9) + pipoca(-20, -52, .9);
     const d = 'M-26 -52 L -18 -2 H 18 L 26 -52 Z';
     s += f(d, '#FFFFFF');
     for (let i = 0; i < 4; i++) {
@@ -261,7 +298,7 @@
   }
 
   /** vaso de ervas para a janela: tipo 0 manjericão, 1 cebolinha, 2 hortelã */
-  function vasoDeErvas(tipo = 0, corVaso = BARRO) {
+  function vasoDeErvas(tipo = 0, corVaso = BARRO, mexe = false) {
     let s = '';
     const V = '#4FB43E', V2 = '#78D35E';
     if (tipo === 0) {
@@ -275,6 +312,7 @@
       s += [[-12, -40], [12, -42], [0, -56], [-8, -62], [10, -64], [0, -40]].map(([x, y], i) =>
         p(`M${x} ${y + 9} Q ${x - 11} ${y} ${x} ${y - 9} Q ${x + 11} ${y} ${x} ${y + 9} Z`, i % 2 ? V2 : V, 3) + l(`M${x} ${y + 6} V ${y - 5}`, '#3E8F35', 2)).join('');
     }
+    if (mexe) s = `<g class="coz-erva">${s}</g>`;                                         // as folhas balançam
     s += p('M-17 -26 L -13 0 H 13 L 17 -26 Z', corVaso, 4) + f('M6 -24 H 15 L 11 -2 H 4 Z', tom(corVaso, -.18));
     s += vol(-20, -32, 40, 9, corVaso, 4, 4, 0, 2);
     s += brilho(-9, -14, 2, 6, 0, .5);
@@ -439,10 +477,221 @@
     return s;
   }
 
+  // ================================================================ AÇÕES (modo brincar; o formato está em casa/acoes.js)
+  // movimentos de uma vez só (as classes casa-* do motor são contínuas)
+  if (typeof document !== 'undefined' && document.head) {
+    const st = document.createElement('style');
+    st.textContent =
+      '.coz-pula{transform-box:fill-box;transform-origin:50% 100%;animation:cozPula .75s ease-out}' +
+      '@keyframes cozPula{30%{transform:translateY(-46px) rotate(-12deg)}60%{transform:translateY(0) rotate(4deg)}78%{transform:translateY(-8px)}}' +
+      '.coz-tampa{transform-box:fill-box;transform-origin:50% 100%;animation:cozTampa .3s ease-in-out 3}' +
+      '@keyframes cozTampa{25%{transform:translateY(-10px) rotate(-6deg)}50%{transform:translateY(-2px)}75%{transform:translateY(-8px) rotate(5deg)}}' +
+      '.coz-erva{transform-box:fill-box;transform-origin:50% 100%;animation:cozErva 1s ease-in-out}' +
+      '@keyframes cozErva{20%{transform:rotate(-9deg)}45%{transform:rotate(7deg)}70%{transform:rotate(-4deg)}90%{transform:rotate(2deg)}}' +
+      '.coz-manivela{transform-box:fill-box;transform-origin:0 50%;animation:cozManivela .43s linear 3}' +
+      '@keyframes cozManivela{50%{transform:scaleX(-1)}}';
+    document.head.appendChild(st);
+  }
+
+  /** "mexendo agora" (não fica guardado): o desenho troca por um tempinho e volta sozinho */
+  const mexendo = new WeakMap(), vez = new WeakMap();
+  const mexe = e => (mexendo.get(e) || 0) > 0;
+  function mexerPor(ctx, ms) {
+    const e = ctx.estado;
+    mexendo.set(e, (mexendo.get(e) || 0) + 1);
+    ctx.mudou();
+    ctx.depois(ms, () => {
+      const k = (mexendo.get(e) || 1) - 1;
+      if (k > 0) mexendo.set(e, k); else { mexendo.delete(e); ctx.mudou(); }
+    });
+  }
+  /** a coisa "de cima" está apoiada em cima da "de baixo"? (posição relativa, em px do desenho de baixo) */
+  function emCima(baixo, cima, meiaLargura, y0, y1) {
+    const a = baixo.noMundo(0, 0), k = baixo.noMundo(1, 0).x - a.x || 1, b = cima.noMundo(0, 0);
+    const dx = (b.x - a.x) / k, dy = (b.y - a.y) / k;
+    return Math.abs(dx) <= meiaLargura && dy >= y0 && dy <= y1;
+  }
+  const FOGO = [-100, -250, -130];                                   // em cima do fogão: meia largura, faixa de altura
+  const noFogoAceso = ctx => ctx.perto(320).some(o => o.id === 'fogao' && o.estado.aceso && emCima(o.contexto(), ctx, ...FOGO));
+
+  const ACOES = {
+    geladeira: {
+      desenho: e => geladeira(!!e.aberta),
+      // porta de baixo aberta: o que vemos é o lado de dentro, então os ímãs grudados nela somem (e voltam ao fechar)
+      portaEsconde: e => (e.aberta ? [-110, -290, 110, -12] : null),
+      sobre: e => (e.aberta ? `<g class="casa-brilha"><ellipse cx="0" cy="-246" rx="84" ry="36" fill="#FFF6C8" opacity=".4"/></g>` : ''),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.aberta = !e.aberta;
+        ctx.som(e.aberta ? 'clique' : 'encaixar');
+        ctx.mudou();
+        if (e.aberta) ctx.particulas('vapor', 10, -170, 3, { dx: 40, dy: -50, espalha: 40 });
+      },
+    },
+    piaCozinha: {
+      // a torneira aberta: um fiozinho de água que brilha e respinga no tampo
+      sobre: e => (e.aberta
+        ? `<path d="M38 -240 Q 37 -214 39 -186 H 47 Q 48 -214 46 -240 Z" fill="#9FD8FF" stroke="${T}" stroke-width="3"/>` +
+          `<path class="casa-pisca" d="M42 -234 V -222 M43 -208 V -196" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>` +
+          `<path class="casa-pisca2" d="M42 -226 V -214 M43 -200 V -191" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>` +
+          `<g class="casa-pulsa"><path d="M26 -186 Q 30 -198 36 -189 M50 -189 Q 56 -198 60 -186" fill="none" stroke="${T}" stroke-width="7" stroke-linecap="round"/>` +
+          `<path d="M26 -186 Q 30 -198 36 -189 M50 -189 Q 56 -198 60 -186" fill="none" stroke="#9FD8FF" stroke-width="3.5" stroke-linecap="round"/></g>`
+        : ''),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.aberta = !e.aberta;
+        ctx.som(e.aberta ? 'bolha' : 'clique');
+        ctx.mudou();
+        if (e.aberta) ctx.particulas('gota', 43, -192, 3, { dy: -60, espalha: 40, cai: true });
+      },
+    },
+    fogao: {
+      // as quatro bocas com foguinho
+      sobre: e => (e.aceso ? [-60, -22, 22, 60].map(v =>
+        `<g class="casa-treme"><path d="M${v - 11} -186 Q ${v - 13} -200 ${v - 4} -206 Q ${v - 2} -198 ${v} -214 Q ${v + 12} -200 ${v + 11} -186 Z" fill="#FF8A3D" stroke="${T}" stroke-width="3" stroke-linejoin="round"/>` +
+        `<path d="M${v - 5} -187 Q ${v - 5} -196 ${v} -202 Q ${v + 5} -196 ${v + 5} -187 Z" fill="${AMA2}"/></g>`).join('') : ''),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.aceso = !e.aceso;
+        ctx.som(e.aceso ? 'clique' : 'soltar');
+        ctx.mudou();
+        if (!e.aceso) return;
+        ctx.particulas('faisca', 0, -196, 3, { dy: -60, espalha: 70 });
+        // a panela (ou a pipoqueira) que estiver em cima esquenta
+        ctx.perto(320).filter(o => (o.id === 'panela' || o.id === 'pipoqueira') && emCima(ctx, o.contexto(), ...FOGO))
+          .forEach(o => ctx.depois(350, () => ACOES[o.id].tocar(o.contexto())));
+      },
+    },
+    panela: {
+      desenho: e => panela(mexe(e)),
+      tocar(ctx) {
+        mexerPor(ctx, 900);
+        ctx.som('bolha');
+        ctx.particulas('vapor', 0, -96, noFogoAceso(ctx) ? 5 : 3, { dy: -110, espalha: 30, seguidas: 160 });
+      },
+    },
+    pipoqueira: {
+      desenho: e => pipoqueira(mexe(e)),
+      tocar(ctx) {
+        mexerPor(ctx, 1300);
+        ctx.tremer();
+        ctx.som('pulo');
+        ctx.particulas('pipoca', 0, -100, noFogoAceso(ctx) ? 8 : 6, { dy: -170, espalha: 70, cai: true, seguidas: 120 });
+        ctx.depois(500, () => ctx.som('pulo'));
+      },
+    },
+    baldePipoca: {
+      desenho: e => baldeDePipoca(mexe(e)),
+      tocar(ctx) { mexerPor(ctx, 800); ctx.som('pulo'); ctx.particulas('pipoca', 4, -78, 1, { dy: -130, espalha: 30, cai: true, ms: 1000 }); },
+    },
+    filtro: {
+      tocar(ctx) { ctx.som('bolha'); ctx.particulas('gota', 40, -10, 1, { dy: 34, espalha: 2, ms: 700 }); },
+    },
+    fruteira: {
+      desenho: e => fruteira(mexe(e) ? (vez.get(e) || 1) : 0),
+      tocar(ctx) { vez.set(ctx.estado, (vez.get(ctx.estado) || 0) % 3 + 1); mexerPor(ctx, 800); ctx.som('pulo'); },
+    },
+    mesa: {
+      // a mesa pula e as coisas que estão em cima dela pulam junto
+      tocar(ctx) {
+        ctx.pular(); ctx.som('pulo');
+        ctx.perto(260).filter(o => emCima(ctx, o.contexto(), 110, -230, -120)).forEach(o => o.contexto().pular());
+      },
+    },
+    cadeiraAmarela: { tocar(ctx) { ctx.pular(); ctx.som('pulo'); ctx.particulas('coracao', 0, -220, 1, { dy: -80, espalha: 20 }); } },
+    cadeiraRosa: { tocar(ctx) { ctx.pular(); ctx.som('pulo'); ctx.particulas('coracao', 0, -220, 1, { dy: -80, espalha: 20 }); } },
+    panoDePrato: { tocar(ctx) { ctx.balancar(); ctx.som('pagina'); } },
+    escorredor: {
+      tocar(ctx) { ctx.tremer(); ctx.som('bolha'); ctx.particulas('gota', -4, -2, 3, { dy: 10, espalha: 20, cai: true, seguidas: 220 }); },
+    },
+  };
+  // as ervas da janela: as folhas balançam
+  [['manjericao', 0, BARRO], ['cebolinha', 1, AGUA], ['hortela', 2, AMA]].forEach(([id, tipo, cor]) => {
+    ACOES[id] = {
+      desenho: e => vasoDeErvas(tipo, cor, mexe(e)),
+      tocar(ctx) { mexerPor(ctx, 1000); ctx.som('pagina'); ctx.particulas('folha', 0, -60, 2, { dy: -50, espalha: 40, cai: true }); },
+    };
+  });
+  // ímãs de letra: o ímã pula e a Pipoca diz o nome da letra
+  ['A', 'B', 'C', 'D', 'E'].forEach(L => {
+    ACOES['ima' + L] = {
+      tocar(ctx) {
+        ctx.pular(); ctx.som('pulo');
+        ctx.particulas('estrela', 0, -10, 2, { dy: -70, espalha: 40 });
+        const nome = (PC.palavras && PC.palavras.falaLetra(L)) || L;
+        ctx.diz(nome.charAt(0).toUpperCase() + nome.slice(1) + '!');
+      },
+    };
+  });
+
   // ================================================================ montagem
-  const MONTA = { geladeira: 4500, pia: 4690, fogao: 4885, janelas: [5420, 6330], luminaria: 5880, prateleira: 6720, portaX: 7104 };
+  // ================================================================ LUZ (interruptor, janela fechada e lustre)
+  const INTERRUPTOR = { x: 4332, y: 1640 };
+  /** interruptor de parede (igual ao do quarto); (x, y) = centro */
+  function interruptor(x, y) {
+    return fr(x - 16, y - 22, 40, 56, T, 8, .08) + r(x - 20, y - 28, 40, 56, '#FFFFFF', 8, 4) + r(x - 8, y - 14, 16, 28, '#F3ECF9', 5, 3) +
+      fr(x - 5, y - 11, 10, 11, '#fff') + l(`M${x - 5} ${y + 1} H ${x + 5}`, '#C9BEDD', 2);
+  }
+  /** A janela fechada: duas cortininhas da mesma chita do bandô (rosa numa janela, amarela na outra) fechadas sobre
+      o vidro todo; o bandô e o varão voltam por cima. j = o vidro (a moldura começa 16 px antes). */
+  function cortinaFechada(j, nj) {
+    const x = j.x - 16, y = j.y - 16, w = 208, h = 230, cor = nj ? AMA : ROSA, ate = y + h - 10;
+    const painel = (x0, x1, lado) => {
+      const dobras = 3, pw = (x1 - x0) / dobras;
+      let d = `M${n(x0)} ${y - 24} H ${n(x1)} L ${n(x1 + lado * 2)} ${ate - 4}`;
+      for (let k = 0; k < dobras; k++) { const xa = x1 - k * pw; d += ` Q ${n(xa - pw / 2)} ${ate + 10} ${n(xa - pw)} ${ate - 4}`; }
+      let o = p(d + ' Z', cor, 5);
+      // dobras (sombra num caminho só) e bolinhas brancas da chita (outro caminho)
+      let so = '', bo = '';
+      for (let k = 0; k < dobras; k++) {
+        const xx = x0 + (k + .7) * pw;
+        so += `M${n(xx)} ${y + 30} q 5 ${n((ate - y) * .45)} 0 ${n(ate - y - 36)} h 10 q 3 ${n(-(ate - y) * .5)} -2 ${n(-(ate - y - 36))} Z `;
+      }
+      for (let yy = y + 44, jj = 0; yy < ate - 12; yy += 28, jj++)
+        for (let xx = x0 + 12 + (jj % 2) * 13; xx < x1 - 8; xx += 26) bo += `M${n(xx - 4)} ${yy} a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0 `;
+      o += f(so, tom(cor, -.16)) + f(bo, '#FFFFFF');
+      const xi = lado > 0 ? x1 : x0;
+      o += f(`M${n(xi)} ${y + 30} L ${n(xi - lado * 12)} ${y + 30} Q ${n(xi - lado * 8)} ${n((y + ate) / 2)} ${n(xi - lado * 3)} ${ate - 6} L ${n(xi)} ${ate - 6} Z`, tom(cor, -.22), .7);
+      return o;
+    };
+    let s = painel(x - 10, x + w / 2 + 3, 1) + painel(x + w / 2 - 3, x + w + 10, -1);
+    // o bandô de chita e o varão por cima (iguais aos da janela aberta)
+    let d = `M${x - 14} ${y - 22} H ${x + w + 14} V ${y + 26}`;
+    for (let k = 0; k < 8; k++) { const xa = x + w + 14 - k * (w + 28) / 8; d += ` Q ${n(xa - (w + 28) / 16)} ${y + 44} ${n(xa - (w + 28) / 8)} ${y + 26}`; }
+    s += p(d + ' Z', cor, 5);
+    for (let k = 0; k < 9; k++) s += fe(x - 2 + k * 26, y - 6 + (k % 2) * 14, 4, 4, '#FFFFFF');
+    s += r(x - 20, y - 30, w + 40, 12, MAD2, 6, 4) + c(x - 20, y - 24, 8, MAD2, 4) + c(x + w + 20, y - 24, 8, MAD2, 4);
+    return s;
+  }
+  /** Lustre da cozinha: pendente de esmalte amarelo de bolinhas, com a borda coral e a lâmpada aparecendo embaixo.
+      Fica no mesmo lugar da luminária pendente do cenário (luminaria(), mais abaixo) e a cobre inteira. (0,0) = o teto. */
+  function lustre(aceso) {
+    const LAMP = aceso ? '#FFF6C8' : '#DCD8E8';
+    let s = r(-18, 20, 36, 10, MAD2, 3, 4) + l('M0 28 V 180', T, 5);
+    s += r(-10, 170, 20, 22, MAD3, 4, 4) + fr(-6, 174, 4, 14, '#fff', 2, .35);
+    // a lâmpada (só a pontinha aparece embaixo da borda)
+    s += c(0, 266, 18, LAMP, 4) + brilho(-6, 268, 4, 5, 0, .8);
+    // a cúpula de esmalte, com o lado da sombra
+    s += p('M-76 254 Q -76 186 0 184 Q 76 186 76 254 Z', AMA, 6);
+    s += f('M30 190 Q 70 198 72 252 L 48 252 Q 50 208 30 190 Z', tom(AMA, -.16));
+    let bo = '';
+    for (const [x, y] of [[-46, 228], [-18, 210], [10, 230], [-50, 246], [36, 214], [-26, 242]]) bo += `M${x - 5} ${y} a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 `;
+    s += f(bo, '#FFFFFF', .9) + brilho(-40, 206, 16, 5, -28, .6);
+    // borda coral (cobre também a borda e o brilho da luminária antiga)
+    s += r(-80, 248, 160, 16, CORAL, 8, 5) + fr(-72, 251, 120, 3, '#fff', 2, .45);
+    return s;
+  }
+
+  const MONTA = { geladeira: 4500, pia: 4800, fogao: 4995, janelas: [5420, 6330], luminaria: 5880, prateleira: 6720, portaX: 7104 };
 
   CASA.partes.cozinha = {
+    luz: {
+      // o vidro de cada janela: janela(x, 1344) com moldura 208 x 230 e vidro 16 px para dentro
+      janelas: MONTA.janelas.map(x => ({ x: x + 16, y: 1360, w: 176, h: 198 })),
+      fechada: (j, nj) => cortinaFechada(j, nj),
+      interruptor: INTERRUPTOR,
+      lustre: { x: MONTA.luminaria, y: CASA.L.cozinha.topo, lampada: [0, 262], desenho: aceso => lustre(aceso) },
+    },
     fundo(L) {
       const { x0, x1, topo } = L, W = x1 - x0, chao = L.piso - 40, az = 1606, dx = MONTA.portaX, dy = L.piso - 350;
       let s = '';
@@ -463,8 +712,10 @@
       // fixos na parede e no teto
       s += relogio(MONTA.geladeira, 1418) + armarioDeParede(MONTA.pia - 100, 1316) + coifa(MONTA.fogao, topo, 1372);
       s += janela(MONTA.janelas[0], 1344) + janela(MONTA.janelas[1], 1344, AMA, false);
-      s += luminaria(MONTA.luminaria, topo + 24, 1300) + prateleira(MONTA.prateleira, 1500);
+      s += prateleira(MONTA.prateleira, 1500);   // (a luz do teto é o lustre de luz.lustre: acende pelo interruptor)
       s += portaDosFundos(L, dx, dy) + capacho(dx + 2, x1 + 14, L.piso - 30);
+      // interruptor da luz, logo depois da passagem que vem da sala
+      s += interruptor(INTERRUPTOR.x, INTERRUPTOR.y);
       return s;
     },
     objetos(L) {
@@ -487,6 +738,7 @@
       return s;
     },
     /** todas as funções de objeto (montadas ou não), desenhadas em volta de (0,0) = meio do pé */
+    acoes: ACOES,
     catalogo: { geladeira, imaLetra, pia, fogao, panela, pipoqueira, panoDePrato, escorredor, liquidificador, mesa, cadeira, fruteira, filtroDeBarro, baldeDePipoca, vasoDeErvas },
   };
 })();

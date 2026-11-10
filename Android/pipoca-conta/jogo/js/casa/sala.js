@@ -21,7 +21,7 @@
 
   /** Sofá de três lugares, verde-água, capitonê no encosto, almofadas estampadas e manta listrada.
       Assento a 150 px do chão; o lugar da Pipoca é o meio (x -60..60). */
-  function sofa() {
+  function sofa(op = {}) {
     const S = COR.agua, S1 = tom(S, -.15), S2 = tom(S, -.28), SL = tom(S, .3);
     let s = sombra(0, 2, 182, 12);
     // pezinhos de madeira
@@ -69,8 +69,9 @@
       losango(-24, 16, 6, 8, COR.creme) + losango(24, 16, 6, 8, COR.creme) + fe(0, 0, 4, 4, COR.coral);
     const est2 = [[-20, -18], [6, -20], [-6, 2], [20, 4], [-22, 18], [10, 20], [26, -12]].map(([x, y]) => fe(x, y, 5, 5, COR.creme)).join('') +
       [[-8, -10], [16, -2], [-16, 8]].map(([x, y]) => fe(x, y, 3, 3, COR.coral)).join('');
-    s += em(-98, -196, 1, almofada(COR.coral, est1), -12);
-    s += em(96, -192, .9, almofada(COR.amarelo2, est2), 10);
+    const pulo = (k, a) => (op.alm ? `<g class="${op.alm}" style="animation-delay:${k * .12}s">${a}</g>` : a);
+    s += pulo(0, em(-98, -196, 1, almofada(COR.coral, est1), -12));
+    s += pulo(1, em(96, -192, .9, almofada(COR.amarelo2, est2), 10));
     // manta listrada jogada no braço direito
     const M = COR.roxo;
     s += p('M86 -280 Q122 -294 156 -270 Q182 -246 180 -196 Q178 -120 176 -64 Q160 -56 140 -64 Q138 -140 128 -190 Q116 -236 86 -280 Z', M, 5);
@@ -101,7 +102,7 @@
   }
 
   /** Espada-de-são-jorge num vaso de barro listrado. */
-  function planta() {
+  function planta(op = {}) {
     let s = sombra(0, 2, 40, 8);
     const folha = (x0, h, inc, w) => {
       const tx = x0 + inc, d = `M${x0 - w} -60 Q${x0 - w - 4} ${-60 - h * .55} ${tx} ${-60 - h} Q${x0 + w + 4} ${-60 - h * .55} ${x0 + w} -60 Z`;
@@ -113,7 +114,8 @@
       }
       return a + f(`M${x0 - 2} -66 Q${x0 - 3} ${-60 - h * .5} ${x0 + inc * .6} ${-60 - h * .85} L${x0 + 2} -66 Z`, '#7FDB6E', .7);
     };
-    s += folha(-24, 170, -22, 13) + folha(24, 160, 24, 13) + folha(-8, 230, -8, 15) + folha(12, 205, 12, 14);
+    const mexe = (k, a) => (op.folhas ? `<g class="${op.folhas}" style="animation-delay:${k * .08}s">${a}</g>` : a);
+    s += mexe(0, folha(-24, 170, -22, 13)) + mexe(2, folha(24, 160, 24, 13)) + mexe(1, folha(-8, 230, -8, 15)) + mexe(3, folha(12, 205, 12, 14));
     // vaso
     s += p('M-38 -70 H38 L28 -4 Q28 0 24 0 H-24 Q-28 0 -28 -4 Z', '#E8825A', 6);
     s += f('M18 -66 H34 L26 -6 H14 Z', tom('#E8825A', -.15));
@@ -124,21 +126,41 @@
   }
 
   /** Rack de madeira baixo com duas portinhas. */
-  function rack() {
+  function rack(op = {}) {
     const M = COR.mad1, M1 = tom(M, -.15);
     let s = sombra(0, 2, 82, 9);
     for (const x of [-56, 56]) s += p(`M${x - 8} -16 H${x + 8} L${x + 5} 0 H${x - 5} Z`, COR.mad3, 4);
     s += r(-74, -104, 148, 90, M, 8, 6);
     s += fr(-70, -30, 140, 12, M1, 4);
-    // portinhas
-    for (const x0 of [-64, 4]) {
-      s += r(x0, -92, 60, 62, tom(M, .12), 6, 4);
-      s += l(`M${x0 + 10} -80 q 14 6 22 -2 t 20 4 M${x0 + 8} -56 q 18 -6 30 2 t 14 -2 M${x0 + 12} -42 q 12 4 22 0`, M1, 2.5);
-      s += brilho(x0 + 18, -84, 12, 4, -10, .4);
+    if (op.aberto) s += rackAberto(M, M1);
+    else {
+      // portinhas
+      for (const x0 of [-64, 4]) {
+        s += r(x0, -92, 60, 62, tom(M, .12), 6, 4);
+        s += l(`M${x0 + 10} -80 q 14 6 22 -2 t 20 4 M${x0 + 8} -56 q 18 -6 30 2 t 14 -2 M${x0 + 12} -42 q 12 4 22 0`, M1, 2.5);
+        s += brilho(x0 + 18, -84, 12, 4, -10, .4);
+      }
+      s += c(-12, -62, 5, COR.amarelo, 3) + c(12, -62, 5, COR.amarelo, 3);
     }
-    s += c(-12, -62, 5, COR.amarelo, 3) + c(12, -62, 5, COR.amarelo, 3);
     // tampo
     s += r(-84, -116, 168, 18, COR.mad2, 7, 5) + fr(-78, -112, 120, 4, tom(COR.mad2, .3), 2);
+    return s;
+  }
+
+  /** o rack com as portinhas abertas: dentro, caixinhas de jogo, uma bola e um dado */
+  function rackAberto(M, M1) {
+    let s = r(-64, -92, 128, 62, tom(M, -.38), 6, 4) + fr(-3, -90, 6, 58, M1);
+    // caixinhas de jogo em pé
+    for (const [x, h, cor] of [[-58, 50, COR.coral], [-44, 44, COR.azul], [-30, 52, COR.verde]]) {
+      s += r(x, -32 - h, 13, h, cor, 2.5, 3) + l(`M${x + 3} ${-26 - h} h 7`, '#fff', 2.5);
+    }
+    s += em(-10, -32, 1, r(-6, -30, 12, 30, COR.amarelo2, 2.5, 3), 14);
+    // bolinha listrada e dado
+    s += c(22, -46, 13, COR.rosa, 3.5) + l('M10 -48 Q22 -40 34 -48', '#fff', 3) + brilho(18, -52, 4, 2.5, -20, .6);
+    s += r(40, -58, 20, 20, '#fff', 4, 3.5) + fe(45, -53, 2.2, 2.2, T) + fe(50, -48, 2.2, 2.2, T) + fe(55, -43, 2.2, 2.2, T);
+    // as portinhas abertas, de lado
+    s += p('M-64 -92 L-86 -100 L-86 -22 L-64 -30 Z', tom(M, .12), 4) + c(-80, -61, 3.5, COR.amarelo, 2.5);
+    s += p('M64 -92 L86 -100 L86 -22 L64 -30 Z', tom(M, .12), 4) + c(80, -61, 3.5, COR.amarelo, 2.5);
     return s;
   }
 
@@ -186,7 +208,7 @@
   }
 
   /** Relógio de parede com números grandes (o “pé” é a borda de baixo). */
-  function relogio() {
+  function relogio(op = {}) {
     const R = 86, cy = -R - 4;
     let s = '';
     s += l(`M0 ${cy - R - 14} l -14 18 M0 ${cy - R - 14} l 14 18`, T, 3) + c(0, cy - R - 14, 4, COR.mad3, 3);
@@ -207,21 +229,26 @@
     }
     // ponteiros (10 e 10)
     const pont = (ang, len, cor, sw) => { const a = ang * Math.PI / 180; return l(`M0 ${cy} L${n(Math.sin(a) * len)} ${n(cy - Math.cos(a) * len)}`, T, sw + 5) + l(`M0 ${cy} L${n(Math.sin(a) * len)} ${n(cy - Math.cos(a) * len)}`, cor, sw); };
-    s += pont(305, 34, COR.roxo, 7) + pont(60, 50, COR.agua, 5);
+    if (!op.hora) s += pont(305, 34, COR.roxo, 7) + pont(60, 50, COR.agua, 5);
+    else {
+      // hora cheia: o ponteiro grande no 12 e o pequeno na hora (cada um num <g> centrado no eixo, para girar)
+      const giro = (cl, len, a) => `<g${op.gira ? ` class="${cl}"` : ''}><circle cx="0" cy="${cy}" r="${len}" fill="none"/>${a}</g>`;
+      s += giro(op.gira + 'H', 34, pont(op.hora * 30, 34, COR.roxo, 7)) + giro(op.gira + 'M', 50, pont(0, 50, COR.agua, 5));
+    }
     s += c(0, cy, 8, COR.amarelo2, 4);
     s += brilho(-40, cy - 50, 22, 8, -40, .5);
     return s;
   }
 
   /** Quadro de paisagem (morros, sol e casinha) com moldura de madeira. */
-  function quadroPaisagem() {
+  function quadroPaisagem(op = {}) {
     let s = fr(-58, -100, 122, 104, T, 10, .1);
     s += l('M0 -122 L-40 -98 M0 -122 L40 -98', T, 3) + c(0, -122, 4, COR.mad3, 3);
     s += r(-62, -106, 124, 106, COR.mad2, 10, 5);
     s += r(-50, -94, 100, 82, '#BFE8FF', 4, 4);
     s += f('M-48 -40 Q-20 -66 6 -44 Q26 -62 48 -46 V-14 H-48 Z', COR.verde);
     s += f('M-48 -26 Q0 -40 48 -28 V-14 H-48 Z', tom(COR.verde, -.15));
-    s += fe(28, -76, 9, 9, COR.amarelo2);
+    s += op.sol ? `<g class="${op.sol}">${fe(28, -76, 9, 9, COR.amarelo2)}</g>` : fe(28, -76, 9, 9, COR.amarelo2);
     s += p('M-24 -38 V-52 L-14 -60 L-4 -52 V-38 Z', COR.coral, 3);
     s += fe(-34, -78, 10, 5, '#fff');
     s += f('M44 -100 H58 V-4 H44 Z', tom(COR.mad2, -.15), .5);
@@ -230,7 +257,7 @@
   }
 
   /** Prateleira de parede com livros, rádio antigo e porta-retrato (o “pé” é a ponta das mãos-francesas). */
-  function prateleira() {
+  function prateleira(op = {}) {
     let s = fr(-80, -24, 166, 10, T, 4, .1);
     // mãos-francesas
     for (const x of [-56, 56]) s += p(`M${x - 6} -28 H${x + 6} V-20 Q${x + 4} -8 ${x} 0 Q${x - 4} -8 ${x - 6} -20 Z`, COR.mad3, 4);
@@ -243,6 +270,7 @@
     }
     s += em(-1, -40, 1, r(0, -56, 14, 56, COR.rosa, 3, 4) + l('M3 -46 h 8 M3 -12 h 8', '#fff', 2.5), 14);
     // rádio
+    const ini = s.length;
     s += l('M44 -84 L60 -122', T, 3) + c(60, -122, 4, COR.amarelo2, 2.5);
     s += r(16, -86, 66, 46, COR.coral, 12, 5);
     s += fr(20, -54, 58, 10, tom(COR.coral, -.15), 5);
@@ -251,6 +279,7 @@
     s += r(52, -78, 24, 12, COR.creme, 3, 3) + l('M60 -78 v 12', COR.coral, 2.5);
     s += c(58, -55, 4.5, COR.amarelo2, 2.5) + c(70, -55, 4.5, COR.agua, 2.5);
     s += brilho(30, -80, 10, 3, -5, .5);
+    if (op.radio) s = s.slice(0, ini) + `<g class="${op.radio}">${s.slice(ini)}</g>`;
     // porta-retrato (a Pipoca e a família: carinhas redondas)
     s += r(-4, -84, 32, 44, COR.amarelo2, 5, 4) + r(2, -78, 20, 30, '#BFE8FF', 3, 2.5);
     s += fe(9, -58, 5, 5, '#E9B77A') + fe(17, -61, 4, 4, '#C98A55') + f('M3 -49 Q9 -56 15 -49 Q18 -54 22 -49 Z', COR.rosa);
@@ -260,19 +289,21 @@
   }
 
   /** Quadrinho redondo com uma flor. */
-  function quadroFlor() {
+  function quadroFlor(op = {}) {
     let s = fe(4, -38, 36, 36, T, .1);
     s += l('M0 -84 L-18 -66 M0 -84 L18 -66', T, 3) + c(0, -84, 3.5, COR.mad3, 2.5);
     s += c(0, -40, 36, COR.agua, 5) + c(0, -40, 26, '#FFF8EC', 4);
     s += l('M0 -34 Q-2 -24 0 -18', '#3FA35A', 4) + f('M0 -24 Q-12 -28 -14 -20 Q-6 -18 0 -24 Z', COR.verde);
-    for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; s += fe(Math.cos(a) * 8, -44 + Math.sin(a) * 8, 6, 6, COR.rosa); }
-    s += fe(0, -44, 5, 5, COR.amarelo2);
+    let flor = '';
+    for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; flor += fe(Math.cos(a) * 8, -44 + Math.sin(a) * 8, 6, 6, COR.rosa); }
+    flor += fe(0, -44, 5, 5, COR.amarelo2);
+    s += op.flor ? `<g class="${op.flor}">${flor}</g>` : flor;
     s += brilho(-16, -60, 9, 4, -40, .5);
     return s;
   }
 
   /** Poltrona coral fofinha, de pés palito, com almofada de listras. Assento a ~140 px. */
-  function poltrona() {
+  function poltrona(op = {}) {
     const P = COR.coral, P1 = tom(P, -.15), PL = tom(P, .3);
     let s = sombra(0, 2, 96, 10);
     for (const x of [-64, 64]) s += p(`M${x - 8} -30 H${x + 8} L${x + lado(x) * 6 + 4} 0 H${x + lado(x) * 6 - 4} Z`, COR.mad3, 4);
@@ -289,7 +320,7 @@
     // almofada de listras
     const alm = p('M-30 -28 Q0 -22 30 -28 Q25 0 30 28 Q0 22 -30 28 Q-25 0 -30 -28 Z', COR.creme, 5) +
       l('M-24 -14 Q0 -10 24 -14 M-26 0 H26 M-24 14 Q0 10 24 14', COR.agua, 5) + f('M-26 16 Q0 22 26 16 L28 26 Q0 22 -28 26 Z', '#E8D9C4');
-    s += em(-6, -184, 1, alm, -8);
+    s += op.alm ? `<g class="${op.alm}">${em(-6, -184, 1, alm, -8)}</g>` : em(-6, -184, 1, alm, -8);
     return s;
     function lado(x) { return x < 0 ? -1 : 1; }
   }
@@ -332,7 +363,7 @@
   }
 
   /** Rede listrada num suporte de madeira (fica de pé sozinha). */
-  function rede() {
+  function rede(op = {}) {
     const M = COR.mad2;
     let s = sombra(0, 2, 200, 12);
     // suporte
@@ -342,6 +373,7 @@
     s += l('M-186 -120 Q-196 -170 -180 -220', tom(M, .3), 3) + l('M186 -120 Q196 -170 180 -220', tom(M, .3), 3);
     s += c(-164, -262, 10, COR.mad3, 4) + c(164, -262, 10, COR.mad3, 4);
     // cordinhas
+    const ini = s.length;
     let cord = '';
     for (const k of [-1, 1]) for (let j = 0; j < 5; j++) cord += `M${k * 164} -258 L${k * (120 - j * 2)} ${-176 + j * 12} `;
     s += l(cord, '#E8D5B0', 3);
@@ -361,11 +393,12 @@
     s += l(fr2, COR.amarelo2, 4);
     s += l('M-120 -128 Q0 -20 120 -128', T, 5);
     s += brilho(-60, -168, 30, 5, 4, .45);
+    if (op.balanca) s = s.slice(0, ini) + `<g class="${op.balanca}">${s.slice(ini)}</g>`;
     return s;
   }
 
   /** Estante baixa de madeira com livros, um pião e um vasinho. */
-  function estante() {
+  function estante(op = {}) {
     const M = COR.mad1, M1 = tom(M, -.15);
     let s = sombra(0, 2, 96, 10);
     for (const x of [-70, 70]) s += r(x - 8, -14, 16, 16, COR.mad3, 3, 4);
@@ -376,17 +409,23 @@
     for (const y of [-180, -96]) s += r(-82, y, 164, 12, M, 3, 4);
     // livros de cima
     let x = -74;
-    for (const [w, h, cor] of [[16, 62, COR.coral], [14, 54, COR.amarelo2], [18, 68, COR.azul], [14, 58, COR.verde]]) { s += r(x, -180 - h, w, h, cor, 3, 3.5) + l(`M${x + 3} ${-170 - h} h ${w - 6}`, '#fff', 2.5); x += w + 1; }
+    for (const [w, h, cor] of [[16, 62, COR.coral], [14, 54, COR.amarelo2], [18, 68, COR.azul], [14, 58, COR.verde]]) {
+      const lv = r(x, -180 - h, w, h, cor, 3, 3.5) + l(`M${x + 3} ${-170 - h} h ${w - 6}`, '#fff', 2.5);
+      s += op.livro && cor === COR.azul ? `<g class="${op.livro}">${lv}</g>` : lv;
+      x += w + 1;
+    }
     s += em(x + 4, -180, 1, r(0, -50, 14, 50, COR.rosa, 3, 3.5), 18);
     // vasinho com plantinha
     s += f('M44 -230 Q30 -250 36 -262 Q48 -250 48 -232 Z M52 -230 Q66 -252 60 -264 Q50 -248 48 -232 Z', COR.verde) + l('M44 -230 Q30 -250 36 -262 Q48 -250 48 -232 M52 -230 Q66 -252 60 -264 Q50 -248 48 -232', T, 3);
     s += p('M34 -232 H62 L58 -182 H38 Z', COR.agua, 4);
     // prateleira do meio: pião e caixinha
-    s += p('M-50 -150 L-28 -150 L-39 -108 Z', COR.roxo, 4) + e(-39, -152, 14, 6, COR.amarelo2, 3.5) + l('M-39 -158 V-170', T, 4);
+    const piao = p('M-50 -150 L-28 -150 L-39 -108 Z', COR.roxo, 4) + e(-39, -152, 14, 6, COR.amarelo2, 3.5) + l('M-39 -158 V-170', T, 4);
+    s += op.piao ? `<g class="${op.piao}">${piao}</g>` : piao;
     s += r(-6, -146, 70, 50, COR.coral, 6, 4.5) + r(-10, -154, 78, 14, tom(COR.coral, .2), 5, 4) + c(29, -118, 6, COR.amarelo2, 3);
     // embaixo: livros deitados
     s += r(-74, -40, 76, 16, COR.verde, 3, 3.5) + r(-70, -56, 70, 16, COR.amarelo2, 3, 3.5) + r(-64, -72, 60, 16, COR.azul, 3, 3.5);
-    s += c(40, -50, 24, COR.coral, 4.5) + l('M18 -50 Q40 -40 62 -50 M40 -74 Q30 -50 40 -26', '#fff', 3);
+    const bola = c(40, -50, 24, COR.coral, 4.5) + l('M18 -50 Q40 -40 62 -50 M40 -74 Q30 -50 40 -26', '#fff', 3);
+    s += op.bola ? `<g class="${op.bola}">${bola}</g>` : bola;
     s += brilho(-70, -262, 26, 4, 0, .45);
     return s;
   }
@@ -455,8 +494,7 @@
     s += porta(dx, dw, dt, ch, piso);
     // ---- janelas com cortina, bem espaçadas
     for (const jx of JANELAS) s += janela(jx, topo + 150, 200, 270);
-    // tomadas
-    for (const tx of [2060, 3000]) s += r(tx, ch - 56, 22, 30, '#FFFFFF', 6, 3) + fe(tx + 7, ch - 41, 2.2, 3, T) + fe(tx + 15, ch - 41, 2.2, 3, T);
+    // (as tomadas são da casa toda: CASA.TOMADAS, js/casa/base.js)
     return s;
   }
 
@@ -519,6 +557,237 @@
     return s;
   }
 
+  // ================================================================ ações (modo brincar)
+  // Os movimentos curtos (uma almofada que pula, um livro que sai e volta) redesenham o item por um instante com a
+  // parte embrulhada num <g class="sala-*">; as classes ficam numa folha de estilo pequena, posta uma vez só.
+  if (typeof document !== 'undefined') {
+    const css = document.createElement('style');
+    const fb = (cl, origem, anim) => `.${cl}{transform-box:fill-box;transform-origin:${origem};animation:${anim}}`;
+    css.textContent = [
+      fb('sala-pula', '50% 100%', 'salaPula .6s cubic-bezier(.3,1.4,.5,1) both'),
+      '@keyframes salaPula{35%{transform:translateY(-38px) rotate(-8deg)}65%{transform:translateY(0) scale(1.08,.9)}85%{transform:scale(.97,1.03)}}',
+      fb('sala-amassa', '50% 100%', 'salaAmassa .7s ease-out'),
+      '@keyframes salaAmassa{25%{transform:scale(1.14,.74)}55%{transform:scale(.94,1.08)}80%{transform:scale(1.03,.97)}}',
+      fb('sala-onda', '50% 100%', 'salaOnda .7s ease-out'),
+      '@keyframes salaOnda{25%{transform:scale(1.03,.6)}55%{transform:scale(.99,1.25)}80%{transform:scale(1.01,.92)}}',
+      fb('sala-rede', '50% 0', 'salaRede 1.3s ease-in-out infinite alternate'),
+      '@keyframes salaRede{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}',
+      fb('sala-livro', '50% 100%', 'salaLivro 1s ease-in-out'),
+      '@keyframes salaLivro{35%,65%{transform:translateY(-44px) rotate(-6deg)}}',
+      fb('sala-piao', 'center', 'salaPiao .24s linear 6'),
+      '@keyframes salaPiao{25%{transform:scaleX(.15)}50%{transform:scaleX(-1)}75%{transform:scaleX(.15)}}',
+      fb('sala-rola', 'center', 'salaRola 1.1s ease-in-out'),
+      '@keyframes salaRola{25%{transform:translateX(8px) rotate(60deg)}70%{transform:translateX(-10px) rotate(-60deg)}}',
+      fb('sala-folha', '50% 100%', 'salaFolha 1.1s ease-in-out both'),
+      '@keyframes salaFolha{20%{transform:rotate(-9deg)}45%{transform:rotate(7deg)}70%{transform:rotate(-4deg)}88%{transform:rotate(2deg)}}',
+      fb('sala-giraM', 'center', 'salaGiraM 1.5s cubic-bezier(.2,.6,.3,1)'),
+      '@keyframes salaGiraM{from{transform:rotate(-1440deg)}}',
+      fb('sala-giraH', 'center', 'salaGiraH 1.5s cubic-bezier(.2,.6,.3,1)'),
+      '@keyframes salaGiraH{from{transform:rotate(-360deg)}}',
+      fb('sala-flor', 'center', 'salaFlor 1.1s ease-in-out'),
+      '@keyframes salaFlor{to{transform:rotate(360deg)}}',
+      fb('sala-sol', 'center', 'salaSol .9s ease-in-out'),
+      '@keyframes salaSol{40%{transform:scale(1.5)}}',
+      fb('sala-danca', '50% 100%', 'salaDanca .4s ease-in-out infinite alternate'),
+      '@keyframes salaDanca{from{transform:rotate(-5deg)}to{transform:rotate(5deg) translateY(-3px)}}',
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(css);
+  }
+
+  /** os movimentos de um instante: guardados fora do estado (não vão para o "salvar") */
+  const agora = new WeakMap();
+  const ativo = (e, qual) => { const t = agora.get(e); return !!t && t.qual === qual && Date.now() < t.ate; };
+  /** redesenha o item com a parte "qual" se mexendo por ms e depois volta ao desenho de sempre */
+  function momento(ctx, qual, ms) {
+    const e = ctx.estado, tok = { qual, ate: Date.now() + ms + 400 };
+    agora.set(e, tok);
+    ctx.mudou();
+    ctx.depois(ms, () => { if (agora.get(e) === tok) { agora.delete(e); ctx.mudou(); } });
+    return tok;
+  }
+  /** variantes dos desenhos, guardadas (o motor pede o desenho várias vezes) */
+  const variantes = new Map();
+  const variante = (chave, fn) => { if (!variantes.has(chave)) variantes.set(chave, String(fn())); return variantes.get(chave); };
+  const HORAS = ['', 'uma', 'duas', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze', 'doze'];
+  const MELODIA = [1, 3, 5, 3, 6, 5, 8];
+  const vezEstante = new WeakMap();
+
+  const ACOES = {
+    // almofadas dão um pulinho
+    sofa: {
+      desenho: e => (ativo(e, 'alm') ? variante('sofa-pula', () => sofa({ alm: 'sala-pula' })) : CASA.desenho('sofa')),
+      tocar(ctx) { momento(ctx, 'alm', 800); ctx.som('pulo'); ctx.particulas('coracao', 0, -250, 2, { dy: -90, espalha: 70 }); },
+    },
+    poltrona: {
+      desenho: e => (ativo(e, 'alm') ? variante('poltrona-pula', () => poltrona({ alm: 'sala-pula' })) : CASA.desenho('poltrona')),
+      tocar(ctx) { momento(ctx, 'alm', 700); ctx.som('pulo'); ctx.particulas('coracao', 0, -240, 1, { dy: -90 }); },
+    },
+    // amassa e volta
+    pufe: {
+      desenho: e => (ativo(e, 'amassa') ? `<g class="sala-amassa">${CASA.desenho('pufe')}</g>` : CASA.desenho('pufe')),
+      tocar(ctx) { momento(ctx, 'amassa', 750); ctx.som('bolha'); ctx.particulas('estrela', 0, -70, 3, { dy: -60, espalha: 90 }); },
+    },
+    // ondula como um lençol sacudido
+    tapeteSala: {
+      desenho: e => (ativo(e, 'onda') ? `<g class="sala-onda">${CASA.desenho('tapeteSala')}</g>` : CASA.desenho('tapeteSala')),
+      tocar(ctx) { momento(ctx, 'onda', 750); ctx.som('pagina'); ctx.particulas('estrela', 0, -20, 3, { dy: -70, espalha: 200 }); },
+    },
+    // 1º toque: balança; 2º: soninho (zzz); 3º: para
+    rede: {
+      desenho: e => (e.balanca ? variante('rede-balanca', () => rede({ balanca: 'sala-rede' })) : CASA.desenho('rede')),
+      sobre: e => (e.balanca === 2
+        ? [[-20, 0], [10, 1.1]].map(([x, d]) => `<text class="casa-sobe" style="animation-delay:${d}s" x="${x}" y="-150" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="34" fill="#fff" stroke="${T}" stroke-width="5" paint-order="stroke">z</text>`).join('')
+        : ''),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.balanca = ((e.balanca || 0) + 1) % 3;
+        ctx.mudou();
+        if (e.balanca === 1) ctx.som('pegar');
+        else if (e.balanca === 2) { ctx.som('soltar'); ctx.particulas('z', 0, -180, 3, { dy: -90, espalha: 40, ms: 1400, seguidas: 300 }); }
+        else ctx.som('clique');
+      },
+    },
+    // as portinhas abrem (tem coisinhas dentro) e fecham
+    rack: {
+      desenho: e => (e.aberto ? variante('rack-aberto', () => rack({ aberto: true })) : CASA.desenho('rack')),
+      tocar(ctx) {
+        ctx.estado.aberto = !ctx.estado.aberto;
+        ctx.som(ctx.estado.aberto ? 'pegar' : 'soltar');
+        ctx.mudou();
+        if (ctx.estado.aberto) ctx.particulas('estrela', 0, -70, 2, { dy: -80, espalha: 60 });
+      },
+    },
+    // a cada toque uma brincadeira: um livro sai e volta, o pião gira, a bola rola
+    estante: {
+      desenho(e) {
+        for (const q of ['livro', 'piao', 'bola']) if (ativo(e, q)) return variante('estante-' + q, () => estante({ [q]: 'sala-' + (q === 'bola' ? 'rola' : q) }));
+        return CASA.desenho('estante');
+      },
+      tocar(ctx) {
+        const vez = (vezEstante.get(ctx.estado) || 0) + 1, q = ['livro', 'piao', 'bola'][(vez - 1) % 3];
+        vezEstante.set(ctx.estado, vez);
+        momento(ctx, q, q === 'livro' ? 1000 : q === 'piao' ? 1500 : 1100);
+        if (q === 'livro') { ctx.som('pagina'); ctx.particulas('estrela', -24, -270, 2, { dy: -70, espalha: 50 }); }
+        else if (q === 'piao') { ctx.som('piu'); ctx.particulas('estrela', -39, -150, 2, { dy: -60, espalha: 40 }); }
+        else ctx.som('pulo');
+      },
+    },
+    // as folhas balançam e uma cai
+    plantaSala: {
+      desenho: e => (ativo(e, 'folhas') ? variante('planta-folhas', () => planta({ folhas: 'sala-folha' })) : CASA.desenho('plantaSala')),
+      tocar(ctx) { momento(ctx, 'folhas', 1300); ctx.som('pagina'); ctx.particulas('folha', 10, -230, 1, { dx: 40, dy: -20, espalha: 30, cai: true, ms: 1500 }); },
+    },
+    // os ponteiros giram e param numa hora cheia; a Pipoca diz a hora
+    relogio: {
+      desenho: e => (e.hora ? variante('relogio-' + e.hora + (ativo(e, 'gira') ? 'g' : ''), () => relogio({ hora: e.hora, gira: ativo(e, 'gira') ? 'sala-gira' : '' })) : CASA.desenho('relogio')),
+      tocar(ctx) {
+        const e = ctx.estado;
+        if (ativo(e, 'gira')) return;
+        let h;
+        do h = 1 + Math.floor(Math.random() * 12); while (h === e.hora);
+        e.hora = h;
+        momento(ctx, 'gira', 1500);
+        ctx.som('clique');
+        for (let k = 1; k <= 4; k++) ctx.depois(k * 280, () => { if (PC.som && PC.som.contar) PC.som.contar(k); });
+        // (depois do redesenho do fim do giro, senão o destaque some junto)
+        ctx.depois(1560, () => {
+          const a = h * Math.PI / 6, rr = 48, cy = -90;
+          ctx.mostrar(`<circle class="casa-pulsa" cx="${n(Math.sin(a) * rr)}" cy="${n(cy - Math.cos(a) * rr + 1)}" r="17" fill="none" stroke="${COR.amarelo}" stroke-width="5"/>`, 1800);
+          ctx.som('acerto');
+          ctx.diz(h === 1 ? 'É uma hora!' : `São ${HORAS[h]} horas!`);
+        });
+      },
+    },
+    // balançam no prego (o sol cresce / a flor gira)
+    quadroPaisagem: {
+      desenho: e => (ativo(e, 'sol') ? variante('paisagem-sol', () => quadroPaisagem({ sol: 'sala-sol' })) : CASA.desenho('quadroPaisagem')),
+      tocar(ctx) { momento(ctx, 'sol', 1250); ctx.balancar(); ctx.som('piu'); },
+    },
+    quadroFlor: {
+      desenho: e => (ativo(e, 'flor') ? variante('flor-gira', () => quadroFlor({ flor: 'sala-flor' })) : CASA.desenho('quadroFlor')),
+      tocar(ctx) { momento(ctx, 'flor', 1250); ctx.balancar(); ctx.som('piu'); },
+    },
+    // o rádio toca uma musiquinha (e dança) até tocar de novo
+    prateleiraSala: {
+      desenho: e => (e.tocando ? variante('prateleira-radio', () => prateleira({ radio: 'sala-danca' })) : CASA.desenho('prateleiraSala')),
+      sobre: e => (e.tocando
+        ? [[44, 0, COR.roxo], [66, 1.1, COR.rosa]].map(([x, d, cor]) => `<g class="casa-sobe" style="animation-delay:${d}s"><path d="M${x + 4} -96 V-116 L${x + 14} -119 V-112 L${x + 4} -109" fill="${T}" stroke="${T}" stroke-width="3" stroke-linejoin="round"/><ellipse cx="${x - 1}" cy="-95" rx="6.5" ry="5" fill="${cor}" stroke="${T}" stroke-width="3"/></g>`).join('')
+        : ''),
+      tocar(ctx) {
+        const e = ctx.estado;
+        e.tocando = !e.tocando;
+        ctx.mudou();
+        if (!e.tocando) { ctx.som('soltar'); return; }
+        MELODIA.forEach((nt, k) => ctx.depois(k * 190, () => { if (e.tocando && PC.som && PC.som.contar) PC.som.contar(nt); }));
+        ctx.particulas('nota', 50, -100, 4, { dy: -100, espalha: 60, ms: 1200, seguidas: 220 });
+      },
+    },
+  };
+
+  // ================================================================ luz (janela fechada e lustre)
+  /** A janela fechada: as mesmas cortinas coral de bolinhas creme, soltas da abraçadeira e fechadas sobre o vidro todo
+      (cobrem também as cortinas abertas); o varão e o babado amarelo voltam por cima. j = o vidro. */
+  function cortinaFechada(j) {
+    const cx = j.x + j.w / 2, k = j.w / 140, rod = j.y - 30, ate = j.y + j.h + 66;
+    const painel = (x0, x1, lado) => {
+      const dobras = 3, pw = (x1 - x0) / dobras;
+      let barra = '';
+      for (let i = 0; i < dobras; i++) { const xa = x1 - i * pw; barra += ` Q ${n(xa - pw / 2)} ${ate + 16} ${n(xa - pw)} ${ate - 2}`; }
+      let s = p(`M${n(x0)} ${rod} H ${n(x1)} L ${n(x1 + lado * 3)} ${ate - 2}${barra} Z`, COR.coral, 5);
+      // dobras: faixas de sombra e de luz, ondulando de cima a baixo (um caminho de cada)
+      let so = '', lu = '', bo = '';
+      for (let i = 0; i < dobras; i++) {
+        const x = x0 + (i + .62) * pw;
+        so += `M${n(x)} ${rod + 6} q 8 ${n((ate - rod) * .4)} 2 ${n((ate - rod) * .75)} q -2 ${n((ate - rod) * .12)} 4 ${n((ate - rod) * .22)} h 14 q -6 ${n(-(ate - rod) * .5)} -4 ${n(-(ate - rod) * .97)} Z `;
+        lu += `M${n(x0 + (i + .2) * pw)} ${rod + 30} q 5 ${n((ate - rod) * .3)} -1 ${n((ate - rod) * .6)} `;
+      }
+      s += f(so, tom(COR.coral, -.15)) + l(lu, '#fff', 4).replace('/>', ' opacity=".3"/>');
+      // bolinhas creme (um caminho só)
+      for (let y = rod + 40, jj = 0; y < ate - 20; y += 38, jj++)
+        for (let x = x0 + 16 + (jj % 2) * 18; x < x1 - 10; x += 36) bo += `M${n(x - 5)} ${y} a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 `;
+      s += f(bo, COR.creme);
+      // sombra onde os dois panos se encontram
+      const xi = lado > 0 ? x1 : x0;
+      s += f(`M${n(xi)} ${rod + 4} L ${n(xi - lado * 16)} ${rod + 4} Q ${n(xi - lado * 10)} ${n((rod + ate) / 2)} ${n(xi - lado * 4)} ${ate - 6} L ${n(xi)} ${ate - 6} Z`, tom(COR.coral, -.2), .7);
+      return s;
+    };
+    let s = painel(cx - 152, cx + 4, 1) + painel(cx - 4, cx + 152, -1);
+    // o varão e o babado por cima (iguais aos da janela aberta)
+    const hw = 108 * k;
+    s += l(`M${n(cx - hw - 2)} ${rod} H${n(cx + hw + 2)}`, T, 10) + l(`M${n(cx - hw)} ${rod} H${n(cx + hw)}`, COR.mad2, 5);
+    s += c(cx - hw - 6, rod, 9, COR.amarelo2, 4) + c(cx + hw + 6, rod, 9, COR.amarelo2, 4);
+    const bw = 104 * k, nb = 8;
+    let bab = `M${n(cx - bw)} ${rod - 4} H${n(cx + bw)} V${rod + 20}`;
+    for (let jj = 0; jj < nb; jj++) bab += ` Q${n(cx + bw - (jj + .5) * 2 * bw / nb)} ${rod + 40} ${n(cx + bw - (jj + 1) * 2 * bw / nb)} ${rod + 20}`;
+    s += p(bab + ' Z', COR.amarelo2, 4.5) + l(`M${n(cx - bw + 4)} ${rod + 7} H${n(cx + bw - 4)}`, COR.amarelo, 3);
+    return s;
+  }
+  /** Lustre da sala: candelabro de latão com três tulipas de vidro (e uma pinha coral embaixo). (0,0) = o teto. */
+  function lustre(aceso) {
+    const LATAO = tom(COR.amarelo, -.12), VIDRO = aceso ? '#FFF0B0' : '#ECE6F0', VIDRO_S = aceso ? '#FFE07A' : '#D8D0E2',
+      LAMP = aceso ? '#FFFBE6' : '#DCD8E8';
+    // canopla no teto e a haste
+    let s = p('M-34 0 H 34 Q 30 16 0 18 Q -30 16 -34 0 Z', COR.creme, 4.5) + fr(-26, 4, 52, 4, '#fff', 2, .7);
+    s += l('M0 18 V 84', T, 11) + l('M0 18 V 84', LATAO, 5) + c(0, 52, 8, LATAO, 4);
+    // os braços (um caminho só): saem do corpo, descem e sobem até as tulipas
+    const bracos = 'M-10 104 Q -60 150 -92 112 M10 104 Q 60 150 92 112 M0 110 V 128';
+    s += l(bracos, T, 12) + l(bracos, LATAO, 6);
+    // corpo (uma bola de latão) com o brilho
+    s += e(0, 100, 24, 18, LATAO, 5) + brilho(-8, 94, 8, 4, -20, .6);
+    // as tulipas: abertas para cima, com a lampadazinha aparecendo
+    const tulipa = (x, y, k = 1) => em(x, y, k,
+      e(0, -40, 12, 7, LAMP, 3.5) +
+      p('M-28 -38 Q -30 -4 0 4 Q 30 -4 28 -38 Q 14 -30 0 -38 Q -14 -30 -28 -38 Z', VIDRO, 5) +
+      f('M10 -32 Q 24 -32 26 -34 Q 26 -6 2 2 Q 16 -12 10 -32 Z', VIDRO_S, .9) +
+      brilho(-14, -20, 4, 10, 15, .7) + r(-10, 2, 20, 8, LATAO, 3, 3.5));
+    s += tulipa(-92, 112) + tulipa(92, 112);
+    // no meio, um globinho de vidro pendurado debaixo do corpo
+    s += c(0, 148, 22, VIDRO, 5) + f('M14 134 Q 24 146 16 162 Q 10 150 6 138 Z', VIDRO_S, .9) + c(0, 150, 9, LAMP, 3) + brilho(-9, 140, 4, 7, 20, .7) + r(-9, 124, 18, 8, LATAO, 3, 3.5);
+    // pinha coral pendurada embaixo
+    s += l('M0 170 V 178', T, 3) + p('M0 176 Q 12 184 8 196 L 0 208 L -8 196 Q -12 184 0 176 Z', COR.coral, 4) + brilho(-3, 188, 2, 5, 0, .6);
+    return s;
+  }
+
   // ================================================================ montagem
   const JANELAS = [1080, 2440, 3220];
   const SOFA = 1600;
@@ -539,6 +808,14 @@
       return s;
     },
     catalogo: { sofa, poltrona, pufe, tapete, luminaria, ventilador, rede, rack, tv, estante, aquario, planta, relogio, quadroPaisagem, quadroFlor, prateleira },
+    acoes: ACOES,
+    luz: {
+      // vidro de cada janela: janela(jx, topo + 150, 200, 270)
+      janelas: JANELAS.map(x => ({ x: x - 100, y: CASA.L.sala.topo + 150, w: 200, h: 270 })),
+      fechada: j => cortinaFechada(j),
+      interruptor: { x: 826, y: 1668 },   // ao lado da porta da rua (desenhado em porta())
+      lustre: { x: 2100, y: CASA.L.sala.topo, lampada: [0, 130], desenho: aceso => lustre(aceso) },
+    },
     // para quem for pôr os bichos: onde a Pipoca senta e o espaço livre no tapete
     lugares: { assento: { x: SOFA, y: BAIXO_PISO - 152 }, tapete: { x0: SOFA - 160, x1: SOFA + 300, y: BAIXO_PISO + 16 } },
   };

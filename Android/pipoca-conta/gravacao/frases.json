@@ -1,7 +1,7 @@
 {
 "leiaMe": "Lista de falas da Pipoca, na ordem do jogo. Pode editar a \"tag\" (emoção, em inglês, entre colchetes; vazio = sem tag). NÃO edite \"texto\" (tem de ser igual ao do jogo) nem \"arquivo\". Para regravar uma frase: GERAR-VOZES.bat --refazer <id>.",
-"total": 3282,
-"caracteres": 68790,
+"total": 3304,
+"caracteres": 69259,
 "frases": [
   {"id":1,"onde":"abertura","texto":"Oi!","tag":"","arquivo":"0001-oi.mp3"},
   {"id":2,"onde":"abertura","texto":"Eu sou a Pipoca!","tag":"","arquivo":"0002-eu-sou-a-pipoca.mp3"},
@@ -3284,5 +3284,27 @@
   {"id":3469,"onde":"livre","texto":"Baldinho!","tag":"","arquivo":"3469-baldinho.mp3"},
   {"id":3470,"onde":"livre","texto":"Mesinha!","tag":"","arquivo":"3470-mesinha.mp3"},
   {"id":3471,"onde":"livre","texto":"Banco!","tag":"","arquivo":"3471-banco.mp3"},
-  {"id":3472,"onde":"livre","texto":"Carrinho de flores!","tag":"","arquivo":"3472-carrinho-de-flores.mp3"}
+  {"id":3472,"onde":"livre","texto":"Carrinho de flores!","tag":"","arquivo":"3472-carrinho-de-flores.mp3"},
+  {"id":3473,"onde":"livre","texto":"Ih, precisa ligar na tomada!","tag":"","arquivo":"3473-ih-precisa-ligar-na-tomada.mp3"},
+  {"id":3474,"onde":"livre","texto":"Ih, precisa colocar na tomada!","tag":"","arquivo":"3474-ih-precisa-colocar-na-tomada.mp3"},
+  {"id":3475,"onde":"livre","texto":"O fio não alcança!","tag":"","arquivo":"3475-o-fio-nao-alcanca.mp3"},
+  {"id":3476,"onde":"livre","texto":"Leve para mais perto da tomada.","tag":"[cheerful]","arquivo":"3476-leve-para-mais-perto-da-tomada.mp3"},
+  {"id":3477,"onde":"livre","texto":"Essa tomada já está ocupada!","tag":"","arquivo":"3477-essa-tomada-ja-esta-ocupada.mp3"},
+  {"id":3478,"onde":"livre","texto":"Agora eu falo o nome das coisas!","tag":"[cheerful]","arquivo":"3478-agora-eu-falo-o-nome-das-coisas.mp3"},
+  {"id":3479,"onde":"livre","texto":"Agora é para brincar!","tag":"[cheerful]","arquivo":"3479-agora-e-para-brincar.mp3"},
+  {"id":3480,"onde":"livre","texto":"É uma hora!","tag":"","arquivo":"3480-e-uma-hora.mp3"},
+  {"id":3481,"onde":"livre","texto":"São duas horas!","tag":"","arquivo":"3481-sao-duas-horas.mp3"},
+  {"id":3482,"onde":"livre","texto":"São três horas!","tag":"","arquivo":"3482-sao-tres-horas.mp3"},
+  {"id":3483,"onde":"livre","texto":"São quatro horas!","tag":"","arquivo":"3483-sao-quatro-horas.mp3"},
+  {"id":3484,"onde":"livre","texto":"São cinco horas!","tag":"","arquivo":"3484-sao-cinco-horas.mp3"},
+  {"id":3485,"onde":"livre","texto":"São seis horas!","tag":"","arquivo":"3485-sao-seis-horas.mp3"},
+  {"id":3486,"onde":"livre","texto":"São sete horas!","tag":"","arquivo":"3486-sao-sete-horas.mp3"},
+  {"id":3487,"onde":"livre","texto":"São oito horas!","tag":"","arquivo":"3487-sao-oito-horas.mp3"},
+  {"id":3488,"onde":"livre","texto":"São nove horas!","tag":"","arquivo":"3488-sao-nove-horas.mp3"},
+  {"id":3489,"onde":"livre","texto":"São dez horas!","tag":"","arquivo":"3489-sao-dez-horas.mp3"},
+  {"id":3490,"onde":"livre","texto":"São onze horas!","tag":"","arquivo":"3490-sao-onze-horas.mp3"},
+  {"id":3491,"onde":"livre","texto":"São doze horas!","tag":"","arquivo":"3491-sao-doze-horas.mp3"},
+  {"id":3492,"onde":"livre","texto":"Plantinha gosta de água!","tag":"","arquivo":"3492-plantinha-gosta-de-agua.mp3"},
+  {"id":3493,"onde":"livre","texto":"Olha, cresceu!","tag":"[cheerful]","arquivo":"3493-olha-cresceu.mp3"},
+  {"id":3494,"onde":"livre","texto":"Cresceu um pouquinho!","tag":"","arquivo":"3494-cresceu-um-pouquinho.mp3"}
 ]}
