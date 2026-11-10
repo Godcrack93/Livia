@@ -1,7 +1,7 @@
 {
 "leiaMe": "Lista de falas da Pipoca, na ordem do jogo. Pode editar a \"tag\" (emoção, em inglês, entre colchetes; vazio = sem tag). NÃO edite \"texto\" (tem de ser igual ao do jogo) nem \"arquivo\". Para regravar uma frase: GERAR-VOZES.bat --refazer <id>.",
-"total": 3304,
-"caracteres": 69259,
+"total": 3311,
+"caracteres": 69355,
 "frases": [
   {"id":1,"onde":"abertura","texto":"Oi!","tag":"","arquivo":"0001-oi.mp3"},
   {"id":2,"onde":"abertura","texto":"Eu sou a Pipoca!","tag":"","arquivo":"0002-eu-sou-a-pipoca.mp3"},
@@ -1304,7 +1304,6 @@
   {"id":1299,"onde":"estacao-51","texto":"Agora para trás, do dez até o zero!","tag":"[cheerful]","arquivo":"1299-agora-para-tras-do-dez-ate-o-zero.mp3"},
   {"id":1300,"onde":"estacao-51","texto":"Contando para trás!","tag":"","arquivo":"1300-contando-para-tras.mp3"},
   {"id":1301,"onde":"estacao-51","texto":"Qual vem depois do sete?","tag":"[curious]","arquivo":"1301-qual-vem-depois-do-sete.mp3"},
-  {"id":1302,"onde":"estacao-51","texto":"Para trás!","tag":"","arquivo":"1302-para-tras.mp3"},
   {"id":1303,"onde":"estacao-51","texto":"Qual vem depois do seis?","tag":"[curious]","arquivo":"1303-qual-vem-depois-do-seis.mp3"},
   {"id":1304,"onde":"estacao-51","texto":"E qual fica entre o zero e o dois?","tag":"[curious]","arquivo":"1304-e-qual-fica-entre-o-zero-e-o-dois.mp3"},
   {"id":1305,"onde":"estacao-51","texto":"zero","tag":"","arquivo":"1305-zero.mp3"},
@@ -3306,5 +3305,13 @@
   {"id":3491,"onde":"livre","texto":"São doze horas!","tag":"","arquivo":"3491-sao-doze-horas.mp3"},
   {"id":3492,"onde":"livre","texto":"Plantinha gosta de água!","tag":"","arquivo":"3492-plantinha-gosta-de-agua.mp3"},
   {"id":3493,"onde":"livre","texto":"Olha, cresceu!","tag":"[cheerful]","arquivo":"3493-olha-cresceu.mp3"},
-  {"id":3494,"onde":"livre","texto":"Cresceu um pouquinho!","tag":"","arquivo":"3494-cresceu-um-pouquinho.mp3"}
+  {"id":3494,"onde":"livre","texto":"Cresceu um pouquinho!","tag":"","arquivo":"3494-cresceu-um-pouquinho.mp3"},
+  {"id":3495,"onde":"livre","texto":"Ficou de noite!","tag":"[gentle]","arquivo":"3495-ficou-de-noite.mp3"},
+  {"id":3496,"onde":"livre","texto":"Boa noite!","tag":"","arquivo":"3496-boa-noite.mp3"},
+  {"id":3497,"onde":"livre","texto":"Olha a lua!","tag":"[cheerful]","arquivo":"3497-olha-a-lua.mp3"},
+  {"id":3498,"onde":"livre","texto":"Bom dia!","tag":"","arquivo":"3498-bom-dia.mp3"},
+  {"id":3499,"onde":"livre","texto":"O sol voltou!","tag":"","arquivo":"3499-o-sol-voltou.mp3"},
+  {"id":3500,"onde":"livre","texto":"Amanheceu!","tag":"","arquivo":"3500-amanheceu.mp3"},
+  {"id":3501,"onde":"livre","texto":"Lustre!","tag":"","arquivo":"3501-lustre.mp3"},
+  {"id":3502,"onde":"livre","texto":"Interruptor!","tag":"","arquivo":"3502-interruptor.mp3"}
 ]}
