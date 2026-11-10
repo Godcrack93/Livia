@@ -238,8 +238,11 @@
     const w = (x1 - x0) / N, h = (yb - yt) / N, VIGA = 150, ALTO = 170;
     const MAD = '#C98A55', CLARO = '#E0A574', ESCURO = '#A9703F', CORR = '#8A5A34';
     let s = '';
-    // parede atrás do buraco da escada (entre a laje e o teto da sala), com a mesma cor da sala
-    s += fr(x0 - 40, CIMA.piso + 40, x1 - x0 + 120, BAIXO.topo - CIMA.piso - 40 + 20, '#FFF1D9');
+    // o vão da laje por onde a escada sobe: a mesma faixa da divisória entre os andares, um tom mais funda (o lado de
+    // dentro da abertura), com as mesmas linhas de cima e de baixo, entre as pontas cortadas da laje (base.js: estrutura)
+    const gy0 = CIMA.piso + 40, gy1 = BAIXO.topo, gx0 = x0 - 20, gx1 = x1 + 20;
+    s += fr(gx0, gy0, gx1 - gx0, gy1 - gy0, '#DCC39C') + fr(gx0, gy0, gx1 - gx0, 14, '#C9AD84', 0, .7) +
+      l(`M${gx0} ${gy0} H ${gx1} M${gx0} ${gy1} H ${gx1}`, T, 6);
     // sombra no chão debaixo da escada
     s += fe(x0 + (x1 - x0) * .55, yb + 6, (x1 - x0) * .45, 10, T, .12);
     // a viga inclinada (de baixo até a laje lá em cima)
