@@ -8,6 +8,7 @@
 //   node ferramentas/vozes-gerar.mjs --refazer 12,40-45   apaga e gera de novo essas frases
 //   node ferramentas/vozes-gerar.mjs --indice        só refaz o jogo/vozes/indice.js
 //   node ferramentas/vozes-gerar.mjs --conta         só mostra quantos caracteres faltam gerar
+//   node ferramentas/vozes-gerar.mjs --onde livre,album   gera só as frases dessas telas
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -80,6 +81,7 @@ if (args['ate-estacao']) {
   const TELAS = new Set(['abertura', 'mapa', 'atividade']);
   faltam = faltam.filter(f => { const m = /^estacao-(\d+)$/.exec(f.onde); return m ? Number(m[1]) <= n : TELAS.has(f.onde); });
 }
+if (args.onde) { const O = new Set(String(args.onde).split(",")); faltam = faltam.filter(f => O.has(f.onde)); }
 if (args.teste) faltam = faltam.slice(0, Number(args.teste) || 10);
 const caracteres = faltam.reduce((s, f) => s + textoParaVoz(f).length, 0);
 console.log(`Frases na lista: ${lista.length}. Já gravadas: ${lista.length - lista.filter(f => !existe(f)).length}. Vou gerar agora: ${faltam.length} (~${caracteres} caracteres/créditos).`);
