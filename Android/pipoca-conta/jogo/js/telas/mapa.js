@@ -412,7 +412,7 @@
           let tipo = 'aberta';
           if (!PC.assinatura.liberada(n)) tipo = 'fechada';
           else if (!feita && n !== atual && !PC.dados.disponivel(n)) tipo = 'bloqueada';
-          estados[n] = { feita, tipo, atual: n === atual, bicho: feita && (!figs || figs.has(f.figurinha)) };
+          estados[n] = { feita, tipo, atual: n === atual, bicho: feita && PC.figurinhas.ehBicho(f.figurinha) && (!figs || figs.has(f.figurinha)) };   // no mapa, só os bichos (a cada 5)
         });
       }
       calcular();
@@ -544,7 +544,7 @@
       const topo = U.el('div', { class: 'pc-mapa-topo' });
       const bInicio = PC.ui.botaoIcone('casa', 'Início', () => sair('abertura'));
       bInicio.classList.add('pc-mapa-btn', 'pc-mapa-inicio'); bInicio.dataset.teste = 'inicio';
-      const bLivre = PC.ui.botaoIcone('livre', 'Brincar livre', () => sair('livre'));
+      const bLivre = PC.ui.botaoIcone('livre', 'Casa da Pipoca', () => sair('livre'));
       bLivre.classList.add('pc-mapa-btn', 'pc-mapa-livre'); bLivre.dataset.teste = 'livre';
       const bAlbum = PC.ui.botaoIcone('album', 'Álbum', () => sair('album'));
       bAlbum.classList.add('pc-mapa-btn', 'pc-mapa-album'); bAlbum.dataset.teste = 'album';

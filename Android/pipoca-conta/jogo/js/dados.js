@@ -1,5 +1,5 @@
 /* Pipoca Aprende — progresso, figurinhas, ajustes, tempo de uso e estatísticas, guardados só no aparelho (localStorage).
-   Nada disso sai do aparelho. Estação = número de 1 a 60; figurinha = 'fig01'…'fig60' (a de cada estação vem de PC.fases).
+   Nada disso sai do aparelho. Estação = número de 1 a 60; figurinha = o prêmio de cada estação (PC.fases[n].figurinha): um bicho 'figNN' ou uma coisa da casa 'casa-<item>'.
    #dados=memoria na URL (e nos testes automáticos) usa só a memória, sem tocar no localStorage.
    #progresso=N marca as estações 1 a N como concluídas (com as figurinhas), para testar mapa e álbum. */
 (function () {
@@ -28,7 +28,7 @@
       d = {
         versao: 1,
         concluidas: Array.isArray(o.concluidas) ? o.concluidas.filter(n => Number.isInteger(n) && n >= 1 && n <= 99) : [],
-        figurinhas: Array.isArray(o.figurinhas) ? o.figurinhas.filter(s => /^fig\d\d$/.test(s)) : [],
+        figurinhas: Array.isArray(o.figurinhas) ? o.figurinhas.filter(s => /^(fig\d\d|casa-[A-Za-z]+)$/.test(s)) : [],
         ajustes: Object.assign(AJUSTES_PADRAO(), o.ajustes || {}),
         extras: o.extras && typeof o.extras === 'object' ? o.extras : {},
         uso: o.uso && typeof o.uso === 'object' ? o.uso : {},

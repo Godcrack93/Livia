@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Casa da Pipoca: proposta</title>
+<link rel="stylesheet" href="../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; background: #fff; font-family: Fredoka, sans-serif; color: #3A2A5A; }
+  .tela { width: 1600px; height: 900px; position: relative; overflow: hidden; }
+  .tela > svg { position: absolute; inset: 0; }
+  .mapa { width: 1600px; position: relative; background: #EAF6E0; padding: 26px 0 30px; }
+  .mapa h2 { margin: 0 30px 14px; font-size: 34px; }
+  .mapa svg { display: block; }
+  .nota { position: absolute; font: 600 24px/1.25 Fredoka, sans-serif; color: #fff; background: #9B7BFF; border: 4px solid #3A2A5A;
+    border-radius: 20px; padding: 10px 16px; max-width: 380px; box-shadow: 0 4px 0 #3A2A5A; }
+</style>
+</head>
+<body>
+<div class="mapa" id="mapa"></div>
+<div class="tela" id="sala"></div>
+<div class="tela" id="quintal"></div>
+<script src="../js/nucleo.js"></script>
+<script src="../js/arte.js"></script>
+<script src="../js/pipoca.js"></script>
+<script src="../js/figurinhas.js"></script>
+<script src="../js/figurinhas-prado.js"></script>
+<script src="../js/figurinhas-lagoa.js"></script>
+<script src="../js/figurinhas-floresta.js"></script>
+<script src="../js/casa/base.js"></script>
+<script src="../js/casa/quarto.js"></script>
+<script src="../js/casa/banheiro.js"></script>
+<script src="../js/casa/sala.js"></script>
+<script src="../js/casa/cozinha.js"></script>
+<script src="../js/casa/quintal.js"></script>
+<script src="../js/casa/itens.js"></script>
+<script src="casa/moradores.js"></script>
+<script>
+  const { T, r, c, p, l, em } = CASA;
+  const miolo = svg => svg.replace(/^<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+  const MUNDO = CASA.mundo(CASA.moradores());
+  const TELA = { w: 1600, h: 900 };
+  const BAU = 176;                                       // altura do baú embaixo da tela
+
+  // ------------------------------------------------ 1. a casa inteira, como um mapa (com as telas marcadas)
+  (function () {
+    const k = 1600 / CASA.W, alt = Math.round(CASA.H * k);
+    let marcas = '';
+    for (let x = 0; x < CASA.W; x += TELA.w) marcas += `<rect x="${x + 14}" y="${CASA.BAIXO.piso + 60 - TELA.h}" width="${TELA.w - 28}" height="${TELA.h}" fill="none" stroke="#9B7BFF" stroke-width="16" stroke-dasharray="60 40"/>`;
+    marcas += `<rect x="14" y="${CASA.CIMA.piso + 60 - TELA.h + 40}" width="${TELA.w - 28}" height="${TELA.h - 40}" fill="none" stroke="#FF7A6B" stroke-width="16" stroke-dasharray="60 40"/>`;
+    document.getElementById('mapa').innerHTML = `<h2>A casa inteira, bem reduzida. Cada retângulo tracejado é UMA tela do tablet.</h2>` +
+      `<svg viewBox="0 0 ${CASA.W} ${CASA.H}" width="1600" height="${alt}">${MUNDO}${marcas}</svg>`;
+  })();
+
+  // ------------------------------------------------ as cartinhas do baú: cada objeto do catálogo cabe num quadrinho
+  const medidor = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  medidor.setAttribute('style', 'position:absolute;left:-9999px;width:10px;height:10px');
+  document.body.appendChild(medidor);
+  function caber(svgObj, w, h, folga = 14) {
+    medidor.innerHTML = `<g>${svgObj}</g>`;
+    const b = medidor.firstChild.getBBox();
+    if (!b.width || !b.height) return '';
+    const k = Math.min((w - 2 * folga) / b.width, (h - 2 * folga) / b.height, 1);
+    return `<g transform="translate(${(w - b.width * k) / 2 - b.x * k} ${(h - b.height * k) / 2 - b.y * k}) scale(${k})">${svgObj}</g>`;
+  }
+  function chamar(fn) { try { return fn(); } catch (e) { return ''; } }
+
+  function hud(cam, itens, abaAtual) {
+    let o = '';
+    o += em(18, 14, 1.4, c(32, 32, 30, '#fff', 4) + em(6, 6, .82, miolo(PC.arte.icone('voltar'))));
+    // mapinha: a faixa da casa com a posição da tela
+    const mx = 1230, my = 18, mw = 350, mh = 80;
+    o += r(mx, my, mw, mh, '#fff', 20, 5) + `<svg x="${mx + 10}" y="${my + 10}" width="${mw - 20}" height="${mh - 20}" viewBox="0 0 ${CASA.W} ${CASA.H}" preserveAspectRatio="none">` +
+      `<rect width="${CASA.W}" height="${CASA.H}" fill="#BFE8FF"/>` +
+      `<path d="M${CASA.CASA0 - 90} ${CASA.CIMA.topo} L ${(CASA.CASA0 + CASA.CASA1) / 2} 30 L ${CASA.CASA1 + 90} ${CASA.CIMA.topo} Z" fill="#FF7A6B"/>` +
+      `<rect x="${CASA.CASA0}" y="${CASA.CIMA.topo}" width="${CASA.CASA1 - CASA.CASA0}" height="${CASA.BAIXO.piso - CASA.CIMA.topo}" fill="#FFE9C2"/>` +
+      `<rect x="0" y="${CASA.CHAO}" width="${CASA.W}" height="300" fill="#7CCB5E"/><circle cx="8100" cy="1400" r="300" fill="#5CC84A"/>` +
+      `<rect x="${cam[0]}" y="${cam[1]}" width="${TELA.w}" height="${TELA.h}" fill="none" stroke="#9B7BFF" stroke-width="110"/></svg>`;
+    // o baú
+    o += r(-20, TELA.h - BAU, 1640, BAU + 40, '#8A5A34', 0, 7) + `<rect x="0" y="${TELA.h - BAU + 6}" width="1600" height="14" fill="#A9703F"/>`;
+    o += r(742, TELA.h - BAU - 30, 116, 40, '#8A5A34', 16, 6) + l(`M782 ${TELA.h - BAU - 4} l 18 -12 l 18 12`, '#FFE9C2', 6);
+    // abas por cor e ícone (a criança não lê): móveis, brinquedos, enfeites, bichos
+    const cores = ['#FF7A6B', '#2EC4B6', '#FFC93C', '#9B7BFF'];
+    cores.forEach((cor, i) => { o += r(22, TELA.h - BAU + 22 + i * 37, 168, 32, i === abaAtual ? cor : '#FFF4E6', 12, 4); });
+    // cartinhas
+    itens.slice(0, 8).forEach((s, i) => {
+      const x = 212 + i * 150;
+      o += r(x, TELA.h - BAU + 24, 136, 136, '#FFFAF0', 22, 5) + `<g transform="translate(${x} ${TELA.h - BAU + 24})">${caber(s, 136, 136)}</g>`;
+    });
+    return o;
+  }
+  function tela(id, camX, camY, itens, aba, notas) {
+    document.getElementById(id).innerHTML = `<svg viewBox="${camX} ${camY} ${TELA.w} ${TELA.h}" width="1600" height="900">${MUNDO}</svg>` +
+      `<svg viewBox="0 0 1600 900" width="1600" height="900">${hud([camX, camY], itens, aba)}</svg>` + (notas || '');
+  }
+  const cat = (nome, ...quais) => {
+    const C = (CASA.partes[nome] && CASA.partes[nome].catalogo) || {};
+    return quais.filter(q => C[q]).map(q => chamar(C[q])).filter(Boolean);
+  };
+
+  // ------------------------------------------------ 2. uma tela na sala (o piso fica logo acima do baú)
+  tela('sala', 1250, CASA.BAIXO.piso + 70 - (TELA.h - BAU),
+    cat('sala', 'poltrona', 'pufe', 'tv', 'ventilador', 'rede', 'estante', 'aquario', 'planta'), 0,
+    `<div class="nota" style="left:980px;top:150px;max-width:330px">Arraste no vazio: a casa passeia para os lados (e pela escada, para cima).</div>` +
+    `<div class="nota" style="left:1080px;top:470px;max-width:330px;background:#2EC4B6">Muito chão livre: arraste do baú e monte do seu jeito.</div>`);
+  // ------------------------------------------------ 3. uma tela no quintal
+  tela('quintal', 7880, CASA.CHAO + 70 - (TELA.h - BAU),
+    cat('quintal', 'piscininha', 'hortinha', 'mesinha', 'banco', 'regador', 'baldinho', 'carrinhoDeFlores', 'casinhaPassarinho'), 1);
+</script>
+</body>
+</html>

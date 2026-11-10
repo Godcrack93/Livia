@@ -707,13 +707,41 @@
     L('Pipoca lendo', 'pipoca', 'A Pipoca aprendeu a ler!'),
   ];
   const REGIOES = ['prado', 'lagoa', 'floresta'];
-  const lista = DADOS.map((d, i) => {
-    const item = { id: 'fig' + String(i + 1).padStart(2, '0'), nome: d.nome, regiao: REGIOES[Math.floor(i / 10) % 3],
-      materia: i < 30 ? 'numeros' : 'letras', tipo: d.tipo };
+  // todos os desenhos de bicho e planta (fig01…fig60): continuam valendo para as palavras (js/palavras.js) e para os
+  // bichos da casa; desde nov/2026 só 12 deles são prêmio de estação (ver RECOMPENSAS)
+  const todas = DADOS.map((d, i) => {
+    const item = { id: 'fig' + String(i + 1).padStart(2, '0'), nome: d.nome, tipo: d.tipo };
     if (d.fala) item.fala = d.fala;
     return Object.freeze(item);
   });
   const porId = {};
+  todas.forEach(f => { porId[f.id] = f; });
+
+  /* O prêmio de cada estação (nov/2026): a cada 5 estações, um bicho novo; nas outras, uma coisa para a Casa da Pipoca
+     (o id 'casa-<item>' aponta para CASA.ITENS, js/casa/itens.js). A coleção (álbum) separa só por cenário. */
+  const RECOMPENSAS = [
+    // Prado (1–20)
+    'tv', 'bola', 'pipoqueira', 'ursinho', 'fig33',            // 5: tatu-bola
+    'rede', 'mesa', 'cadeiraAmarela', 'piscininha', 'fig03',  // 10: tamanduá-bandeira
+    'carrinho', 'aquario', 'pato', 'poltrona', 'fig05',       // 15: lobo-guará
+    'baldePipoca', 'guardaRoupa', 'fruteira', 'regador', 'fig36', // 20: papagaio
+    // Lagoa (21–40)
+    'rack', 'piao', 'vaso', 'cadeiraRosa', 'fig20',           // 25: capivara
+    'bau', 'espelho', 'hortinha', 'pufe', 'fig13',            // 30: ariranha
+    'panela', 'estante', 'tapeteBanheiro', 'baldinho', 'fig41', // 35: boto-cor-de-rosa
+    'comoda', 'liquidificador', 'sabonete', 'mesinha', 'fig15', // 40: tuiuiú
+    // Floresta (41–60)
+    'ventilador', 'despertador', 'filtro', 'copoEscovas', 'fig22', // 45: bicho-preguiça
+    'banco', 'pantufas', 'plantaSala', 'casinhaPassarinho', 'fig23', // 50: tucano
+    'manjericao', 'prateleiraBanheiro', 'panoDePrato', 'carrinhoDeFlores', 'fig25', // 55: mico-leão-dourado
+    'luminariaTeto', 'plantaBanheiro', 'papel', 'hortela', 'fig21', // 60: onça-pintada
+  ];
+  const nomeItem = id => (window.CASA && CASA.ITENS && CASA.ITENS[id] ? CASA.ITENS[id].nome : id);
+  const lista = RECOMPENSAS.map((r, i) => {
+    const n = i + 1, regiao = REGIOES[Math.floor(i / 20)];
+    if (/^fig\d\d$/.test(r)) return Object.freeze(Object.assign({}, porId[r], { n, regiao }));
+    return { id: 'casa-' + r, item: r, n, regiao, tipo: 'casa', get nome() { return nomeItem(r); } };
+  });
   lista.forEach(f => { porId[f.id] = f; });
 
   const cache = {};
@@ -722,7 +750,10 @@
     if (cache[id]) return cache[id];
     let s;
     try {
-      if (id === 'fig30' || id === 'fig60') {
+      if (id.indexOf('casa-') === 0) {
+        s = adesivoDaCasa(id.slice(5));
+        if (!s) return adesivo(c(100, 100, 64, '#FFF4B8'));   // a casa ainda não carregou: não guarda no cache
+      } else if (id === 'fig30' || id === 'fig60') {
         s = id === 'fig30' ? pipocaComMedalha() : pipocaLendo();
         if (!s) return soMedalha();              // a arte da Pipoca ainda não está pronta: não guarda no cache
       } else if (D[id]) {
@@ -740,8 +771,34 @@
 
   const maiuscula = s => s.charAt(0).toUpperCase() + s.slice(1);
 
+  /** Uma coisa da casa (CASA.ITENS) como adesivo: medida no navegador e encaixada no quadro 200 × 200. */
+  let medidor = null;
+  function adesivoDaCasa(item) {
+    const C = window.CASA;
+    if (!C || !C.ITENS || !C.ITENS[item] || typeof document === 'undefined' || !document.body) return '';
+    const d = C.desenho(item);
+    if (!medidor) {
+      medidor = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      medidor.setAttribute('style', 'position:absolute;left:-99999px;top:0;width:10px;height:10px;visibility:hidden');
+      document.body.appendChild(medidor);
+    }
+    medidor.innerHTML = '<g>' + d + '</g>';
+    let b;
+    try { b = medidor.firstChild.getBBox(); } catch (e) { b = null; }
+    medidor.innerHTML = '';
+    if (!b || !b.width || !b.height) return '';
+    const k = r2(Math.min(150 / b.width, 150 / b.height, 1.6));
+    const tx = r2(100 - (b.x + b.width / 2) * k), ty = r2(100 - (b.y + b.height / 2) * k);
+    return adesivo(d, { k, transform: `translate(${tx} ${ty}) scale(${k})` });
+  }
+
   PC.figurinhas = {
+    /** os 60 prêmios, na ordem das estações: { id, n, regiao, tipo ('casa' para as coisas da casa), nome, item? } */
     lista,
+    /** todos os desenhos de bicho e planta (fig01…fig60), prêmio ou não */
+    todas,
+    ehBicho: id => /^fig\d\d$/.test(String(id)),
+    daEstacao: n => lista[n - 1] || null,
     desenho,
     obter: id => porId[id] || null,
     fala(id) { const f = porId[id]; return f ? (f.fala || maiuscula(f.nome) + '!') : ''; },

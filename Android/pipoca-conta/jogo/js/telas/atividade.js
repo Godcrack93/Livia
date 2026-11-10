@@ -302,7 +302,9 @@
         const festa = U.el('div', { class: 'pipoca-festa' });
         const bonecoFesta = PC.pipoca.criar(festa, { pose: 'danca' });
         const titulo = U.el('h2', { text: final && r.primeiraVez ? 'Você completou a trilha!' : 'Parabéns!' });
-        const msg = U.el('p', { text: r.nova ? 'Você ganhou uma figurinha nova!' : (fase ? 'Você terminou esta brincadeira!' : 'Muito bem!') });
+        const bicho = fase && PC.figurinhas.ehBicho(fase.figurinha);
+        const msg = U.el('p', { text: r.nova ? (bicho ? 'Um bicho novo para a Casa da Pipoca!' : 'Uma coisa nova para a Casa da Pipoca!')
+          : (fase ? 'Você terminou esta brincadeira!' : 'Muito bem!') });
         painel.append(festa, titulo, msg);
         // linha da figurinha: a figurinha e, ao lado dela, o botão de jogar de novo (dentro do painel)
         const linhaFig = U.el('div', { class: 'linha-figurinha' });

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Casa da Pipoca</title>
+<link rel="stylesheet" href="../../estilo.css">
+<style>
+  html, body { overflow: auto !important; height: auto !important; position: static !important; }
+  body { margin: 0; background: #fff; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<!-- ?cam=x,y,w,h mostra só esse pedaço do mundo (padrão: o mundo inteiro), na largura da janela.
+     ?parte=quarto (ou banheiro, sala, cozinha, quintal) enquadra a parte. -->
+<div id="vista"></div>
+<script src="../../js/nucleo.js"></script>
+<script src="../../js/arte.js"></script>
+<script src="../../js/pipoca.js"></script>
+<script src="../../js/figurinhas.js"></script>
+<script src="../../js/figurinhas-prado.js"></script>
+<script src="../../js/figurinhas-lagoa.js"></script>
+<script src="../../js/figurinhas-floresta.js"></script>
+<script src="../../js/casa/base.js"></script>
+<script src="../../js/casa/quarto.js"></script>
+<script src="../../js/casa/banheiro.js"></script>
+<script src="../../js/casa/sala.js"></script>
+<script src="../../js/casa/cozinha.js"></script>
+<script src="../../js/casa/quintal.js"></script>
+<script src="../../js/casa/itens.js"></script>
+<script src="moradores.js"></script>
+<script>
+  const q = new URLSearchParams(location.search);
+  let cam = [0, CASA.TOPO, CASA.W, CASA.H - CASA.TOPO];
+  const parte = q.get('parte');
+  if (parte && CASA.L[parte]) { const L = CASA.L[parte]; cam = [L.x0 - 40, Math.max(0, L.topo - 60), L.x1 - L.x0 + 80, L.piso - L.topo + 160]; }
+  if (q.get('cam')) cam = q.get('cam').split(',').map(Number);
+  const larg = window.innerWidth, alt = Math.round(larg * cam[3] / cam[2]);
+  const extra = (!q.has('sem') && CASA.moradores) ? CASA.moradores() : '';
+  document.getElementById('vista').innerHTML = `<svg viewBox="${cam.join(' ')}" width="${larg}" height="${alt}" xmlns="http://www.w3.org/2000/svg">${CASA.mundo(extra)}</svg>`;
+</script>
+</body>
+</html>

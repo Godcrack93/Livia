@@ -256,7 +256,7 @@
     if (e.ativa) {
       if (e.origem === 'revisao') return { classe: 'ativa', titulo: 'Acesso de revisão ativo', texto: 'Tudo liberado pelo código de acesso.' };
       if (e.origem === 'simulada') return { classe: 'ativa', titulo: 'Assinatura ativa (simulada)', texto: 'Simulação do navegador: todas as estações estão liberadas.' };
-      return { classe: 'ativa', titulo: 'Assinatura ativa', texto: 'As 60 estações e o Brincar livre completo estão liberados.' };
+      return { classe: 'ativa', titulo: 'Assinatura ativa', texto: 'As 60 estações estão liberadas, com as figurinhas que elas dão para a Casa da Pipoca.' };
     }
     if (e.carregando) return { classe: 'carregando', titulo: 'Consultando o Google Play…', texto: '' };
     if (e.pendente) return { classe: 'pendente', titulo: 'Compra aguardando pagamento ou aprovação', texto: 'Quando o Google Play confirmar, tudo é liberado sozinho.' };
@@ -265,7 +265,7 @@
         texto: 'Isso acontece, por exemplo, quando o modo infantil do fabricante bloqueia a loja. As estações 1 a 4 continuam grátis.' };
     }
     return { classe: 'inativa', titulo: 'Sem assinatura',
-      texto: 'Grátis: estações 1 a 4 e Brincar livre com até 2 torres. A assinatura libera as estações 5 a 60 e o Brincar livre completo.' };
+      texto: 'Grátis: estações 1 a 4 e a Casa da Pipoca. A assinatura libera as estações 5 a 60 e as figurinhas que elas dão para a casa.' };
   }
 
   /**
@@ -1047,7 +1047,7 @@
           U.el('p', { text: 'A assinatura libera:' }),
           U.el('ul', {},
             U.el('li', {}, check(), '56 estações a mais (da 5 à 60)'),
-            U.el('li', {}, check(), 'Brincar livre completo')));
+            U.el('li', {}, check(), 'Figurinhas para a Casa da Pipoca')));
         cartao.append(libera);
 
         const erro = textoErro(e, { semPrecoJaAvisado: true });

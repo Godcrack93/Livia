@@ -41,7 +41,7 @@ Outros: **Pulo** (sapinho verde-limão de bochechas rosadas), **pintinhos** (ave
 ```
 abertura ──Jogar──> mapa ──estação──> atividade (──> Parabéns ──> mapa)
    │                 ├──Álbum──> album
-   │                 ├──Brincar livre──> livre
+   │                 ├──Casa da Pipoca──> livre
    │                 └──cadeado dos adultos──[portão]──> pais
    └──cadeado dos adultos──[portão]──> pais ──> assinatura (paywall) ──> pais
 limite diário atingido ──> descanso (só um adulto libera, pelo portão)
@@ -53,14 +53,14 @@ limite diário atingido ──> descanso (só um adulto libera, pelo portão)
    - **atual (disponível)**: colorida e pulsando (a única que pulsa);
    - **bloqueada pela ordem**: cinza com cadeado; tocar → "Primeiro esta aqui!" e a Pipoca aponta a atual;
    - **fechada (assinatura)**: cinza com cadeado simples (nunca dourado, sem brilho); tocar → fala neutra "Essa ainda está fechadinha. Vamos brincar nesta?" e aponta uma estação liberada. **Nunca abre portão nem oferta.**
-   Botões: Início (casinha), Álbum, Brincar livre, cadeado dos adultos.
+   Botões: Início (casinha), Álbum, Casa da Pipoca (poltrona), cadeado dos adultos.
 3. **Atividade**: moldura com cenário da região, HUD (voltar, bolinhas das rodadas, ouvir de novo), a Pipoca no canto. O voltar (HUD ou Android) pergunta **"Quer parar?"** (casinha = sair; play grande pulsando = continuar; sem resposta em 8 s, continua). A rodada em andamento fica guardada e a estação recomeça dali.
 4. **Parabéns**: confete, Pipoca dançando, figurinha nova; os botões aparecem depois da animação: **Continuar** (grande, verde, pulsando, ícone play) e **De novo** (menor, ícone de seta circular). "De novo" sorteia números novos.
-5. **Álbum ("álbum que brinca")**: duas cenas por região (Prado, Lagoa e Floresta, cada uma com a cena "123" dos números e a "ABC" das letras); cada figurinha ganha fica colada no seu lugar da cena; tocar nela → som, pulinho e a Pipoca diz o nome. As que faltam aparecem como moldura tracejada vazia (sem silhueta, sem "?"). Contador "12 de 60".
-6. **Brincar livre**: mesa com balde de cubinhos; montar, juntar e separar à vontade; cada torre com sua plaquinha; tocar numa torre → a Pipoca conta. **Grátis limitado** (até 2 torres e 10 cubinhos por torre); com assinatura, até 8 torres e 20 cubinhos. Botão de limpar.
+5. **Álbum ("álbum que brinca", a Coleção)**: uma cena por região (Prado, Lagoa e Floresta), **sem separar números e letras**; cada cena tem as 20 figurinhas das estações dela: as 16 coisas da casa em duas fileiras e os 4 bichos maiores embaixo. Cada figurinha ganha fica colada no seu lugar; tocar nela → som, pulinho e a Pipoca diz o nome. As que faltam aparecem como moldura tracejada vazia (sem silhueta, sem "?"). Contador "12 de 60".
+6. **Casa da Pipoca** (o Brincar livre; botão da poltrona no mapa; tela `livre`, `js/telas/casa.js`, arte em `js/casa/`): uma casa grande e contínua, de dois andares (quarto e banheiro em cima; sala com a escada e cozinha embaixo), com quintal na frente e nos fundos — uns 10.800 × 2.140 px, quase 7 telas de largura. A criança passeia arrastando o dedo no vazio (com inércia) ou tocando no mapinha; tira coisas do **baú** (embaixo, com abas por ícone: móveis, brinquedos, enfeites) arrastando a cartinha para cima; móveis assentam no chão do andar onde foram soltos e enfeites ficam onde foram soltos; arrasta qualquer coisa para mudar de lugar (perto da borda a casa passeia junto); solta em cima do baú para guardar; toca numa coisa e a Pipoca diz o nome. A Pipoca viva mora na casa e também pode ser arrastada. Os cômodos são espaçosos e vêm só com o essencial montado (`CASA.inicial()` em `js/casa/itens.js`); a casa fica salva no aparelho (`PC.dados.extra('casa')`). Desempenho: o cenário vira imagens em pedaços de 1350 × 1070 (só as camadas que passam por cada pedaço), os da tela primeiro e o resto aos poucos; a Pipoca e a coisa arrastada têm camada própria. **Etapas**: 1 (feita) a casa, o baú e salvar; 2 (feita) as figurinhas viram itens (seção 7.1): o baú tem o que vem com a casa e o que a criança ganhou (no modo de desenvolvedor, tudo); 3 os bichos como personagens com animações e interações (por enquanto entram na casa com o desenho da figurinha). Sem limite extra para quem não assina: os itens novos vêm das estações, que já são da assinatura a partir da 5ª. (O Brincar livre antigo, de cubinhos, está guardado em `guardado/brincar-livre-cubinhos/`.)
 7. **Área dos pais** (depois do portão; textos com no mínimo 34 px virtuais): assinatura (estado, ver planos, restaurar, gerenciar, "tenho um código de acesso"), voz (volume, "falar mais devagar", aviso e botão "instalar voz em português" se faltar), efeitos sonoros liga/desliga, tempo de uso (hoje e semana), limite diário (desligado, 15, 30, 45, 60 min; aviso visível quando ligado), esconder ofertas de assinatura, progresso por estação (vezes, erros, dicas, tempo) e **zerar progresso** (confirmação dupla), privacidade (resumo + link para a política), créditos e licenças (Fredoka, SIL OFL 1.1), versão. No navegador: "Simular assinatura (só no navegador)".
 8. **Assinatura (paywall)**, aberta só pela área dos pais. Dois estados, conforme o Google Play:
-   - **com teste disponível**: "Experimente 7 dias grátis. Depois, R$ X por mês, cobrados automaticamente na sua conta Google Play todo mês até você cancelar. Cancele até o fim do teste e não paga nada. Para cancelar: Google Play > Pagamentos e assinaturas > Assinaturas. Sem assinar, as estações 1 a 4 continuam liberadas." + o que a assinatura libera (56 estações, Brincar livre completo) + botão **Começar teste grátis**;
+   - **com teste disponível**: "Experimente 7 dias grátis. Depois, R$ X por mês, cobrados automaticamente na sua conta Google Play todo mês até você cancelar. Cancele até o fim do teste e não paga nada. Para cancelar: Google Play > Pagamentos e assinaturas > Assinaturas. Sem assinar, as estações 1 a 4 continuam liberadas." + o que a assinatura libera (56 estações e as figurinhas que elas dão para a Casa da Pipoca) + botão **Começar teste grátis**;
    - **sem teste**: o mesmo texto sem o teste + botão **Assinar por R$ X por mês**.
    O preço vem sempre do Google Play. Sem preço (sem internet ou Play indisponível): botão desligado e "Conecte à internet para ver o preço". Compra pendente: "Aguardando pagamento ou aprovação". Play indisponível (ex.: modo infantil do fabricante): "O Google Play não está disponível neste aparelho". Nunca usar a moedinha da feirinha como ícone de compra. X grande para fechar.
 9. **Portão dos adultos** (`PC.portao.pedir()` → Promise<boolean>, uma camada por cima da tela atual): "Para adultos: toque nos números sete, dois, nove." Três números por extenso (sem sequências fáceis como 1-2-3 ou 1-1-1), teclado 1 a 9, **sem voz**, X grande para fechar; errou → desafio novo; 3 erros seguidos → espera de 5 s; 20 s sem toque → fecha (false). Protege: área dos pais, assinatura, assinar, gerenciar, links externos, liberar tempo.
@@ -268,19 +268,16 @@ Regras: no máximo uma novidade por estação; cada faixa numérica nova estreia
 | 29 | 58 | Floresta | Montar | nomes de bichos, 2–3 sílabas, 2 despistes, 4 rodadas |
 | 30 | 60 | Floresta | Ler | 3 sílabas, 3 figuras, 4 rodadas (final) |
 
-### 7.1 Figurinhas (fauna e flora do Brasil)
-Nenhuma mostra número como personagem nem cubinho com rosto. Desenho próprio, fofo, com borda branca de adesivo.
+### 7.1 Figurinhas (prêmios das estações, desde nov/2026)
+A cada 5 estações a criança ganha um **bicho** (12 ao todo); nas outras estações ganha uma **coisa para a Casa da Pipoca** (48: móveis, brinquedos e enfeites). Tudo vai para a Coleção e para o baú da casa (os bichos ficam na aba "bichos"). A lista e a ordem estão em `RECOMPENSAS`, em `js/figurinhas.js` (a figurinha da estação é `PC.fases[n].figurinha`: `figNN` para bicho, `casa-<item>` para coisa da casa; o desenho da coisa da casa vira adesivo na hora, a partir de `CASA.ITENS`). No mapa, só os bichos aparecem ao lado das estações feitas.
 
-| Região | Figurinhas |
-|---|---|
-| Prado (fig01–fig10) | ipê-amarelo, joão-de-barro, tamanduá-bandeira, seriema, lobo-guará, borboleta-azul, joaninha, abelha jataí, girassol, quero-quero |
-| Lagoa (fig11–fig20) | vitória-régia, garça-branca, ariranha, martim-pescador, tuiuiú, libélula, jacaré-de-papo-amarelo, peixinho lambari, sapo-cururu, capivara |
-| Floresta (fig21–fig30) | onça-pintada, bicho-preguiça, tucano, arara-azul, mico-leão-dourado, quati, coruja-buraqueira, beija-flor, cogumelo, a Pipoca com uma medalha (final dos números) |
-| Prado, letras (fig31–fig40) | bem-te-vi, sabiá-laranjeira, tatu-bola, ema, carcará, papagaio, vaga-lume, gafanhoto, caju, flor-de-maracujá |
-| Lagoa, letras (fig41–fig50) | boto-cor-de-rosa, tracajá, pirarucu, arraia, cervo-do-pantanal, colhereiro, anta, jaçanã, sucuri, aguapé |
-| Floresta, letras (fig51–fig60) | sagui, harpia, jabuti, cutia, jiboia, sapinho-ponta-de-flecha, bromélia, pau-brasil, castanheira, a Pipoca lendo um livro (final da trilha) |
+| Região | Bichos (estações 5, 10, 15, 20 / 25… / 45…) | Coisas da casa (as outras 16 estações da região) |
+|---|---|---|
+| Prado (1–20) | tatu-bola, tamanduá-bandeira, lobo-guará, papagaio | TV, bola, pipoqueira, ursinho, rede, mesa, cadeira amarela, piscininha, carrinho, aquário, patinho, poltrona, pipoca, guarda-roupa, fruteira, regador |
+| Lagoa (21–40) | capivara, ariranha, boto-cor-de-rosa, tuiuiú | rack, pião, vaso sanitário, cadeira rosa, baú de brinquedos, espelho, hortinha, pufe, panela, estante, tapetinho, baldinho, cômoda, liquidificador, sabonete, mesinha |
+| Floresta (41–60) | bicho-preguiça, tucano, mico-leão-dourado, onça-pintada | ventilador, despertador, filtro de barro, escova de dente, banco, pantufas, planta, casinha de passarinho, manjericão, prateleira, pano de prato, carrinho de flores, luminária, plantinha, papel higiênico, hortelã |
 
-As figurinhas das estações de números ficam em `figurinhas.js` (fig01–fig30, e a fig60); as das estações de letras em `figurinhas-prado.js`, `figurinhas-lagoa.js` e `figurinhas-floresta.js`. O álbum tem duas cenas por região (123 e ABC).
+Os desenhos de bicho e planta de antes (fig01–fig60, fauna e flora do Brasil) continuam no jogo: os 12 bichos acima saem deles, e os outros seguem sendo usados nas palavras das atividades de letras. Desenho próprio, fofo, com borda branca de adesivo; nenhum número como personagem.
 
 ## 8. Assinatura, teste grátis e acesso de revisão
 
@@ -288,7 +285,7 @@ As figurinhas das estações de números ficam em `figurinhas.js` (fig01–fig30
 - **Fluxo nativo (Billing Library 9.1.0)**: um `BillingClient` com `enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())` e `enableAutoServiceReconnection()`; `startConnection` na abertura; `queryPurchasesAsync(SUBS)` ao abrir e a cada `onResume`; `queryProductDetailsAsync` (tratando `unfetchedProductList`); oferta: filtrar `basePlanId == 'mensal'`, usar `teste-gratis` se vier (fase com preço 0 = teste; fase recorrente `P1M` = preço), senão o plano básico; `launchBillingFlow` na thread principal; acknowledge só de compras `PURCHASED` e não reconhecidas (repetir no próximo início se falhar); `PENDING` → estado pendente; erros `USER_CANCELED`, `ITEM_ALREADY_OWNED` (refazer consulta), `BILLING_UNAVAILABLE` (Play bloqueada), `SERVICE_UNAVAILABLE`, `NETWORK_ERROR` → mensagem ao adulto.
 - **Cache só no Android** (SharedPreferences) `{ativa, confirmadoEm}`: resposta OK sem compra ativa revoga na hora; erro de serviço/rede/indisponível usa o cache até **7 dias** após a última confirmação; depois, modo grátis (figurinhas ganhas ficam). O JS só recebe o estado decidido.
 - **Acesso de revisão** (para a equipe do Google Play): na área dos pais, "Tenho um código de acesso" → mensagem `codigoRevisao`; o Android compara com um código lido de `aplicativo/revisao.properties` (fora do git) e, se certo, libera tudo por 30 dias (`origem: 'revisao'`). Texto em inglês para o Play Console fica no README.
-- **Grátis**: estações 1 a 4 (jogáveis de novo com números novos) e Brincar livre limitado. **Assinatura**: estações 5 a 60 e Brincar livre completo. Assinatura que acaba: estações feitas continuam com estrela no mapa (só fechadas para jogar), sem mensagem de perda. Mudança de assinatura no meio de uma estação vale a partir da próxima.
+- **Grátis**: estações 1 a 4 (jogáveis de novo com números novos) e a Casa da Pipoca. **Assinatura**: estações 5 a 60 (e as figurinhas que elas dão para a casa). Assinatura que acaba: estações feitas continuam com estrela no mapa (só fechadas para jogar), sem mensagem de perda. Mudança de assinatura no meio de uma estação vale a partir da próxima.
 - **No navegador**, a assinatura é simulada (`#assinante=1` ou o botão da área dos pais); a ponte falsa (`#ponte=falsa&assinatura=...`) simula o app.
 
 ## 9. Arquitetura do jogo (pasta `jogo/`)
@@ -311,7 +308,7 @@ As figurinhas das estações de números ficam em `figurinhas.js` (fig01–fig30
 | `js/atividades/<id>.js` | uma atividade cada | um agente por atividade |
 | `js/telas/mapa.js` | mapa | agente do mapa |
 | `js/telas/album.js` + `js/figurinhas.js` | álbum e as 30 figurinhas | agente do álbum |
-| `js/telas/livre.js` | Brincar livre | agente do livre |
+| `js/telas/casa.js` + `js/casa/*.js` | Casa da Pipoca (tela `livre`) | — |
 | `js/telas/pais.js` + `js/telas/portao.js` | telas `pais`, `assinatura`, `descanso` e `PC.portao` | agente dos pais |
 | `teste/ponte-falsa.js`, `ferramentas/` | testes | núcleo |
 | `aplicativo/`, `gerar-apk.bat` | app Android | agente Android |

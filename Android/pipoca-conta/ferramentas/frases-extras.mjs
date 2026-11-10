@@ -4,6 +4,8 @@
 // Uso: import frasesExtras from './frases-extras.mjs'; frasesExtras() → [{ origem, texto }, ...]
 // Não remove repetidas entre origens (quem usa faz isso).
 
+import fs from 'node:fs';
+
 // ---------------------------------------------------------------- números por extenso (cópia de jogo/js/voz.js)
 const UNI = ['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez',
   'onze', 'doze', 'treze', 'quatorze', 'quinze', 'dezesseis', 'dezessete', 'dezoito', 'dezenove'];
@@ -534,39 +536,26 @@ function album(f) {
     ['jaçanã'], ['sucuri'], ['aguapé'], ['sagui'], ['harpia'], ['jabuti'], ['cutia'], ['jiboia'], ['sapinho-ponta-de-flecha'],
     ['bromélia'], ['pau-brasil'], ['castanheira'], ['Pipoca lendo', 'A Pipoca aprendeu a ler!'],
   ];
-  FIGS.forEach(([nome, fala]) => f(fala || M(nome) + '!'));
-  const total = FIGS.length;
+  // desde nov/2026 só 12 bichos são prêmio (a cada 5 estações; RECOMPENSAS em jogo/js/figurinhas.js); os nomes das
+  // coisas da casa vêm de livre() (jogo/js/casa/itens.js)
+  const fonteFig = fs.readFileSync(new URL('../jogo/js/figurinhas.js', import.meta.url), 'utf8');
+  const premios = new Set([...fonteFig.matchAll(/'fig(\d\d)'/g)].map(m => Number(m[1]) - 1));
+  FIGS.forEach(([nome, fala], i) => { if (premios.has(i)) f(fala || M(nome) + '!'); });
+  const total = 60;
   for (let g = 1; g <= total; g++) f('Você tem ' + quantidade(g, 'figurinha', 'figurinhas', { feminino: true }) + '!' + (g >= total ? ' Álbum completo!' : ''));
 }
+// Casa da Pipoca (jogo/js/telas/casa.js): falas da Pipoca e o nome de cada item (tocar no item ou na cartinha do baú).
+// Os nomes vêm de jogo/js/casa/itens.js (lidos do arquivo, sem carregar os desenhos).
 function livre(f) {
-  const CUBOS = 20;                                   // com assinatura: até 20 cubinhos por torre (sem: 10)
-  f('Vamos montar torres! Toque no balde.');
-  f('Toque numa torre para contar!');
-  f('Toque no balde para pegar cubinhos!');
-  f('Arraste uma torre para cima da outra!');
-  f('Puxe o cubinho de cima para separar!');
-  f('Arraste um cubinho para a mesa!');
-  f('Dez! Uma dezena!');
-  f('Vinte! Duas dezenas!');
-  // tocar numa torre: contagem e total
-  for (let n = 1; n <= CUBOS; n++) f(ext(n));
-  for (let n = 1; n <= CUBOS; n++) {
-    const total = n >= 16 && n <= 19 ? dezEMais(n) + ' cubinhos' : cubinhos(n);
-    f(M(total) + '!');
-  }
-  // juntar duas torres (a + b ≤ 20)
-  for (let a = 1; a < CUBOS; a++) for (let b = 1; a + b <= CUBOS; b++) {
-    const s = a + b;
-    let texto = M(ext(a)) + ' mais ' + ext(b) + '... ' + ext(s) + '!';
-    if (s === 10) texto += ' Uma dezena!';
-    else if (s === 20) texto += ' Duas dezenas!';
-    f(texto);
-  }
-  // limites (neutros)
-  f('A mesa está cheia!');
-  f('Essa torre está cheia!');
-  for (let s = 11; s <= 2 * CUBOS; s++) f('Não cabe! Ia ficar com ' + cubinhos(s) + '.');
-  f('Mesa limpinha!');
+  f('Esta é a minha casa! Tire coisas do baú e arrume do seu jeito.');
+  f('Que bom que você voltou!');
+  ['Oi!', 'Que casa bonita!', 'Vamos brincar?'].forEach(t => f(t));
+  const fonte = fs.readFileSync(new URL('../jogo/js/casa/itens.js', import.meta.url), 'utf8');
+  const nomes = new Set();
+  for (const m of fonte.matchAll(/item\('[^']+', '[^']+', '([^']+)'/g)) nomes.add(m[1]);
+  nomes.forEach(n => f(M(n) + '!'));
+  // ímãs de letrinhas da geladeira (a Pipoca diz o nome da letra)
+  ['Á', 'Bê', 'Cê', 'Dê', 'É'].forEach(l => f(l + '!'));
 }
 function pais(f) {
   f('Oi! Eu sou a Pipoca. Vamos contar até três?');

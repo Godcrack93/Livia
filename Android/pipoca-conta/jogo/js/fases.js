@@ -1,6 +1,7 @@
 /* Pipoca Aprende — a trilha: 3 regiões e 60 estações (PROJETO.md, seção 7), intercaladas: as ímpares são de
    números (as 30 estações de matemática, na ordem de sempre) e as pares são de letras (as 30 de português).
-   Cada estação: n (1…60), regiao, materia ('numeros' | 'letras'), atividade, params, figurinha.
+   Cada estação: n (1…60), regiao, materia ('numeros' | 'letras'), atividade, params, figurinha (o prêmio: um bicho 'figNN'
+   a cada 5 estações, senão uma coisa da casa 'casa-<item>'; ver js/figurinhas.js).
    Figurinhas: as de números continuam 'fig01'…'fig30' (na ordem da matemática); as de letras são 'fig31'…'fig60'.
    As 4 primeiras são grátis (PC.config.estacoesGratis). Parâmetros comuns:
      demo: true      primeira rodada começa com a Pipoca demonstrando (estreia de atividade ou modo)
@@ -91,16 +92,18 @@
     E('ler', { silabas: [3, 3], opcoes: 3, rodadas: 4 }),
   ];
 
-  const fig = k => 'fig' + String(k).padStart(2, '0');
   PC.fases = [];
   numeros.forEach((e, i) => {
-    PC.fases.push({ materia: 'numeros', atividade: e.atividade, params: e.params, figurinha: fig(i + 1) });
+    PC.fases.push({ materia: 'numeros', atividade: e.atividade, params: e.params });
     const l = letras[i];
-    PC.fases.push({ materia: 'letras', atividade: l.atividade, params: l.params, figurinha: fig(31 + i) });
+    PC.fases.push({ materia: 'letras', atividade: l.atividade, params: l.params });
   });
   PC.fases.forEach((f, i) => {
     f.n = i + 1;
     f.regiao = PC.regioes.find(r => f.n >= r.de && f.n <= r.ate).id;
+    // o prêmio da estação: a cada 5, um bicho; nas outras, uma coisa para a Casa da Pipoca (js/figurinhas.js)
+    const premio = PC.figurinhas && PC.figurinhas.daEstacao ? PC.figurinhas.daEstacao(f.n) : null;
+    f.figurinha = premio ? premio.id : 'fig' + String(f.n).padStart(2, '0');
   });
 
   PC.fase = n => PC.fases.find(f => f.n === n) || null;

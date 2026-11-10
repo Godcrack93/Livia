@@ -87,7 +87,12 @@
     album: `<rect x="12" y="10" width="40" height="46" rx="6" fill="#FF8FC2" stroke="${T}" stroke-width="5"/>
       <path d="M20 10 V 56" stroke="${T}" stroke-width="4"/>
       <path d="M36 22 L 39.5 29 L 47 30 L 41.5 35 L 43 42.5 L 36 39 L 29 42.5 L 30.5 35 L 25 30 L 32.5 29 Z" fill="#FFC93C" stroke="${T}" stroke-width="3" stroke-linejoin="round"/>`,
-    livre: cuboMini(10, 38, '#9B7BFF') + cuboMini(30, 38, '#2EC4B6') + cuboMini(20, 16, '#FFC93C'),
+    // a Casa da Pipoca (o Brincar livre): uma poltrona fofa com almofada (diferente da casinha do Início)
+    livre: `<path d="M14 30 Q 14 16 32 16 Q 50 16 50 30 V 40 H 14 Z" fill="#FF7A6B" stroke="${T}" stroke-width="4.5" stroke-linejoin="round"/>
+      <rect x="22" y="22" width="20" height="13" rx="4" fill="#FFC93C" stroke="${T}" stroke-width="3.5" transform="rotate(-8 32 28)"/>
+      <rect x="8" y="34" width="13" height="18" rx="6" fill="#FF8FA0" stroke="${T}" stroke-width="4.5"/><rect x="43" y="34" width="13" height="18" rx="6" fill="#FF8FA0" stroke="${T}" stroke-width="4.5"/>
+      <rect x="17" y="40" width="30" height="12" rx="4" fill="#FF8FA0" stroke="${T}" stroke-width="4.5"/>
+      <path d="M13 52 V 57 M51 52 V 57" stroke="${T}" stroke-width="5" stroke-linecap="round"/>`,
     cadeado: `<path d="M21 28 V 20 A 11 11 0 0 1 43 20 V 28" fill="none" stroke="${T}" stroke-width="6"/>` + corpoCadeado('#B9B3CC'),
     'cadeado-ouro': `<path d="M21 28 V 20 A 11 11 0 0 1 43 20 V 28" fill="none" stroke="${T}" stroke-width="6"/>` + corpoCadeado('#FFC93C'),
     'cadeado-aberto': `<path d="M21 28 V 13 A 11 11 0 0 1 43 13 V 17" fill="none" stroke="${T}" stroke-width="6" stroke-linecap="round"/>` + corpoCadeado('#B9B3CC'),

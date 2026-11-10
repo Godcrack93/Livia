@@ -28,7 +28,8 @@ const ORDEM_TELAS_DEPOIS = ['album', 'livre', 'pais', 'descanso'];
 
 function lerColeta() {
   if (!fs.existsSync(COLETA)) { console.log('Aviso: sem ' + COLETA + ' (rode frases-coletar.mjs).'); return []; }
-  return JSON.parse(fs.readFileSync(COLETA, 'utf8'));
+  // o Brincar livre de cubinhos virou a Casa da Pipoca (nov/2026): as falas coletadas dele não valem mais
+  return JSON.parse(fs.readFileSync(COLETA, 'utf8')).filter(c => c.origem !== 'livre' && c.onde !== 'livre');
 }
 async function lerExtras() {
   if (!fs.existsSync(EXTRAS)) { console.log('Aviso: sem ' + EXTRAS); return []; }
@@ -84,7 +85,14 @@ const slug = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().repla
 // ---------------------------------------------------------------- montar
 const falas = await falasEmOrdem();
 const anterior = fs.existsSync(DESTINO) ? JSON.parse(fs.readFileSync(DESTINO, 'utf8')) : { frases: [] };
-const frases = anterior.frases.slice();
+// frases que o jogo não fala mais (ex.: o Brincar livre de cubinhos, que virou a Casa da Pipoca) saem da lista, a não
+// ser que já tenham áudio gravado (aí ficam, sem custo)
+const atuais = new Set();
+for (const { texto } of falas) for (const fr of dividirFrases(texto)) atuais.add(chaveFrase(fr));
+const PASTA_AUDIO = path.join(RAIZ, 'jogo', 'vozes');
+const frases = anterior.frases.filter(f => atuais.has(chaveFrase(f.texto)) || fs.existsSync(path.join(PASTA_AUDIO, f.arquivo)));
+const removidas = anterior.frases.length - frases.length;
+if (removidas) console.log(`Saíram ${removidas} frases que o jogo não fala mais (sem áudio gravado).`);
 const conhecidas = new Set(frases.map(f => chaveFrase(f.texto)));
 let proximoId = frases.reduce((m, f) => Math.max(m, f.id), 0) + 1;
 let novas = 0;
