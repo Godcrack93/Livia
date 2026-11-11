@@ -60,7 +60,6 @@
     // torneira na ponta esquerda
     s += tubo('M-124 -146 V -194 Q -124 -212 -104 -212 H -90 V -202', METAL, 10, 4) + l('M-122 -192 V -150', '#fff', 3);
     s += c(-124, -176, 10, CORAL, 4) + brilho(-127, -179, 3, 2, 0, .9);
-    s += gota(-90, -186, .8);
     // bolhas subindo
     s += bolha(-40, -238, 13) + bolha(36, -262, 10) + bolha(100, -226, 15) + bolha(-6, -300, 8) + bolha(118, -292, 10) + bolha(-96, -262, 9);
     return s;
@@ -108,14 +107,17 @@
   }
 
   /** cortina listrada no varão, presa de lado (0,0 = meio do varão; o varão vai até a parede em +146).
-      fechada = o pano solto cobrindo a banheira inteira */
-  function cortina(fechada = false) {
+      fechada = o pano solto cobrindo a banheira inteira; balancando = só o pano balança (o varão é preso na parede) */
+  function cortina(fechada = false, balancando = false) {
     let s = '';
+    const pano = t => (balancando ? `<g class="casa-balanca-solta" style="animation-duration:1.1s">${t}</g>` : t);
     // varão (preso na parede da direita, bolinha na ponta)
     s += tubo('M-152 0 H 150', METAL, 8, 4) + l('M-148 -2 H 146', '#fff', 2.5);
     s += c(-158, 0, 10, AMAR, 4) + brilho(-161, -3, 3, 2, 0, .9);
     s += r(144, -16, 12, 32, METAL, 4, 4);
-    if (fechada) return s + panoFechado();
+    if (fechada) return s + pano(panoFechado());
+    const varao = s;
+    s = '';
     // o pano: cai do varão, amarrado no meio, abre de novo embaixo
     const H = 330, N = 14;
     const xl = t => 40 + 52 * Math.sin(Math.PI * t / 1.12), xr = t => 144 - 16 * Math.sin(Math.PI * t / 1.12);
@@ -153,7 +155,7 @@
     s += p(`M${n(xa + 6)} ${n(ym + 2)} Q ${n(xa - 10)} ${n(ym + 30)} ${n(xa - 4)} ${n(ym + 44)} L ${n(xa + 10)} ${n(ym + 38)} Q ${n(xa + 4)} ${n(ym + 22)} ${n(xa + 12)} ${n(ym + 6)} Z`, CORAL, 4);
     s += c(xa + 6, ym, 7, tom(CORAL, -.1), 4);
     s += brilho(xl(.15) + 14, yy(.15), 6, 26, 8, .5);
-    return s;
+    return varao + pano(s);
   }
 
   /** chuveiro elétrico com gotinhas (0,0 = o meio de cima da ducha; o cano vai até a parede em x = comp) */
@@ -170,9 +172,21 @@
     // crivo
     s += r(-40, 20, 80, 12, METAL, 6, 4);
     for (let i = 0; i < 6; i++) s += fe(-25 + i * 10, 26, 2, 2, METAL_S);
-    // água caindo
-    const gs = [[-28, 54, .8], [-6, 64, .9], [18, 50, .75], [32, 82, .8], [-20, 96, .85], [6, 108, .75], [-34, 130, .7], [24, 128, .8], [-6, 150, .7]];
-    for (const [x, y, k] of gs) s += gota(x, y, k);
+    return s;
+  }
+  /** A água do chuveiro ligado (0,0 = o meio de cima da ducha): fios que caem do crivo até a banheira, em traços que
+   *  descem sem parar (classe casa-escorre), abrindo um pouquinho, e respingos na espuma lá embaixo. */
+  function aguaDoChuveiro(ate = 236) {
+    let s = '';
+    const fios = [[-26, -40], [-14, -18], [-2, 0], [10, 14], [22, 34]];
+    fios.forEach(([x, abre], k) => {
+      const d = `M${x} 34 Q ${x + abre * .2} ${n(34 + ate * .4)} ${x + abre} ${ate}`;
+      s += `<path d="${d}" fill="none" stroke="#BFE6FF" stroke-width="7" stroke-linecap="round" opacity=".55"/>`;
+      s += `<path class="casa-escorre" style="animation-delay:-${(k * .13).toFixed(2)}s" d="${d}" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="16 26"/>`;
+    });
+    // respingos na espuma (sobem e somem)
+    s += [[-40, 0], [-6, .25], [30, .5], [52, .15]].map(([x, d]) =>
+      `<path class="casa-respingo" style="animation-delay:${d}s" d="M${x - 8} ${ate} q 4 -14 8 -4 M${x + 2} ${ate - 2} q 6 -16 10 -2" fill="none" stroke="#BFE6FF" stroke-width="4" stroke-linecap="round"/>`).join('');
     return s;
   }
 
@@ -194,7 +208,6 @@
     // torneira (atrás da cuba)
     s += tubo('M0 -170 V -238 Q 0 -256 18 -256 Q 34 -256 34 -240 V -228', METAL, 10, 4) + l('M-2 -236 V -200 M6 -251 Q 18 -253 26 -248', '#fff', 2.5);
     s += c(-17, -214, 9, AZ, 4) + c(17, -214, 9, CORAL, 4) + fe(-19, -216, 2.5, 2, '#fff', .9) + fe(15, -216, 2.5, 2, '#fff', .9);
-    s += gota(34, -214, .7);
     // cuba
     const cuba = 'M-62 -204 L 62 -204 Q 60 -168 30 -163 L -30 -163 Q -60 -168 -62 -204 Z';
     s += p(cuba, LOUCA, 5) + f('M24 -200 L 58 -200 Q 54 -172 30 -166 L 14 -166 Q 40 -176 24 -200 Z', LOUCA_S) + brilho(-36, -186, 14, 5, -15, .9) + l(cuba, T, 5);
@@ -288,7 +301,8 @@
       t += l(d, T, 5);
       for (let xx = a + 6; xx <= b - 4; xx += 9) t += l(`M${n(xx)} ${h + 1} v 7`, T, 3);
       t += c(x, 0, 8, AMAR, 4);
-      return balancando ? `<g class="casa-balanca" style="animation-duration:.55s;animation-delay:${n(-x / 200 - .3)}s">${t}</g>` : t;
+      // balança uma vez, cada toalha um tiquinho depois da outra, e para exatamente onde estava (sem pulo no fim)
+      return balancando ? `<g class="casa-balanca-solta" style="animation-delay:${n((x + 66) / 660)}s">${t}</g>` : t;
     };
     s += toalha(-66, 62, 158, CORAL, '#fff') + toalha(66, 54, 104, VERDE, AMAR2) + toalha(0, 66, 136, AMAR2, AZ);
     return s;
@@ -456,7 +470,8 @@
     // banheira: a torneira abre, a água cai, a espuma cresce e as bolhas sobem (toca de novo: fecha)
     banheira: {
       sobre: e => (e.ligado
-        ? fr(-95, -200, 10, 22, '#8FD0FF', 4, .9) + `<g class="casa-pisca">${gota(-90, -188, .6)}</g>` +
+        ? fr(-95, -202, 10, 46, '#8FD0FF', 4, .9) +
+          `<path class="casa-escorre" d="M-90 -200 V -158" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-dasharray="10 16"/>` +
           `<g class="casa-gira-lento">${c(-124, -176, 10, CORAL, 4)}${l('M-131 -176 H -117', '#fff', 3)}</g>` +
           `<g class="casa-pulsa" style="animation-duration:1.6s">${espuma([[-60, -200, 22], [-22, -210, 26], [20, -206, 24], [60, -198, 20], [-40, -224, 16], [6, -232, 18]])}</g>` +
           bolhaSobe(-50, -250, 12, 0) + bolhaSobe(10, -270, 9, .7) + bolhaSobe(70, -246, 13, 1.4) + bolhaSobe(-10, -300, 8, 1.1) + bolhaSobe(110, -280, 10, .35)
@@ -471,12 +486,11 @@
     },
     // cortina: abre e fecha (e balança)
     cortina: {
-      desenho: e => cortina(!!e.fechada),
+      desenho: e => cortina(!!e.fechada, mexendo.has(e)),
       tocar(ctx) {
         ctx.estado.fechada = !ctx.estado.fechada;
         ctx.som('pagina');
-        ctx.mudou();
-        ctx.balancar();
+        mexerUmPouco(ctx, 1300);          // só o pano balança e para no lugar; o varão fica parado (preso na parede)
       },
     },
     // pia: a torneira abre e a água escorre (toca de novo: fecha)
@@ -484,7 +498,8 @@
       sobre: e => (e.ligado
         ? `<g class="casa-gira-lento">${c(-17, -214, 9, AZ, 4)}${l('M-23 -214 H -11', '#fff', 3)}</g>` +
           r(27, -232, 14, 30, '#8FD0FF', 7, 3) + `<g class="casa-brilha">${l('M32 -226 V -202', '#fff', 3)}</g>` + fe(30, -203, 22, 3.5, '#8FD0FF') +
-          `<g class="casa-pisca">${gota(22, -190, .5)}</g><g class="casa-pisca2">${gota(46, -192, .5)}</g>` +
+          `<path class="casa-escorre" d="M34 -228 V -204" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="8 12"/>` +
+          `<path class="casa-respingo" d="M20 -202 q 3 -10 7 -2 M41 -202 q 4 -10 7 0" fill="none" stroke="#8FD0FF" stroke-width="3" stroke-linecap="round"/>` +
           `<g class="casa-sobe">${bolha(-20, -212, 6)}</g><g class="casa-sobe" style="animation-delay:1.1s">${bolha(10, -214, 5)}</g>`
         : ''),
       tocar(ctx) {
@@ -641,6 +656,12 @@
       s += em(P.banheira + 10, piso - 494, 1, cortina());
       return s;
     },
+    // coisas do cenário que funcionam ao tocar (o motor guarda se estão ligadas e desenha `sobre` no mundo)
+    tocaveis: [{
+      id: 'chuveiro', nome: 'Chuveiro!', som: 'bolha',
+      area: () => { const L = CASA.L.banheiro, x = L.x1 - 162 + 4, y = L.piso - 404; return [x - 52, y - 66, L.x1, y + 40]; },
+      sobre: () => { const L = CASA.L.banheiro; return em(L.x1 - 162 + 4, L.piso - 404, 1, aguaDoChuveiro()); },
+    }],
     luz: {
       fecha: 'cima',   // persiana: desce de cima (as cortinas dos outros cômodos fecham dos lados)
       // o vidro de cada janelinha basculante: janela() em (P.janela, topo + 220), vidro de -78..78 x -64..64

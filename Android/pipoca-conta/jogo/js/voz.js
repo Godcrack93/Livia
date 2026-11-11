@@ -176,7 +176,7 @@
       if (i >= arquivos.length) { audioAtual = null; encerrarPendente('fim'); return; }
       const primeiro = i === 0;
       const a = new Audio('vozes/' + arquivos[i]);
-      a.__arquivo = arquivos[i++];
+      a.__arquivo = arquivos[i]; a.__parte = i++;
       audioAtual = a;
       a.volume = volume();
       try { a.preservesPitch = true; } catch (e) { /* antigo */ }
@@ -330,6 +330,10 @@
     aoMudar: fn => PC.on('voz:mudou', fn),
     parar: pararTudo,
     bocaAgora,
+    /** qual frase (0, 1, 2…) da fala gravada está tocando agora, ou -1 */
+    /** em que segundo da fala gravada (a parte que está tocando) o som está agora, ou -1 */
+    tempoAgora: () => (audioAtual && !audioAtual.paused ? audioAtual.currentTime : -1),
+    parteAgora: () => (audioAtual && audioAtual.__parte != null ? audioAtual.__parte : -1),
     /** Elogio variado (a moldura usa no acerto). */
     elogio() { ultimoElogio = sortearSem(ELOGIOS, ultimoElogio); return ultimoElogio; },
     /** "Quase!" — use SÓ quando a criança errou por pouco (por um, ou por um passo da sequência). */

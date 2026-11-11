@@ -63,7 +63,11 @@ function montarIndice() {
   return n;
 }
 
-const textoParaVoz = f => (f.tag ? f.tag + ' ' : '') + f.texto;
+// palavras que a voz lê errado (gravacao/pronuncia.json): só o texto enviado ao ElevenLabs muda
+const PRONUNCIA = (() => { try { const j = JSON.parse(fs.readFileSync(path.join(PASTA_GRAVACAO, 'pronuncia.json'), 'utf8')); delete j._leia; return j; } catch (e) { return {}; } })();
+const pronunciar = t => Object.entries(PRONUNCIA).reduce((s, [de, para]) =>
+  s.replace(new RegExp(`(^|[^\\p{L}])(${de})(?![\\p{L}])`, 'giu'), (m, antes, w) => antes + (w[0] === w[0].toUpperCase() ? para[0].toUpperCase() + para.slice(1) : para)), t);
+const textoParaVoz = f => (f.tag ? f.tag + ' ' : '') + pronunciar(f.texto);
 
 if (args.indice) { console.log(`indice.js: ${montarIndice()} frases gravadas.`); process.exit(0); }
 

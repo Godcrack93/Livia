@@ -26,6 +26,33 @@
     { id: 'bichos', icone: 'bicho-fig20', cor: '#9B7BFF' },
   ];
   const Maiuscula = s => s.charAt(0).toUpperCase() + s.slice(1);
+  // madeira do baú: três tábuas com veios e preguinhos (um pedaço de 640 px que se repete na largura)
+  const svgUrl = svg => 'data:image/svg+xml,' + encodeURIComponent(svg).replace(/'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29');
+  const MADEIRA_BAU = svgUrl((() => {
+    const H = BAU + 40, T = '#3A2A5A';
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 ${H}" width="640" height="${H}"><rect width="640" height="${H}" fill="#A9703F"/>`;
+    const tabuas = [[22, 78], [78, 136], [136, H]];
+    tabuas.forEach(([y0, y1], k) => {
+      s += `<rect x="0" y="${y0}" width="640" height="${y1 - y0}" fill="${k % 2 ? '#B27A48' : '#A66D3C'}"/>`;
+      s += `<path d="M0 ${y0 + 4} H 640" stroke="#C48C57" stroke-width="3" opacity=".7"/>`;
+      // veios
+      for (let x = 30 + k * 70; x < 640; x += 210) s += `<path d="M${x} ${y0 + 16} q 40 -8 80 0 t 80 0" fill="none" stroke="#8E5C33" stroke-width="3" stroke-linecap="round" opacity=".55"/>`;
+      for (let x = 120 + k * 40; x < 640; x += 260) s += `<ellipse cx="${x}" cy="${(y0 + y1) / 2 + 6}" rx="12" ry="5" fill="none" stroke="#8E5C33" stroke-width="2.5" opacity=".5"/>`;
+      // emenda da tábua (risco escuro) e preguinhos
+      const ex = 140 + k * 160;
+      s += `<path d="M${ex} ${y0} V ${y1}" stroke="${T}" stroke-width="3" opacity=".35"/>`;
+      s += [ex - 12, ex + 12].map(x => `<circle cx="${x}" cy="${y0 + 14}" r="3.5" fill="#6E4425"/><circle cx="${x - 1}" cy="${y0 + 13}" r="1.3" fill="#E9C9A0"/>`).join('');
+      s += `<path d="M0 ${y1} H 640" stroke="${T}" stroke-width="4" opacity=".45"/>`;
+    });
+    return s + '</svg>';
+  })());
+  // beirada clara com rebites dourados
+  const BEIRADA_BAU = svgUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 22" width="220" height="22"><rect width="220" height="22" fill="#D9A066"/>` +
+    `<rect y="0" width="220" height="6" fill="#ECBE85"/><circle cx="40" cy="12" r="5" fill="#FFC93C" stroke="#3A2A5A" stroke-width="2.5"/><circle cx="38.5" cy="10.5" r="1.6" fill="#FFF3B0"/>` +
+    `<circle cx="150" cy="12" r="5" fill="#FFC93C" stroke="#3A2A5A" stroke-width="2.5"/><circle cx="148.5" cy="10.5" r="1.6" fill="#FFF3B0"/></svg>`);
+  // o fundo do baú, escurinho, com um forro de bolinhas
+  const FUNDO_BAU = svgUrl(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120"><rect width="120" height="120" fill="#6E4425"/>` +
+    `<circle cx="30" cy="30" r="6" fill="#7E5230"/><circle cx="90" cy="90" r="6" fill="#7E5230"/><circle cx="90" cy="30" r="3" fill="#7A4E2C"/><circle cx="30" cy="90" r="3" fill="#7A4E2C"/></svg>`);
 
   function css() {
     return `
@@ -42,6 +69,25 @@
       .pc-casa-item { position: absolute; display: block; overflow: visible; pointer-events: none; transform-origin: 50% 100%; }
       .pc-casa-item * { pointer-events: visiblePainted; }
       .pc-casa-item.pegado, .pc-casa-item.junto { will-change: transform; z-index: 5; }
+      .pc-casa-janela.foto-aberta { filter: blur(9px) saturate(.85); }
+      .pc-casa-janela.foto-aberta * { animation-play-state: paused !important; }
+      .pc-casa-hud, .pc-casa-bau { transition: opacity .3s; }
+      .pc-casa-hud.some, .pc-casa-bau.some { opacity: 0; pointer-events: none; }
+      .pc-casa-foto { position: absolute; left: -400px; top: -300px; right: -400px; bottom: -300px; z-index: 60;
+        background: rgba(40, 30, 80, .3); display: flex; align-items: center; justify-content: center; animation: pcCasaFotoFundo .3s; }
+      .pc-casa-foto.sai { opacity: 0; transition: opacity .25s; }
+      @keyframes pcCasaFotoFundo { from { opacity: 0; } }
+      .pc-casa-foto .moldura { animation: pcCasaFotoAbre .45s cubic-bezier(.3, 1.25, .5, 1); will-change: transform; }
+      .pc-casa-foto .moldura svg { display: block; height: 820px; width: auto; }
+      @keyframes pcCasaFotoAbre { from { transform: scale(.35) rotate(-4deg); opacity: 0; } }
+      .pc-casa-foto .bis { position: absolute; left: calc(50% + 300px); bottom: 360px; width: 116px; height: 116px; border-radius: 50%;
+        background: #fff; box-shadow: 0 6px 0 rgba(58, 42, 90, .35); display: none; align-items: center; justify-content: center; cursor: pointer; }
+      .pc-casa-foto.com-bis .bis { display: flex; animation: pcCasaBis .4s cubic-bezier(.3, 1.5, .5, 1); }
+      .pc-casa-foto .bis svg { width: 70px; height: 70px; }
+      .pc-casa-foto .bis.apertado { transform: scale(.92); }
+      @keyframes pcCasaBis { from { transform: scale(0); } }
+      .pc-casa-foto .pip { position: absolute; left: 610px; bottom: 330px; width: 300px; height: 324px; animation: pcCasaFotoPip .5s .15s backwards; }
+      @keyframes pcCasaFotoPip { from { transform: translateX(-260px); opacity: 0; } }
       .pc-casa-fixos, .pc-casa-ceu { position: absolute; left: 0; top: 0; pointer-events: none; }
       .pc-casa-fixos > *, .pc-casa-ceu > * { position: absolute; }
       .pc-casa-vidro-noite { background: #1A2154; border-radius: 6px; opacity: 0; transition: opacity 1.4s; }
@@ -97,7 +143,16 @@
       .casa-treme { transform-box: fill-box; transform-origin: center; animation: casaTremeP .12s linear infinite; }
       @keyframes casaTremeP { 50% { transform: translate(1.5px, -1px) rotate(1deg); } }
       .casa-balanca { transform-box: fill-box; transform-origin: 50% 0; animation: casaBalanca 1.6s ease-in-out infinite alternate; }
+      /* balanço que vai morrendo e termina parado no lugar (toalhas): uma vez só, acaba exatamente na posição inicial */
+      .casa-balanca-solta { transform-box: fill-box; transform-origin: 50% 0; animation: casaBalancaSolta 1.25s cubic-bezier(.35, .1, .4, 1) both; }
+      @keyframes casaBalancaSolta { 0% { transform: rotate(0); } 12% { transform: rotate(9deg); } 30% { transform: rotate(-6.5deg); }
+        48% { transform: rotate(4deg); } 65% { transform: rotate(-2.2deg); } 82% { transform: rotate(.9deg); } 100% { transform: rotate(0); } }
       @keyframes casaBalanca { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+      /* água escorrendo: os traços do caminho descem sem parar (stroke-dasharray no próprio caminho) */
+      .casa-escorre { animation: casaEscorre .42s linear infinite; }
+      @keyframes casaEscorre { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -42; } }
+      .casa-respingo { transform-box: fill-box; transform-origin: 50% 100%; animation: casaRespingo .6s ease-out infinite; }
+      @keyframes casaRespingo { 0% { transform: scale(.4); opacity: 0; } 40% { opacity: 1; } 100% { transform: translateY(-6px) scale(1.1); opacity: 0; } }
       .casa-pulsa { transform-box: fill-box; transform-origin: center; animation: casaPulsa 1s ease-in-out infinite; }
       @keyframes casaPulsa { 50% { transform: scale(1.12); } }
 
@@ -117,14 +172,26 @@
       @keyframes pcCasaAnel { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.3); opacity: 0; } }
 
       /* o botão de modo: brincar (mãozinha) ou ouvir os nomes (balão) */
-      .pc-casa-modo { position: absolute; left: 140px; top: 12px; width: 120px; height: 120px; display: grid; place-items: center;
-        cursor: pointer; touch-action: manipulation; }
-      .pc-casa-modo > span { width: 96px; height: 96px; border-radius: 50%; background: #fff; border: 5px solid var(--tinta);
-        box-shadow: 0 6px 0 var(--tinta); display: grid; place-items: center; transition: transform .12s; }
-      .pc-casa-modo.falar > span { background: #FFE27A; }
-      .pc-casa-modo svg { width: 64px; height: 64px; display: block; }
-      .pc-casa-modo.troca > span { animation: pcCasaModo .4s cubic-bezier(.3, 1.6, .5, 1); }
-      @keyframes pcCasaModo { 40% { transform: scale(1.2) rotate(-8deg); } }
+      .pc-casa-zoom { position: absolute; right: 24px; width: 92px; height: 92px; border-radius: 50%; background: #fff;
+        box-shadow: 0 5px 0 rgba(58, 42, 90, .3); display: grid; place-items: center; cursor: pointer; transition: opacity .2s, transform .1s; }
+      .pc-casa-zoom svg { width: 60px; height: 60px; }
+      .pc-casa-zoom.mais { top: 132px; } .pc-casa-zoom.menos { top: 236px; }
+      .pc-casa-zoom.fim { opacity: .4; }
+      .pc-casa-zoom.apertado { transform: scale(.9); }
+      /* seletor deslizante: brincar (mãozinha, à esquerda) | ouvir os nomes (balão, à direita). As duas opções aparecem;
+         a bolinha branca fica embaixo da escolhida, e a trilha muda de cor. */
+      .pc-casa-modo { position: absolute; left: 140px; top: 20px; width: 196px; height: 96px; cursor: pointer; touch-action: manipulation; }
+      .pc-casa-modo * { box-sizing: border-box; }
+      .pc-casa-modo .trilho { position: absolute; inset: 0; border-radius: 48px; border: 5px solid var(--tinta); box-shadow: 0 6px 0 var(--tinta);
+        background: #9EE6DA; transition: background .25s; }
+      .pc-casa-modo.falar .trilho { background: #FFE27A; }
+      .pc-casa-modo .bolinha { position: absolute; left: 10px; top: 10px; width: 76px; height: 76px; border-radius: 50%; background: #fff;
+        border: 4px solid var(--tinta); box-shadow: 0 4px 0 rgba(58, 42, 90, .35); transition: transform .3s cubic-bezier(.3, 1.4, .5, 1); }
+      .pc-casa-modo.falar .bolinha { transform: translateX(100px); }
+      .pc-casa-modo .op { position: absolute; top: 20px; width: 56px; height: 56px; display: grid; place-items: center; transition: opacity .25s, transform .25s; }
+      .pc-casa-modo .op.brincar { left: 20px; } .pc-casa-modo .op.falar { left: 120px; }   /* centros em x 48 e 148, y 48: os mesmos da bolinha */
+      .pc-casa-modo .op svg { width: 52px; height: 52px; display: block; }
+      .pc-casa-modo.brincar .op.falar, .pc-casa-modo.falar .op.brincar { opacity: .45; transform: scale(.82); }
       .pc-casa-pipoca.no-ar [data-p="sombra"] { opacity: 0; }
       .pc-casa-sombra { position: absolute; width: 230px; height: 26px; margin: -13px 0 0 -115px; border-radius: 50%;
         background: rgba(58, 42, 90, .2); pointer-events: none; will-change: transform; }
@@ -138,23 +205,35 @@
 
       .pc-casa-bau { position: absolute; left: 0; width: ${TELA.l}px; height: ${BAU + 40}px; top: ${TELA.a - BAU}px; z-index: 40;
         transition: top .28s cubic-bezier(.3, 1.3, .5, 1); touch-action: none; }
-            .pc-casa-bau .tampa { position: absolute; inset: 0; background: #8A5A34; border-top: 7px solid var(--tinta);
-        box-shadow: inset 0 14px 0 #A9703F; }
-      .pc-casa-alca { position: absolute; left: calc(50% - 70px); top: -46px; width: 140px; height: 54px; border-radius: 22px 22px 0 0; background: #8A5A34;
-        border: 6px solid var(--tinta); border-bottom: none; display: grid; place-items: center; cursor: pointer; }
-      .pc-casa-alca svg { width: 46px; height: 30px; transition: transform .25s; }
+      /* o baú de brinquedos: tábuas de madeira com veios e preguinhos, uma beirada clara com rebites dourados, a
+         fechadura dourada (a alça), as etiquetas das abas e o fundo do baú onde ficam as cartinhas. Tudo parado (os
+         desenhos de madeira são imagens SVG repetidas: o navegador desenha uma vez). */
+      .pc-casa-bau .tampa { position: absolute; inset: 0; background: #A9703F url("${MADEIRA_BAU}") repeat-x 0 0 / 640px ${BAU + 40}px;
+        border-top: 6px solid var(--tinta); }
+      .pc-casa-bau .beirada { position: absolute; left: 0; right: 0; top: 0; height: 22px; background: #D9A066 url("${BEIRADA_BAU}") repeat-x 0 0 / 220px 22px;
+        border-bottom: 5px solid var(--tinta); }
+      .pc-casa-alca { position: absolute; left: calc(50% - 62px); top: -40px; width: 124px; height: 62px; border-radius: 22px 22px 14px 14px;
+        background: #FFC93C; border: 6px solid var(--tinta); box-shadow: inset 0 -8px 0 #F2A91B, inset 0 6px 0 #FFE38A;
+        display: grid; place-items: center; cursor: pointer; z-index: 2; }
+      .pc-casa-alca::before, .pc-casa-alca::after { content: ''; position: absolute; top: 22px; width: 10px; height: 10px; border-radius: 50%;
+        background: #F2A91B; border: 3px solid var(--tinta); }
+      .pc-casa-alca::before { left: 9px; } .pc-casa-alca::after { right: 9px; }
+      .pc-casa-alca svg { width: 44px; height: 28px; transition: transform .25s; }
+      .pc-casa-alca.apertado { transform: translateY(3px); }
       .pc-casa-bau.fechado .pc-casa-alca svg { transform: rotate(180deg); }
-      .pc-casa-abas { position: absolute; left: 18px; top: 22px; display: flex; flex-direction: column; gap: 6px; }
-      .pc-casa-aba { width: 150px; height: 33px; border-radius: 14px; background: #FFF4E6; border: 4px solid var(--tinta); cursor: pointer;
-        display: grid; place-items: center; }
-      .pc-casa-aba svg { height: 28px; width: 120px; display: block; }
-      .pc-casa-aba.atual { background: var(--cor); transform: translateX(8px); }
-      .pc-casa-cartas-vao { position: absolute; left: 196px; right: 12px; top: 18px; height: 150px; overflow: hidden; }
-      .pc-casa-cartas { position: absolute; left: 0; top: 0; display: flex; gap: 16px; padding: 4px 6px; will-change: transform; }
-      .pc-casa-carta { flex: 0 0 auto; width: 140px; height: 140px; border-radius: 24px; background: #FFFAF0; border: 5px solid var(--tinta);
-        box-shadow: 0 5px 0 var(--tinta); display: grid; place-items: center; }
-      .pc-casa-carta svg { width: 118px; height: 118px; display: block; overflow: visible; pointer-events: none; }
-      .pc-casa-carta.vazia { background: transparent; border: 5px dashed #C9B08A; box-shadow: none; }
+      .pc-casa-abas { position: absolute; left: 18px; top: 32px; display: grid; grid-template-columns: 76px 76px; gap: 8px; }
+      .pc-casa-aba { width: 76px; height: 62px; border-radius: 16px; background: #FFF4E6; border: 4px solid var(--tinta); cursor: pointer;
+        display: grid; place-items: center; box-shadow: 0 4px 0 var(--tinta); transition: transform .12s, box-shadow .12s; }
+      .pc-casa-aba svg { height: 46px; width: 60px; display: block; }
+      .pc-casa-aba.atual { background: var(--cor); transform: translateY(3px); box-shadow: 0 1px 0 var(--tinta), inset 0 -6px 0 rgba(58, 42, 90, .18); }
+      .pc-casa-cartas-vao { position: absolute; left: 196px; right: 18px; top: 30px; height: 132px; overflow: hidden; border-radius: 22px;
+        background: #6E4425 url("${FUNDO_BAU}") repeat 0 0 / 120px 120px; border: 5px solid var(--tinta);
+        box-shadow: inset 0 10px 0 rgba(0, 0, 0, .22), inset 0 -4px 0 rgba(255, 255, 255, .08); }
+      .pc-casa-cartas { position: absolute; left: 0; top: 0; display: flex; gap: 14px; padding: 8px 12px; will-change: transform; }
+      .pc-casa-carta { flex: 0 0 auto; width: 110px; height: 110px; border-radius: 20px; background: #FFFAF0; border: 5px solid var(--tinta);
+        box-shadow: 0 5px 0 var(--tinta), inset 0 -8px 0 #F3E6D2; display: grid; place-items: center; }
+      .pc-casa-carta svg { width: 90px; height: 90px; display: block; overflow: visible; pointer-events: none; }
+      .pc-casa-carta.vazia { background: rgba(255, 244, 230, .08); border: 5px dashed #B98A5C; box-shadow: none; }
       .pc-casa-carta.saiu { opacity: .35; }
     `;
   }
@@ -174,6 +253,13 @@
       // a geladeira ficou mais larga (nov/2026): pia, fogão e ímãs que ainda estão no lugar de fábrica antigo vão para o novo
       const MUDOU = { piaCozinha: [4690, 4800], fogao: [4885, 4995] }, IMAS = { imaA: [4470, 4448], imaB: [4512, 4510], imaC: [4476, 4466], imaD: [4522, 4540] };
       itens.forEach(i => { const m = MUDOU[i.id] || IMAS[i.id]; if (m && Math.round(i.x) === m[0]) i.x = m[1]; });
+      // coisas que a casa ganhou depois (vêm uma vez para as casas já guardadas; se a criança guardar no baú, ficam lá)
+      const NOVIDADES = ['quadroSagui'];
+      if (guardado) NOVIDADES.forEach(id => {
+        if ((guardado.novos || []).indexOf(id) >= 0 || itens.some(i => i.id === id)) return;
+        const ini = C.inicial().find(i => i.id === id);
+        if (ini) itens.push({ id, x: ini.x, y: ini.y, k: ini.k || 1, rot: ini.rot || 0, e: {}, t: null });
+      });
       // quem está apoiado em quem (o pé a até 12 px de um tampo)
       itens.forEach(i => {
         i.sobre = null;
@@ -190,11 +276,12 @@
       const luzG = (guardado && guardado.luz) || {};
       let noite = !!luzG.noite;
       const fechadas = Object.assign({}, luzG.fechadas), acesas = Object.assign({}, luzG.acesas);
+      const ligados = Object.assign({}, guardado && guardado.ligados);   // coisas do cenário ligadas (o chuveiro)
       const pip = Object.assign({ x: 2150, y: C.BAIXO.piso }, guardado && guardado.pipoca);
       let bauAberto = guardado ? guardado.bau !== false : true;
       const camIni = guardado && guardado.cam ? guardado.cam : { x: pip.x - 760, y: C.BAIXO.piso + 70 - (TELA.a - BAU) };
       let timerSalvar = 0;
-      const paraGuardar = () => ({ v: VERSAO, modo, luz: { noite, fechadas, acesas },
+      const paraGuardar = () => ({ v: VERSAO, modo, ligados, zoom: Math.round(zoom * 100) / 100, novos: NOVIDADES, historiaTufo: historiaOuvida, luz: { noite, fechadas, acesas },
         itens: itens.map(i => ({ id: i.id, x: Math.round(i.x), y: Math.round(i.y), k: i.k, rot: i.rot, e: i.e, t: i.t })),
         pipoca: { x: Math.round(pip.x), y: Math.round(pip.y) }, cam: { x: Math.round(cam.x), y: Math.round(cam.y) }, bau: bauAberto });
       function salvar() {
@@ -301,12 +388,12 @@
       /** Carrega os pedaços que a tela mostra (e uma margem), os mais perto do meio primeiro. */
       function pedacosPerto() {
         const mx = 700, my = 500;
-        const ix0 = Math.max(0, Math.floor((cam.x - M.x - mx) / PW)), ix1 = Math.min(NX - 1, Math.floor((cam.x + TELA.l + M.x + mx) / PW));
-        const iy0 = Math.max(0, Math.floor((cam.y - Y0 - my) / PH)), iy1 = Math.min(NY - 1, Math.floor((cam.y - Y0 + TELA.a + my) / PH));
+        const ix0 = Math.max(0, Math.floor((cam.x - M.x / zoom - mx) / PW)), ix1 = Math.min(NX - 1, Math.floor((cam.x + (TELA.l + M.x) / zoom + mx) / PW));
+        const iy0 = Math.max(0, Math.floor((cam.y - M.y / zoom - Y0 - my) / PH)), iy1 = Math.min(NY - 1, Math.floor((cam.y - Y0 + (TELA.a + M.y) / zoom + my) / PH));
         const querer = [];
         for (let iy = iy0; iy <= iy1; iy++) for (let ix = ix0; ix <= ix1; ix++) querer.push([ix, iy]);
         // os da tela primeiro
-        const cx = cam.x + TELA.l / 2, cy = cam.y + TELA.a / 2;
+        const cx = cam.x + TELA.l / 2 / zoom, cy = cam.y + TELA.a / 2 / zoom;
         querer.sort((a, b) => Math.hypot((a[0] + .5) * PW - cx, Y0 + (a[1] + .5) * PH - cy) - Math.hypot((b[0] + .5) * PW - cx, Y0 + (b[1] + .5) * PH - cy));
         return Promise.all(querer.map(([ix, iy]) => carregarPedaco(ix, iy)));
       }
@@ -314,7 +401,7 @@
       async function carregarRestante() {
         const ordem = [];
         for (let iy = 0; iy < NY; iy++) for (let ix = 0; ix < NX; ix++) ordem.push([ix, iy]);
-        const cx = cam.x + TELA.l / 2;
+        const cx = cam.x + TELA.l / 2 / zoom;
         ordem.sort((a, b) => Math.abs((a[0] + .5) * PW - cx) - Math.abs((b[0] + .5) * PW - cx));
         for (const [ix, iy] of ordem) {
           if (!vivo) return;
@@ -579,6 +666,8 @@
           noMundo,
           /** a Pipoca olha para cá */
           olhar() { rig.olhar(Math.sign(i.x - pip.x), -.2, 1500); },
+          /** mostra o desenho deste item grande no meio da tela, com a casa borrada atrás (a foto do sagui) */
+          ampliar() { abrirFoto(i); },
         };
         return ctx;
       }
@@ -607,6 +696,126 @@
         }
       }
 
+      // ------------------------------------------------------------ foto ampliada (o quadro do sagui)
+      // O quadro aparece grande no meio da tela; a casa fica borrada e PARADA atrás (as animações dela pausam e a
+      // Pipoca da casa se esconde: assim o borrado é feito uma vez só, e não a cada quadro, o que pesaria em aparelho
+      // fraco). Uma Pipoca própria aparece ao lado da foto. Tocar em qualquer lugar fecha.
+      let foto = null;
+      // a história da foto (gravada inteira num áudio só: vozes/longas.js). Na 1ª vez toca inteira e não dá para pular;
+      // depois, a foto amplia calada e aparece o botão de contar de novo (o balãozinho de fala).
+      const FALA_FOTO = 'Olha só! Esse é o meu vovô Tufo! Ele é um sagui-de-tufos-brancos, igualzinho a mim. Sabia que a gente é um macaquinho bem pequenininho do Brasil? Cabe na palma da mão! Olha os tufinhos brancos nas orelhas, e o rabo listrado! A gente mora nas árvores e adora comer frutinhas. Quem tirou essa foto foi Evija Martina.';
+      let historiaOuvida = !!(guardado && guardado.historiaTufo);
+      function abrirFoto(i) {
+        if (foto) return;
+        PC.som.pegar();
+        const el = U.el('div', { class: 'pc-casa-foto', teste: 'foto', role: 'dialog', 'aria-label': C.ITENS[i.id].nome });
+        el.innerHTML = `<div class="moldura"><svg viewBox="-104 -280 208 290" xmlns="${NS}">${C.desenho(i.id)}</svg></div>`;
+        const pe = U.el('div', { class: 'pip' });
+        el.appendChild(pe);
+        janela.classList.add('foto-aberta');
+        hud.classList.add('some'); bau.classList.add('some');
+        raiz.appendChild(el);
+        // a própria Pipoca da casa vai para o lado da foto (uma Pipoca viva só: a casa borrada fica parada)
+        if (quedaPipoca) { quedaPipoca.vivo = false; quedaPipoca = null; }
+        tirarSombraChao();
+        pe.appendChild(pipEl);
+        pipEl.style.left = '0px'; pipEl.style.top = '0px';
+        rig.pose('feliz');
+        rig.olhar(1, -.3, 4000);
+        foto = { el, aberta: performance.now(), presa: false };
+        const f = foto;
+        // botão de contar a história de novo (aparece depois da 1ª vez inteira)
+        const bis = U.el('div', { class: 'bis', teste: 'contar-de-novo', role: 'button', 'aria-label': 'Contar a história de novo' });
+        bis.innerHTML = ICONE_MODO.falar;
+        bis.addEventListener('pointerdown', ev => ev.stopPropagation());
+        PC.aoTocar(bis, () => { if (foto === f && !f.presa) contar(); });
+        el.appendChild(bis);
+        const contar = () => {
+          rig.olhar(1, -.3, 2500);
+          const fala = pipocaDiz(FALA_FOTO);
+          gesticularHistoria(f, fala);
+          return fala;
+        };
+        if (!historiaOuvida) {
+          // 1ª vez: a história toca inteira, sem pular (tocar na tela não fecha até acabar)
+          f.presa = true;
+          setTimeout(() => {
+            if (foto !== f) return;
+            contar().then(() => {
+              if (foto !== f) return;
+              f.presa = false;
+              historiaOuvida = true; salvar();
+              el.classList.add('com-bis');
+            });
+          }, U.duracao(500));
+        } else el.classList.add('com-bis');
+        PC.aoTocar(el, () => { if (foto === f && !f.presa && performance.now() - f.aberta > 350) fecharFoto(); }, { som: false });
+      }
+      /* Enquanto conta a história do vovô Tufo, a Pipoca gesticula e muda a expressão a cada frase (aprovado em
+         teste/pipoca-discurso.html, "proposta 2"). As frases começam nos tempos do áudio gravado (as pausas dele). */
+      const ROSTOS = {
+        encantada: { olhoEsc: 1.14, sobOp: 1, sobEy: -4, sobDy: -4, corar: .95, bSorriso: 1 },
+        orgulhosa: { feliz: .85, corar: 1.1, cabRot: 6, sobOp: .6, sobEy: -2, sobDy: -2 },
+        risonha: { feliz: 1, corar: 1.05, bSorriso: 1.2, cabRot: -4 },
+        curiosa: { olhoEsc: 1.08, sobOp: 1, sobEy: -7, sobDy: -1, sobEr: -6, cabRot: -9 },
+        espantada: { olhoEsc: 1.22, sobOp: 1, sobEy: -6, sobDy: -6, corar: .8 },
+        sonhadora: { palE: .45, palD: .45, cabRot: 6, corar: 1, olharY: -2 },
+        piscadinha: { corar: 1.05 },   // (com o joinha: o rosto é a piscadinha da própria pose, só mais corada)
+      };
+      const P_FOTO = [1, -.3], P_CRIANCA = [-.1, 0];
+      const ROTEIRO_FOTO = [
+        ['surpresa', 'encantada', P_FOTO], ['aponta', 'orgulhosa', P_FOTO], ['carinho', 'risonha', P_CRIANCA], ['pensa', 'curiosa', P_CRIANCA],
+        ['surpresa', 'espantada', P_CRIANCA], ['aponta', 'encantada', P_FOTO], ['normal', 'sonhadora', P_CRIANCA], ['joia', 'piscadinha', P_CRIANCA]];
+      const INICIOS_FOTO = (() => {
+        const frases = FALA_FOTO.split(/(?<=[.!?…])\s+/);
+        const s = (window.PC_BOCAS || {})['9001-historia-vovo-tufo.mp3'] || '';
+        const cues = [...s.matchAll(/([A-HX])(\d+)/g)].map(m => [m[1], +m[2] / 100]);
+        const total = cues.length ? cues[cues.length - 1][1] : 22;
+        const pausas = cues.filter(c => c[0] === 'X').map(c => c[1]);
+        const soma = frases.reduce((a, b) => a + b.length, 0);
+        let acc = 0;
+        return frases.map((fr, k) => {
+          const est = total * acc / soma; acc += fr.length;
+          if (!k) return 0;
+          const perto = pausas.reduce((m, p) => (Math.abs(p - est) < Math.abs(m - est) ? p : m), Infinity);
+          return Math.abs(perto - est) < 1 ? perto : est;
+        });
+      })();
+      function gesticularHistoria(f, fala) {
+        let atual = -1, t0 = performance.now();
+        const aplicar = k => { const [pose, rosto, olha] = ROTEIRO_FOTO[k]; rig.pose(pose); rig.rosto(ROSTOS[rosto]); rig.olhar(olha[0], olha[1], 8000); };
+        const parar = () => { f.gesto = 0; if (rig.rosto) rig.rosto(null); if (foto === f) rig.pose('feliz'); };
+        const seguir = () => {
+          if (foto !== f || !vivo) { parar(); return; }
+          // pelo tempo do áudio gravado; sem ele (voz do aparelho), por uma estimativa do tempo
+          let t = PC.voz.tempoAgora ? PC.voz.tempoAgora() : -1;
+          if (t < 0) t = (performance.now() - t0) / 1000 * (INICIOS_FOTO[INICIOS_FOTO.length - 1] / 20);
+          let k = 0;
+          while (k + 1 < INICIOS_FOTO.length && INICIOS_FOTO[k + 1] <= t + .15) k++;
+          if (k !== atual) { atual = k; aplicar(k); }
+          f.gesto = requestAnimationFrame(seguir);
+        };
+        aplicar(0); atual = 0;
+        f.gesto = requestAnimationFrame(seguir);
+        fala.then(() => { cancelAnimationFrame(f.gesto); parar(); });
+      }
+      function fecharFoto() {
+        if (!foto) return;
+        if (foto.gesto) cancelAnimationFrame(foto.gesto);
+        rig.rosto(null);
+        const f = foto; foto = null;
+        if (PC.voz.parar) PC.voz.parar();
+        PC.som.soltar();
+        janela.classList.remove('foto-aberta');
+        hud.classList.remove('some'); bau.classList.remove('some');
+        // a Pipoca volta para o lugar dela na casa
+        camada.appendChild(pipEl);
+        posPipoca();
+        rig.pose('normal');
+        f.el.classList.add('sai');
+        setTimeout(() => f.el.remove(), U.duracao(260));
+      }
+
       // ------------------------------------------------------------ a Pipoca viva
       const PK = 1.2;
       const pipEl = U.el('div', { class: 'pc-casa-pipoca', teste: 'pipoca', role: 'img', 'aria-label': 'Pipoca' });
@@ -623,6 +832,10 @@
       // em px virtuais de cada lado): a janela cobre isso também e a câmera nunca mostra o que está fora do mundo.
       const cam = { x: 0, y: 0 };
       const M = { x: 0, y: 0 };
+      // zoom: 1 = tamanho normal; menos que 1 mostra mais da casa, mais que 1 chega mais perto. Um ponto da tela p (px
+      // virtuais do palco) mostra o ponto do mundo cam + p / zoom.
+      const Z_MIN = .5, Z_MAX = 1.35;
+      let zoom = U.limitar(+((guardado && guardado.zoom) || 1), Z_MIN, Z_MAX);
       const alturaBau = () => (bauAberto ? BAU : BAU_FECHADO);
       const bauTopo = () => TELA.a + M.y - alturaBau();
       function margens() {
@@ -635,13 +848,36 @@
       }
       function posBau() { bau.style.top = bauTopo() + 'px'; bau.classList.toggle('fechado', !bauAberto); }
       // embaixo, a câmera para quando o gramado fica logo acima do baú (não mostra terra nem o fim do mundo)
-      const limY = () => C.CHAO + 80 - bauTopo();
+      const limY = () => C.CHAO + 80 - bauTopo() / zoom;
       function moverCam(x, y) {
-        cam.x = U.limitar(x, M.x, C.W - TELA.l - M.x);
-        cam.y = U.limitar(y, C.TOPO + M.y, limY());
-        mundo.style.transform = `translate(${M.x - cam.x}px, ${M.y - cam.y}px)`;
+        cam.x = U.limitar(x, M.x / zoom, C.W - (TELA.l + M.x) / zoom);
+        cam.y = U.limitar(y, C.TOPO + M.y / zoom, Math.max(C.TOPO + M.y / zoom, limY()));
+        mundo.style.transform = `translate(${(M.x - cam.x * zoom).toFixed(2)}px, ${(M.y - cam.y * zoom).toFixed(2)}px)${zoom !== 1 ? ` scale(${zoom.toFixed(4)})` : ''}`;
         atualizarMapinha();
         pedacosLogo();
+      }
+      /** Muda o zoom mantendo parado o ponto do mundo que está embaixo do ponto da tela p (o meio dos dedos, ou o meio
+       *  da tela nos botões). */
+      function zoomEm(z, p) {
+        z = U.limitar(z, Z_MIN, Z_MAX);
+        if (Math.abs(z - zoom) < .0005) return;
+        const w = telaParaMundo(p);
+        zoom = z;
+        moverCam(w.x - p.x / zoom, w.y - p.y / zoom);
+      }
+      const meioDaTela = () => ({ x: TELA.l / 2, y: (bauTopo() - M.y) / 2 });
+      let animZoom = 0;
+      function zoomAnimado(z) {
+        cancelAnimationFrame(animZoom);
+        z = U.limitar(z, Z_MIN, Z_MAX);
+        const z0 = zoom, t0 = performance.now(), dur = U.duracao(260), p = meioDaTela();
+        const passo = t => {
+          if (!vivo) return;
+          const u = dur > 0 ? Math.min(1, (t - t0) / dur) : 1;
+          zoomEm(z0 * Math.pow(z / z0, 1 - Math.pow(1 - u, 3)), p);
+          if (u < 1) animZoom = requestAnimationFrame(passo); else { mostrarZoom(); salvar(); }
+        };
+        animZoom = requestAnimationFrame(passo);
       }
       let glide = 0;
       function deslizar(x, y, ms = 600) {
@@ -661,7 +897,7 @@
         const passo = t => {
           const dt = Math.min(50, t - ult) / 1000; ult = t;
           vx *= Math.pow(.04, dt); vy *= Math.pow(.04, dt);
-          moverCam(cam.x - vx * dt, cam.y - vy * dt);
+          moverCam(cam.x - vx * dt / zoom, cam.y - vy * dt / zoom);
           if (vivo && Math.hypot(vx, vy) > 30) inercia = requestAnimationFrame(passo); else salvar();
         };
         inercia = requestAnimationFrame(passo);
@@ -753,8 +989,26 @@
           fixosEl.appendChild(f.lustre);
         }
       }
+      // coisas do cenário que funcionam ao tocar (CASA.partes.<c>.tocaveis: o chuveiro): ligado = desenha `sobre`
+      const tocaveis = [];
+      Object.keys(C.partes).forEach(nm => (C.partes[nm].tocaveis || []).forEach(t => tocaveis.push(t)));
+      function desenharTocavel(t) {
+        if (t.el) { t.el.remove(); t.el = null; }
+        if (!ligados[t.id]) return;
+        try { t.el = svgNoMundo(t.sobre()); } catch (e) { console.error(t.id, e); return; }
+        fixosEl.appendChild(t.el);
+      }
       /** Toque no cenário: interruptor ou lustre acende/apaga a luz do teto; janela abre/fecha a cortina. */
       function tocarFixo(w) {
+        for (const t of tocaveis) {
+          const [x0, y0, x1, y1] = t.area();
+          if (w.x < x0 || w.x > x1 || w.y < y0 || w.y > y1) continue;
+          if (modo === 'falar') { PC.som.clique(); pipocaDiz(t.nome); return true; }
+          ligados[t.id] = !ligados[t.id];
+          if (ligados[t.id] && PC.som[t.som]) PC.som[t.som](); else PC.som.clique();
+          desenharTocavel(t); salvar();
+          return true;
+        }
         for (const nm of COMODOS) {
           const lz = luzDe(nm), f = fixos[nm];
           if (!lz || !f) continue;
@@ -902,6 +1156,7 @@
         salvar();
       }
       montarFixos();
+      tocaveis.forEach(desenharTocavel);
       mostrarCeu();
       pedirLuz();
 
@@ -943,7 +1198,10 @@
       hud.appendChild(astroBtn);
       mapinha.classList.toggle('noite', noite);
       mostrarAstroBtn();
-      function atualizarMapinha() { vistaMapa.setAttribute('x', cam.x); vistaMapa.setAttribute('y', cam.y); }
+      function atualizarMapinha() {
+        vistaMapa.setAttribute('x', cam.x); vistaMapa.setAttribute('y', cam.y);
+        vistaMapa.setAttribute('width', TELA.l / zoom); vistaMapa.setAttribute('height', TELA.a / zoom);
+      }
       desligar.push(PC.arrastar(mapinha, {
         limiar: 4,
         aoTocar: (p, ev) => irPeloMapa(ev),
@@ -953,7 +1211,7 @@
         if (!ev) return;
         const r = mapinha.getBoundingClientRect();
         const fx = U.limitar((ev.clientX - r.left) / r.width, 0, 1), fy = U.limitar((ev.clientY - r.top) / r.height, 0, 1);
-        const x = fx * C.W - TELA.l / 2, y = C.TOPO + fy * (C.H - C.TOPO) - (TELA.a - BAU) / 2;
+        const x = fx * C.W - TELA.l / 2 / zoom, y = C.TOPO + fy * (C.H - C.TOPO) - (TELA.a - BAU) / 2 / zoom;
         if (ja) { cancelAnimationFrame(glide); moverCam(x, y); salvar(); } else { PC.som.clique(); deslizar(x, y); }
       }
       // modo: brincar (mãozinha) ou ouvir os nomes (balão). Tocar troca; a Pipoca avisa.
@@ -962,32 +1220,50 @@
         falar: '<svg viewBox="0 0 64 64"><path d="M10 12 H 54 A 8 8 0 0 1 62 20 V 40 A 8 8 0 0 1 54 48 H 28 L 14 58 L 17 48 H 10 A 8 8 0 0 1 2 40 V 20 A 8 8 0 0 1 10 12 Z" fill="#fff" stroke="#3A2A5A" stroke-width="4.5" stroke-linejoin="round"/>' +
           '<path d="M16 30 V 30 M24 24 V 36 M32 19 V 41 M40 23 V 37 M48 29 V 31" stroke="#9B7BFF" stroke-width="5.5" stroke-linecap="round"/></svg>',
       };
-      const bModo = U.el('div', { class: 'pc-casa-modo', teste: 'modo', role: 'button' });
+      const bModo = U.el('div', { class: 'pc-casa-modo', teste: 'modo', role: 'switch' });
+      bModo.innerHTML = `<span class="trilho"></span><span class="bolinha"></span>` +
+        `<span class="op brincar" data-teste="modo-brincar">${ICONE_MODO.brincar}</span><span class="op falar" data-teste="modo-falar">${ICONE_MODO.falar}</span>`;
       function mostrarModo() {
         bModo.className = 'pc-casa-modo ' + modo;
+        bModo.setAttribute('aria-checked', modo === 'falar' ? 'true' : 'false');
         bModo.setAttribute('aria-label', modo === 'falar' ? 'Modo: ouvir os nomes' : 'Modo: brincar');
-        bModo.innerHTML = `<span>${ICONE_MODO[modo]}</span>`;
       }
       mostrarModo();
+      // tocar num lado escolhe aquele modo; tocar no que já está escolhido também troca (fica fácil para quem só toca)
+      let ladoTocado = null;
+      bModo.addEventListener('pointerdown', ev => {
+        const r = bModo.getBoundingClientRect();
+        ladoTocado = ev.clientX < r.left + r.width / 2 ? 'brincar' : 'falar';
+      });
       PC.aoTocar(bModo, () => {
-        modo = modo === 'falar' ? 'brincar' : 'falar';
+        const novo = ladoTocado && ladoTocado !== modo ? ladoTocado : (modo === 'falar' ? 'brincar' : 'falar');
+        modo = novo;
         mostrarModo();
-        bModo.classList.add('troca');
         pipocaDiz(modo === 'falar' ? 'Agora eu falo o nome das coisas!' : 'Agora é para brincar!');
         salvar();
       });
-      hud.append(bVoltar, bModo, mapinha);
+      // zoom: lupa com + e com − (a criança também pode afastar ou juntar dois dedos na casa)
+      const lupa = sinal => `<svg viewBox="0 0 64 64"><circle cx="27" cy="27" r="17" fill="#fff" stroke="#3A2A5A" stroke-width="5"/>` +
+        `<path d="M40 40 L 54 54" stroke="#3A2A5A" stroke-width="8" stroke-linecap="round"/>` +
+        `<path d="M19 27 H 35${sinal > 0 ? ' M27 19 V 35' : ''}" stroke="#9B7BFF" stroke-width="5.5" stroke-linecap="round"/></svg>`;
+      const bMais = U.el('div', { class: 'pc-casa-zoom mais', teste: 'zoom-mais', role: 'button', 'aria-label': 'Chegar mais perto', html: lupa(1) });
+      const bMenos = U.el('div', { class: 'pc-casa-zoom menos', teste: 'zoom-menos', role: 'button', 'aria-label': 'Ver mais da casa', html: lupa(-1) });
+      function mostrarZoom() { bMais.classList.toggle('fim', zoom >= Z_MAX - .01); bMenos.classList.toggle('fim', zoom <= Z_MIN + .01); }
+      PC.aoTocar(bMais, () => zoomAnimado(zoom >= .99 ? Z_MAX : Math.min(1, zoom * 1.4)));
+      PC.aoTocar(bMenos, () => zoomAnimado(zoom > 1.01 ? 1 : zoom / 1.4));
+      mostrarZoom();
+      hud.append(bVoltar, bModo, mapinha, bMais, bMenos);
       raiz.appendChild(hud);
 
       // ------------------------------------------------------------ o baú
       const bau = U.el('div', { class: 'pc-casa-bau' + (bauAberto ? '' : ' fechado'), teste: 'bau' });
       const alca = U.el('div', { class: 'pc-casa-alca', teste: 'alca-bau', role: 'button', 'aria-label': 'Abrir ou fechar o baú' });
-      alca.innerHTML = `<svg viewBox="0 0 46 30"><path d="M6 22 L 23 8 L 40 22" fill="none" stroke="#FFE9C2" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      alca.innerHTML = `<svg viewBox="0 0 46 30"><path d="M8 22 L 23 9 L 38 22" fill="none" stroke="#3A2A5A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
       const abasEl = U.el('div', { class: 'pc-casa-abas' });
       const vao = U.el('div', { class: 'pc-casa-cartas-vao' });
       const cartas = U.el('div', { class: 'pc-casa-cartas' });
       vao.appendChild(cartas);
-      bau.append(U.el('div', { class: 'tampa' }), alca, abasEl, vao);
+      bau.append(U.el('div', { class: 'tampa' }), U.el('div', { class: 'beirada' }), alca, abasEl, vao);
       raiz.appendChild(bau);
       PC.aoTocar(alca, () => { bauAberto = !bauAberto; posBau(); moverCam(cam.x, cam.y); salvar(); });
 
@@ -998,7 +1274,7 @@
       let aba = 'moveis', rolagem = 0;
       ABAS.forEach(a => {
         const el = U.el('div', { class: 'pc-casa-aba', teste: 'aba-' + a.id, role: 'button', style: '--cor:' + a.cor });
-        el.innerHTML = miniatura(a.icone, 120, 28);
+        el.innerHTML = miniatura(a.icone, 60, 46);
         el.__aba = a.id;
         PC.aoTocar(el, () => { aba = a.id; rolagem = 0; montarCartas(); }, { som: true });
         abasEl.appendChild(el);
@@ -1016,7 +1292,7 @@
         const lista = Object.values(C.ITENS).filter(it => it.aba === aba && !naCasa(it.id) && temItem(it.id));
         lista.forEach(it => {
           const c = U.el('div', { class: 'pc-casa-carta', teste: 'carta-' + it.id, 'aria-label': it.nome });
-          c.innerHTML = miniatura(it.id, 118, 118);
+          c.innerHTML = miniatura(it.id, 90, 90);
           c.__id = it.id;
           cartas.appendChild(c);
         });
@@ -1124,7 +1400,7 @@
       // ------------------------------------------------------------ gestos na casa: passear, arrastar coisas, tocar
       let gesto = null;   // { tipo: 'cam' | 'item' | 'pipoca', ... }
       let autoRaf = 0;
-      function telaParaMundo(p) { return { x: p.x + cam.x, y: p.y + cam.y }; }
+      function telaParaMundo(p) { return { x: p.x / zoom + cam.x, y: p.y / zoom + cam.y }; }
       function alvoDe(ev) {
         const t = ev && ev.target;
         if (!t || !t.closest) return null;
@@ -1147,7 +1423,7 @@
           const esq = -M.x + BORDA_AUTO, dir = TELA.l + M.x - BORDA_AUTO, cima = -M.y + BORDA_AUTO + 20;
           if (p.x < esq) vx = -(esq - p.x) / 6; else if (p.x > dir) vx = (p.x - dir) / 6;
           if (p.y < cima && p.y > -M.y) vy = -(cima - p.y) / 7; else if (p.y > bauTopo() - 40 && p.y < bauTopo()) vy = (p.y - (bauTopo() - 40)) / 5;
-          if (vx || vy) { moverCam(cam.x + vx, cam.y + vy); seguirDedo(); }
+          if (vx || vy) { moverCam(cam.x + vx / zoom, cam.y + vy / zoom); seguirDedo(); }
           autoRaf = requestAnimationFrame(passo);
         };
         autoRaf = requestAnimationFrame(passo);
@@ -1266,6 +1542,48 @@
         pipocaDiz(primeiraFala ? 'Esta é a minha casa! Tire coisas do baú e arrume do seu jeito.' : U.escolher(['Oi!', 'Que casa bonita!', 'Vamos brincar?']));
         primeiraFala = false;
       }
+      // pinça: com dois dedos na casa, afastar chega perto e juntar mostra mais (o meio dos dedos fica parado)
+      const dedos = new Map();
+      let pinca = null;
+      const noPalco = ev => PC.palco.paraVirtual(ev.clientX, ev.clientY);
+      const dedoDesce = ev => {
+        if (ev.pointerType !== 'touch') return;
+        dedos.set(ev.pointerId, noPalco(ev));
+        if (dedos.size === 2) {
+          // o segundo dedo: vira pinça (o que estava sendo arrastado é solto onde está)
+          const g = gesto; gesto = null; cancelAnimationFrame(autoRaf); cancelAnimationFrame(inercia); cancelAnimationFrame(glide);
+          if (g && g.tipo === 'item') soltarItem(g.i, false);
+          else if (g && g.tipo === 'pipoca') soltarPipoca();
+          else if (g && g.tipo === 'plugue') soltarPlugue(g.i, posPlugue(g.i));
+          const [a, b] = [...dedos.values()];
+          pinca = { d0: Math.hypot(a.x - b.x, a.y - b.y) || 1, z0: zoom };
+        }
+      };
+      const dedoMove = ev => {
+        if (!dedos.has(ev.pointerId)) return;
+        dedos.set(ev.pointerId, noPalco(ev));
+        if (!pinca || dedos.size < 2) return;
+        const [a, b] = [...dedos.values()];
+        const meio = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+        zoomEm(pinca.z0 * Math.hypot(a.x - b.x, a.y - b.y) / pinca.d0, meio);
+        // o meio dos dedos também arrasta a casa
+        if (pinca.meio) moverCam(cam.x - (meio.x - pinca.meio.x) / zoom, cam.y - (meio.y - pinca.meio.y) / zoom);
+        pinca.meio = meio;
+      };
+      const dedoSobe = ev => {
+        if (!dedos.delete(ev.pointerId)) return;
+        if (pinca && dedos.size < 2) { pinca = null; gesto = null; mostrarZoom(); salvar(); }
+      };
+      janela.addEventListener('pointerdown', dedoDesce, true);
+      window.addEventListener('pointermove', dedoMove, true);
+      window.addEventListener('pointerup', dedoSobe, true);
+      window.addEventListener('pointercancel', dedoSobe, true);
+      desligar.push(() => {
+        janela.removeEventListener('pointerdown', dedoDesce, true);
+        window.removeEventListener('pointermove', dedoMove, true);
+        window.removeEventListener('pointerup', dedoSobe, true);
+        window.removeEventListener('pointercancel', dedoSobe, true);
+      });
       desligar.push(PC.arrastar(janela, {
         aoPressionar: (p, ev) => {
           cancelAnimationFrame(inercia); cancelAnimationFrame(glide);
@@ -1303,7 +1621,7 @@
           const g = gesto; if (!g) return;
           g.ultimo = p;
           if (g.tipo === 'cam') {
-            moverCam(g.cx - p.dx, g.cy - p.dy);
+            moverCam(g.cx - p.dx / zoom, g.cy - p.dy / zoom);
             g.hist.push({ t: performance.now(), x: p.x, y: p.y });
             if (g.hist.length > 6) g.hist.shift();
           } else seguirDedo();
@@ -1414,8 +1732,8 @@
             itens: itens.map(i => ({ id: i.id, x: Math.round(i.x), y: Math.round(i.y), e: i.e, t: i.t, sobre: i.sobre ? i.sobre.id : null })), pipoca: { x: Math.round(pip.x), y: Math.round(pip.y) } }),
           /** põe um item da casa (do catálogo) em (x, y) do mundo, já acomodado */
           por: (id, x, y) => { const i = { id, x, y, k: 1, rot: 0, e: {}, t: null }; itens.push(i); camada.insertBefore(elItem(i), pipEl); acomodar(i); posicionar(i); if (acaoDe(id) && acaoDe(id).eletrico) desenharFio(i); montarCartas(); return true; },
-          plugue: id => { const i = itens.find(o => o.id === id); return i && i.plugEl ? (() => { const b = posPlugue(i); return { x: Math.round(b.x - cam.x), y: Math.round(b.y - cam.y) }; })() : null; },
-          tomada: k => ({ x: Math.round(C.TOMADAS[k].x - cam.x), y: Math.round(C.TOMADAS[k].y - cam.y) }),
+          plugue: id => { const i = itens.find(o => o.id === id); return i && i.plugEl ? (() => { const b = posPlugue(i); return { x: Math.round((b.x - cam.x) * zoom), y: Math.round((b.y - cam.y) * zoom) }; })() : null; },
+          tomada: k => ({ x: Math.round((C.TOMADAS[k].x - cam.x) * zoom), y: Math.round((C.TOMADAS[k].y - cam.y) * zoom) }),
           /** toca num item como no modo brincar (testes) */
           brincar: id => { const i = itens.find(o => o.id === id); if (!i) return false; brincarCom(i); return true; },
           /** liga o plugue do item na tomada k (testes) */
@@ -1429,9 +1747,11 @@
           noite: v => { mudarNoite(!!v); return true; },
           janela: (nm, k) => { const j = luzDe(nm).janelas[k]; return tocarFixo({ x: j.x + j.w / 2, y: j.y + j.h / 2 }); },
           interruptor: nm => tocarFixo(luzDe(nm).interruptor),
+          foto: () => !!foto,
           camera: (x, y) => moverCam(x, y),
           /** posição na TELA (px virtuais) de um ponto do mundo */
-          naTela: (x, y) => ({ x: Math.round(x - cam.x), y: Math.round(y - cam.y) }),
+          naTela: (x, y) => ({ x: Math.round((x - cam.x) * zoom), y: Math.round((y - cam.y) * zoom) }),
+          zoom: z => { if (z != null) { zoomEm(z, meioDaTela()); mostrarZoom(); } return zoom; },
         };
       }
 
@@ -1444,6 +1764,7 @@
           if (timerSalvar) { clearTimeout(timerSalvar); timerSalvar = 0; PC.dados.extra('casa', paraGuardar()); }
           timersAcao.forEach(clearTimeout);
           rig.destruir();
+          foto = null;
           clearTimeout(timerPedacos);
           Object.keys(pedacos).forEach(soltarPedaco);
           desligar.forEach(f => { try { f(); } catch (e) { console.error(e); } });

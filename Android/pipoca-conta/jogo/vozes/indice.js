@@ -1700,5 +1700,7 @@ window.PC_VOZES = { voz: "oJebhZNaPllxk6W0LSBA", modelo: "eleven_v4", mapa: {
   "o sol voltou!": "3499-o-sol-voltou.mp3",
   "amanheceu!": "3500-amanheceu.mp3",
   "lustre!": "3501-lustre.mp3",
-  "interruptor!": "3502-interruptor.mp3"
+  "interruptor!": "3502-interruptor.mp3",
+  "foto do sagui!": "3503-foto-do-sagui.mp3",
+  "chuveiro!": "3504-chuveiro.mp3"
 } };

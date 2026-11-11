@@ -3308,4 +3308,6 @@ window.FRASES_PIPOCA = [{"id":1,"onde":"abertura","texto":"Oi!","tag":"","arquiv
 {"id":3499,"onde":"livre","texto":"O sol voltou!","tag":"","arquivo":"3499-o-sol-voltou.mp3","gravada":true},
 {"id":3500,"onde":"livre","texto":"Amanheceu!","tag":"","arquivo":"3500-amanheceu.mp3","gravada":true},
 {"id":3501,"onde":"livre","texto":"Lustre!","tag":"","arquivo":"3501-lustre.mp3","gravada":true},
-{"id":3502,"onde":"livre","texto":"Interruptor!","tag":"","arquivo":"3502-interruptor.mp3","gravada":true}];
+{"id":3502,"onde":"livre","texto":"Interruptor!","tag":"","arquivo":"3502-interruptor.mp3","gravada":true},
+{"id":3503,"onde":"livre","texto":"Foto do sagui!","tag":"","arquivo":"3503-foto-do-sagui.mp3","gravada":true},
+{"id":3504,"onde":"livre","texto":"Chuveiro!","tag":"","arquivo":"3504-chuveiro.mp3","gravada":true}];

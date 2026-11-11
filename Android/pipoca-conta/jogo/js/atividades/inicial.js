@@ -254,7 +254,7 @@
     }
 
     // ------------------------------------------------------------ instrução
-    /** "É á, ó ou u?" (modo letra) ou "Boto, pato ou mala?" (modo bicho), destacando cada opção enquanto fala. */
+    /** "Á, ó ou u?" (modo letra) ou "Boto, pato ou mala?" (modo bicho), destacando cada opção enquanto fala. */
     async function lerOpcoes(sinal) {
       const vivas = opcoes.filter(o => !o.fora);
       const falaDe = o => (modo === 'bicho' ? nome(o.palavra) : letraFalada(o.letra));
@@ -268,7 +268,7 @@
           destacar(vivas[k].el);
           const ultimo = k === vivas.length - 1;
           const texto = falaDe(vivas[k]);
-          const inicio = k === 0 ? (modo === 'bicho' ? maiuscula(texto) : 'É ' + texto) : (ultimo ? 'ou ' + texto : texto);
+          const inicio = k === 0 ? maiuscula(texto) : (ultimo ? 'ou ' + texto : texto);
           await falarEm(sinal, inicio + (ultimo ? '?' : ','));
         }
       }

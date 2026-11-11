@@ -289,6 +289,26 @@
   }
 
   /** Quadrinho redondo com uma flor. */
+  /**
+   * Quadro com a FOTO de um sagui-de-tufos-brancos de verdade (a espécie da Pipoca), numa moldura de madeira do jogo:
+   * barbante no prego e passe-partout creme. A foto é img/sagui-foto.jpg (Unsplash, Evija
+   * Martina; ver referencias/sagui/CREDITOS.md). (0,0) = o meio da borda de baixo.
+   */
+  function quadroSagui() {
+    let s = fr(-84, -232, 182, 238, T, 16, .1);                                                  // sombra na parede
+    s += l('M0 -268 L-56 -238 M0 -268 L56 -238', T, 3) + c(0, -268, 5, COR.mad3, 3);              // barbante e prego
+    s += r(-91, -242, 182, 242, COR.mad1, 16, 6);                                                  // moldura
+    s += f('M-91 -226 Q -91 -242 -75 -242 H 75 Q 91 -242 91 -226 L 79 -230 H -79 Z', tom(COR.mad1, .25), .9);   // luz em cima
+    s += fr(79, -230, 9, 222, tom(COR.mad1, -.18), 3, .8);                                         // sombra do lado
+    s += l('M-70 -236 q 14 -3 28 0 M30 -8 q 16 2 34 -1', tom(COR.mad1, -.2), 3);                   // veios da madeira
+    s += [[-78, -229], [78, -229], [-78, -13], [78, -13]].map(([x, y]) => c(x, y, 4.5, COR.amarelo2, 2.5)).join('');   // pininhos dourados
+    s += r(-74, -225, 148, 210, '#FFF8EC', 6, 4);                                                  // passe-partout
+    s += `<image href="img/sagui-foto.jpg" x="-64" y="-205" width="128" height="171" preserveAspectRatio="xMidYMid slice"/>`;
+    s += r(-64, -205, 128, 171, 'none', 3, 4);
+    s += f('M-60 -201 L -22 -201 L -60 -150 Z', '#FFFFFF', .22) + brilho(40, -180, 5, 22, 25, .35);  // reflexo no vidro
+    return s;
+  }
+
   function quadroFlor(op = {}) {
     let s = fe(4, -38, 36, 36, T, .1);
     s += l('M0 -84 L-18 -66 M0 -84 L18 -66', T, 3) + c(0, -84, 3.5, COR.mad3, 2.5);
@@ -709,6 +729,8 @@
       desenho: e => (ativo(e, 'sol') ? variante('paisagem-sol', () => quadroPaisagem({ sol: 'sala-sol' })) : CASA.desenho('quadroPaisagem')),
       tocar(ctx) { momento(ctx, 'sol', 1250); ctx.balancar(); ctx.som('piu'); },
     },
+    // a foto do sagui: amplia no meio da tela (e a Pipoca conta quem é)
+    quadroSagui: { tocar(ctx) { ctx.ampliar(); } },
     quadroFlor: {
       desenho: e => (ativo(e, 'flor') ? variante('flor-gira', () => quadroFlor({ flor: 'sala-flor' })) : CASA.desenho('quadroFlor')),
       tocar(ctx) { momento(ctx, 'flor', 1250); ctx.balancar(); ctx.som('piu'); },
@@ -813,7 +835,7 @@
       s += em(SOFA, y - 2, 1, sofa());
       return s;
     },
-    catalogo: { sofa, poltrona, pufe, tapete, luminaria, ventilador, rede, rack, tv, estante, aquario, planta, relogio, quadroPaisagem, quadroFlor, prateleira },
+    catalogo: { sofa, poltrona, pufe, tapete, luminaria, ventilador, rede, rack, tv, estante, aquario, planta, relogio, quadroPaisagem, quadroFlor, quadroSagui, prateleira },
     acoes: ACOES,
     luz: {
       // vidro de cada janela: janela(jx, topo + 150, 200, 270)

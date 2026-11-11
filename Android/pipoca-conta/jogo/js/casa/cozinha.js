@@ -118,7 +118,6 @@
     s += brilho(-2, -228, 2, 12, 0, .9);
     s += r(-12, -196, 24, 14, METAL, 5, 4);
     s += em(-24, -198, 1, r(-6, -8, 12, 12, CORAL, 4, 3) + r(-9, -12, 18, 6, CORAL, 3, 3)) + em(24, -198, 1, r(-6, -8, 12, 12, AZUL, 4, 3) + r(-9, -12, 18, 6, AZUL, 3, 3));
-    s += p('M42 -236 Q 47 -228 42 -224 Q 37 -228 42 -236 Z', '#9FD8FF', 3);   // pingo
     // cuba de avental (frente de inox no meio)
     s += vol(-44, -h + 10, 88, 44, METAL, 8, 6, 12, 8) + l('M-32 -146 H 32', METAL_S, 3) + brilho(-30, -158, 3, 8, 0, .8);
     // tampo de mármore

@@ -7,6 +7,7 @@
    PC.pipoca.criar(el, opcoes)  -> põe a Pipoca VIVA dentro de `el` e devolve o controle:
         pose(nome)              troca a pose (braços, cabeça e rosto vão até lá com molas: nada "pula" de lugar)
         falar(true | false)     a boca mexe com vários formatos e a cabeça acompanha
+        rosto({...} | null)     muda só números do rosto por cima da pose (expressão enquanto fala)
         pular(altura)           pulinho: dobra as pernas, estica, encolhe os pés no ar e amortece na volta
         momento(nome, ms)       faz uma pose por um tempo e volta para a de antes
         olhar(dx, dy, ms)       olha numa direção por um tempo (dx, dy entre -1 e 1)
@@ -504,6 +505,7 @@
     el.querySelectorAll('[data-p]').forEach(e => { refs[e.dataset.p] = e; });
 
     let relogio = 0, ultimo = 0, raf = 0, tPose = 0, destruida = false, quadros = 0, visivel = true, fora = 0;
+    let rostoExtra = null; const alvoRosto = {};
     let falando = false, falaPeso = 0, bocaAtual = BOCAS[0], proxBoca = 0;
     let proxPisca = sorte(1, 3), piscaT = -1, piscaDupla = false;
     let proxTufo = sorte(3, 7), tufoT = -1, tufoLado = 'E';
@@ -643,6 +645,7 @@
       relogio += dt;
       // a fala troca o formato da boca várias vezes por segundo
       let al = alvo;
+      if (rostoExtra) al = Object.assign(alvoRosto, alvo, rostoExtra);
       if (falando) {
         const v = PC.voz && PC.voz.bocaAgora ? PC.voz.bocaAgora() : null;
         if (v) bocaAtual = VISEMAS[v] || bocaAtual;
@@ -650,7 +653,7 @@
           let b; do { b = BOCAS[Math.floor(Math.random() * BOCAS.length)]; } while (b === bocaAtual);
           bocaAtual = b; proxBoca = relogio + sorte(.085, .17);
         }
-        al = Object.assign(alvoFala, alvo);
+        al = Object.assign(alvoFala, al);
         al.bAbre = bocaAtual[0]; al.bLarg = bocaAtual[1]; al.bO = bocaAtual[2]; al.bSorriso = .6;
       }
       // molas
@@ -718,6 +721,8 @@
         momentoTimer = setTimeout(() => { if (nome === outra) pose(antes); }, ms || 1500);
       },
       /** Olha para uma direção (dx, dy de -1 a 1) por `ms`. */
+      /** muda só o rosto (olhos, sobrancelhas, bochechas, sorriso, inclinação da cabeça) por cima da pose: rosto({...}) ou rosto(null) */
+      rosto(r) { rostoExtra = r ? Object.assign({}, r) : null; acordar(); },
       olhar(dx, dy, ms) { toque.x = lim(dx, -1, 1); toque.y = lim(dy, -1, 1); toque.ate = relogio + (ms || 1200) / 1000; acordar(); },
       destruir() { destruida = true; clearTimeout(momentoTimer); if (raf) cancelAnimationFrame(raf); raf = 0; },
     };

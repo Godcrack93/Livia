@@ -294,8 +294,7 @@
     s += r(-40, -78, 80, 78, cor, 18, 5) + f('M18 -74 H 22 Q 38 -74 38 -58 V -18 Q 38 -2 22 -2 H 18 Z', tom(cor, -.15)) + r(-40, -78, 80, 78, 'none', 18, 5);
     s += e(-6, -78, 22, 6, tom(cor, -.2), 4);
     s += [[-22, -52], [4, -40], [-14, -22], [18, -60], [10, -16]].map(([x, y]) => fe(x, y, 5, 5, '#fff', .85)).join('') + brilho(-26, -60, 4, 12, 0, .5);
-    const gotas = [[104, -62], [112, -44], [100, -36]].map(([x, y]) => em(x, y, .8, p('M0 -10 Q 7 0 0 6 Q -7 0 0 -10 Z', AGUA, 3))).join('');
-    if (!regando) return sb + s + gotas;
+    if (!regando) return sb + s;          // parado: sem gotas penduradas no bico
     return sb + `<g transform="translate(40 0)"><g style="--ang:30deg;--sobe:-56px;animation:qtlInclina 1.7s ease-in-out both"><g transform="translate(-40 0)">${s}</g></g></g>`;
   }
 

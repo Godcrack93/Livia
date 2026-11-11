@@ -75,7 +75,7 @@ export default function frasesLetras() {
         return M(comeco) + '… ' + (resto ? resto + '. ' : '') + Nome(w) + '!';
       };
       if (modo === 'letra') {
-        for (const l of letras) { f(`É ${L(l)},`); f(`${L(l)},`); f(`ou ${L(l)}?`); f(`Toque na letra ${L(l)}!`); }
+        for (const l of letras) { f(`${L(l)},`); f(`ou ${L(l)}?`); f(`Toque na letra ${L(l)}!`); }
         for (const w of W) {
           f(`${Nome(w)}! Com que letra começa ${nome(w)}?`);
           f(`${M(L(w.inicial))}! ${Nome(w)} começa com ${L(w.inicial)}!`);

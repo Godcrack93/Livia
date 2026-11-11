@@ -553,7 +553,7 @@ function livre(f) {
   // tomadas, fios e o botão de modo (jogo/js/telas/casa.js)
   ['Ih, precisa ligar na tomada!', 'Ih, precisa colocar na tomada!', 'O fio não alcança! Leve para mais perto da tomada.',
     'Essa tomada já está ocupada!', 'Agora eu falo o nome das coisas!', 'Agora é para brincar!',
-    'Ficou de noite! Boa noite!', 'Olha a lua!', 'Bom dia! O sol voltou!', 'Amanheceu!', 'Lustre!', 'Interruptor!', 'Janela!'].forEach(t => f(t));
+    'Ficou de noite! Boa noite!', 'Olha a lua!', 'Bom dia! O sol voltou!', 'Amanheceu!', 'Lustre!', 'Interruptor!', 'Janela!', 'Chuveiro!'].forEach(t => f(t));
   // o relógio da sala diz a hora (uma hora cheia de 1 a 12)
   f('É uma hora!');
   for (let h = 2; h <= 12; h++) f('São ' + extenso(h, { feminino: true }) + ' horas!');   // duas horas (feminino)

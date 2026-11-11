@@ -752,10 +752,9 @@
         } else {
           const m = cercados[alvo].n, o = cercados[1 - alvo].n;
           cercados[alvo].pintos.forEach((p, k) => pular(p, 24, k * 50));
-          if (o === 0) {
-            U.animar(cercados[1 - alvo].el, [{ transform: 'scale(1)' }, { transform: 'scale(1.04)', offset: 0.5 }, { transform: 'scale(1)' }], { duration: 500 });
-            await ctx.falar('Nenhum! Zero pintinho.', { mostrar: 0 });
-          }
+          // a criança escolheu o que tem mais: a fala é sobre a escolha dela ("Dois é mais que zero!"); o cercadinho
+          // vazio só dá uma balançadinha junto, sem um "Nenhum! Zero pintinho." solto, fora de contexto
+          if (o === 0) U.animar(cercados[1 - alvo].el, [{ transform: 'scale(1)' }, { transform: 'scale(1.04)', offset: 0.5 }, { transform: 'scale(1)' }], { duration: 500, delay: 700 });
           await ctx.falar(maiuscula(ext(m)) + ' é mais que ' + ext(o) + '!');
         }
       } catch (e) {

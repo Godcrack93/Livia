@@ -32,6 +32,7 @@
   item('relogio', 'sala', 'relógio', 'enfeites', 'solto', de('sala', 'relogio'));
   item('quadroPaisagem', 'sala', 'quadro', 'enfeites', 'solto', de('sala', 'quadroPaisagem'));
   item('quadroFlor', 'sala', 'quadro', 'enfeites', 'solto', de('sala', 'quadroFlor'));
+  item('quadroSagui', 'sala', 'foto do sagui', 'enfeites', 'solto', de('sala', 'quadroSagui'));
   item('prateleiraSala', 'sala', 'prateleira', 'enfeites', 'solto', de('sala', 'prateleira'));
   // ---------------------------------------------------------------- quarto
   item('cama', 'quarto', 'cama', 'moveis', 'chao', de('quarto', 'cama'));
@@ -157,6 +158,7 @@
     // sala: o cantinho de estar e a parede
     { id: 'prateleiraSala', x: 714, y: S - 410 }, { id: 'relogio', x: 1600, y: S - 420 }, { id: 'quadroPaisagem', x: 1860, y: S - 440 },
     { id: 'quadroFlor', x: 2830, y: S - 470, k: 1.15 },
+    { id: 'quadroSagui', x: 4060, y: S - 270 },   // a foto do sagui, no cantinho embaixo da escada
     { id: 'tapeteSala', x: 1660, y: S }, { id: 'luminariaPe', x: 1478, y: S - 8 }, { id: 'sofa', x: 1600, y: S - 2 },
     // cozinha: geladeira com ímãs, pia e fogão
     { id: 'geladeira', x: 4500, y: S }, { id: 'piaCozinha', x: 4800, y: S }, { id: 'fogao', x: 4995, y: S },
